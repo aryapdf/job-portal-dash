@@ -1,5 +1,5 @@
-export default function Home() {
-  const style:any = {
+export default function Page() {
+  const style: any = {
     container: {
       width: "100vw",
       height: "100vh",
@@ -7,14 +7,12 @@ export default function Home() {
       flexDirection: "column",
       justifyContent: "center",
       alignItems: "center",
-    }
-  }
+    },
+  };
 
   return (
-    <div style={{
-      ...style.container
-    }}>
-      <h1>Ini main page</h1>
-    </div>
+      <div style={{ ...style.container }}>
+        <h1>This is admin page</h1>
+      </div>
   );
 }
