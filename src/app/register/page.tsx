@@ -13,10 +13,10 @@ export default function Home() {
   }
 
   return (
-    <div style={{
-      ...style.container
-    }}>
-      <h1>This is root page</h1>
-    </div>
+      <div style={{
+        ...style.container
+      }}>
+        <OnboardingCard />
+      </div>
   );
 }
