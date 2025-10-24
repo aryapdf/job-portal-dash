@@ -1,3 +1,5 @@
+import LoginCard from "@/components/Login/LoginCard";
+
 export default function Home() {
   const style:any = {
     container: {
@@ -14,7 +16,7 @@ export default function Home() {
     <div style={{
       ...style.container
     }}>
-      <h1>Ini main page</h1>
+      <LoginCard />
     </div>
   );
 }
