@@ -1,5 +1,20 @@
 "use client"
 
+import { useState } from "react"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import {
+    Form,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormControl,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -9,140 +24,74 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { useSelector } from "react-redux"
-import { RootState } from "@/store"
-import {LoadingOverlay} from "@/components/Loading/LoadingOverlay";
-import SocialButton from "@/components/Button/SocialButton";
+import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
+import SocialButton from "@/components/Button/SocialButton"
+
 
 export default function OnboardingCard() {
     const deviceType = useSelector((state: RootState) => state.screen.deviceType)
     const isMobile = deviceType === "mobile"
 
     const [loading, setLoading] = useState(false)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [emailError, setEmailError] = useState("")
-    const [passwordError, setPasswordError] = useState("")
     const [status, setStatus] = useState<"register" | "email_sent" | "login">("login")
     const [passwordMode, setPasswordMode] = useState(false)
+    const [emailState, setEmailState] = useState("")
 
-    // Validation functions
-    const validateEmail = () => {
-        if (!email) {
-            setEmailError("Email tidak boleh kosong.");
-            return false;
-        }
-        if (!/\S+@\S+\.\S+/.test(email)) {
-            setEmailError("Format email tidak valid.");
-            return false;
-        }
-        setEmailError("");
-        return true;
+
+    // ----------------------
+    // Validation Schema
+    // ----------------------
+    const formSchema = z.object({
+        email: z
+            .string()
+            .min(1, "Email tidak boleh kosong")
+            .email("Format email tidak valid"),
+        password: passwordMode
+            ? z
+                .string()
+                .min(8, "Minimal 8 karakter")
+                .regex(/[A-Z]/, "Harus mengandung huruf besar")
+                .regex(/[0-9]/, "Harus mengandung angka")
+            : z.string().optional(),
+    })
+
+    // react-hook-form setup
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: { email: "", password: "" },
+    })
+
+
+    // Submit handler
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        console.log('Teretekannn')
+        setLoading(true)
+        setEmailState(data.email)
+        setTimeout(() => {
+            setLoading(false)
+            setStatus("email_sent")
+        }, 2000)
     }
 
-    const validatePassword = () => {
-        if (password.length < 8) {
-            setPasswordError("Minimal 8 karakter");
-            return false;
-        }
-        if (!/[A-Z]/.test(password)) {
-            setPasswordError("Harus mengandung huruf besar");
-            return false;
-        }
-        if (!/[0-9]/.test(password)) {
-            setPasswordError("Harus mengandung angka");
-            return false;
-        }
-        setPasswordError("");
-        return true;
-    }
-
-    const handleSubmit = () => {
-        const isEmailValid = validateEmail();
-        const isPasswordValid = passwordMode ? validatePassword() : true;
-
-        if (isEmailValid && isPasswordValid) {
-            setLoading(true);
-            // Simulate API call
-            setTimeout(() => {
-                setLoading(false);
-                setStatus("email_sent");
-            }, 2000);
-        }
-    }
-
-    // Reusable Input Field Component
-    const FormField = ({
-                           id,
-                           label,
-                           type = "text",
-                           value,
-                           onChange,
-                           error
-                       }: {
-        id: string;
-        label: string;
-        type?: string;
-        value: string;
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-        error?: string;
-    }) => (
-        <div className="grid" style={{ gap: isMobile ? "4vw" : "0.571vw" }}>
-            <Label
-                htmlFor={id}
-                className="text-slate-700 font-medium"
-                style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
-            >
-                {label}
-            </Label>
-            <Input
-                id={id}
-                type={type}
-                value={value}
-                onChange={onChange}
-                className={`border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all ${
-                    error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
-                }`}
-                style={{
-                    padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
-                    fontSize: isMobile ? "3.5vw" : "0.857vw",
-                }}
-            />
-            {error && (
-                <p
-                    className="text-red-500"
-                    style={{
-                        fontSize: isMobile ? "3vw" : "0.7vw",
-                        marginTop: isMobile ? "1vw" : "0.3vw",
-                    }}
-                >
-                    {error}
-                </p>
-            )}
-        </div>
-    );
-
+    // Helper components
     const Separator = () => (
         <div className="relative w-full">
             <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-slate-300" />
             </div>
             <div className="relative flex justify-center">
-                <span
-                    className="bg-white text-slate-500"
-                    style={{
-                        fontSize: isMobile ? "3.5vw" : "0.857vw",
-                        paddingInline: isMobile ? "2vw" : "0.857vw",
-                    }}
-                >
-                    or
-                </span>
+        <span
+            className="bg-white text-slate-500"
+            style={{
+                fontSize: isMobile ? "3.5vw" : "0.857vw",
+                paddingInline: isMobile ? "2vw" : "0.857vw",
+            }}
+        >
+          or
+        </span>
             </div>
         </div>
-    );
+    )
 
     const Logo = () => (
         <img
@@ -154,8 +103,11 @@ export default function OnboardingCard() {
                 width: isMobile ? "20vw" : "10.357vw",
             }}
         />
-    );
+    )
 
+    // ----------------------
+    // Login Form
+    // ----------------------
     function renderLogin() {
         return (
             <>
@@ -180,64 +132,120 @@ export default function OnboardingCard() {
                             className="font-medium hover:underline transition-colors cursor-pointer"
                             style={{ color: "rgba(1, 149, 159, 1)" }}
                         >
-                            Daftar menggunakan email
-                        </span>
+              Daftar menggunakan email
+            </span>
                     </div>
                 </CardHeader>
 
                 <CardContent className="grid p-0" style={{ gap: isMobile ? "6vw" : "1.143vw" }}>
-                    <FormField
-                        id="email"
-                        label="Alamat email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        error={emailError}
-                    />
+                    <Form {...form}>
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className="grid"
+                            style={{ gap: isMobile ? "6vw" : "1.143vw" }}
+                        >
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className="text-slate-700 font-medium"
+                                            style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
+                                        >
+                                            Alamat email
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="email"
+                                                {...field}
+                                                className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                                style={{
+                                                    padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                                                    fontSize: isMobile ? "3.5vw" : "0.857vw",
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage
+                                            className="text-red-500"
+                                            style={{
+                                                fontSize: isMobile ? "3vw" : "0.7vw",
+                                                marginTop: isMobile ? "1vw" : "0.3vw",
+                                            }}
+                                        />
+                                    </FormItem>
+                                )}
+                            />
 
-                    {passwordMode && (
-                        <FormField
-                            id="password"
-                            label="Kata sandi"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            error={passwordError}
-                        />
-                    )}
+                            {passwordMode && (
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                className="text-slate-700 font-medium"
+                                                style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
+                                            >
+                                                Kata sandi
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="password"
+                                                    {...field}
+                                                    className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                                    style={{
+                                                        padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                                                        fontSize: isMobile ? "3.5vw" : "0.857vw",
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage
+                                                className="text-red-500"
+                                                style={{
+                                                    fontSize: isMobile ? "3vw" : "0.7vw",
+                                                    marginTop: isMobile ? "1vw" : "0.3vw",
+                                                }}
+                                            />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+
+                            <Button
+                                type="submit"
+                                className="w-full font-bold transition-colors shadow-md hover:shadow-lg"
+                                style={{
+                                    background: "rgba(251, 192, 55, 1)",
+                                    color: "rgba(64, 64, 64, 1)",
+                                    fontSize: isMobile ? "4vw" : "1.143vw",
+                                    height: isMobile ? "12vw" : "2.857vw",
+                                }}
+                            >
+                                {passwordMode ? "Masuk" : "Kirim link login"}
+                            </Button>
+                        </form>
+                    </Form>
                 </CardContent>
 
                 <CardFooter className="flex flex-col p-0" style={{ gap: isMobile ? "6vw" : "1.143vw" }}>
-                    <Button
-                        className="w-full font-bold transition-colors shadow-md hover:shadow-lg"
-                        style={{
-                            background: "rgba(251, 192, 55, 1)",
-                            color: "rgba(64, 64, 64, 1)",
-                            fontSize: isMobile ? "4vw" : "1.143vw",
-                            height: isMobile ? "12vw" : "2.857vw",
-                        }}
-                        onClick={handleSubmit}
-                    >
-                        {passwordMode ? "Masuk" : "Kirim link login"}
-                    </Button>
-
                     <Separator />
 
                     <SocialButton
-                        icon={passwordMode ? '/asset/mail-icon.svg' : `/asset/key-icon.svg`}
-                        text={passwordMode ? `Kirim link login melalui email` : `Masuk dengan kata sandi`}
-                        onClick={() => setPasswordMode(prev => !prev)}
+                        icon={passwordMode ? "/asset/mail-icon.svg" : "/asset/key-icon.svg"}
+                        text={passwordMode ? "Kirim link login melalui email" : "Masuk dengan kata sandi"}
+                        onClick={() => setPasswordMode((prev) => !prev)}
                     />
 
-                    <SocialButton
-                        icon="/asset/google-icon.svg"
-                        text="Masuk dengan Google"
-                    />
+                    <SocialButton icon="/asset/google-icon.svg" text="Masuk dengan Google" />
                 </CardFooter>
             </>
         )
     }
 
+    // ----------------------
+    // Register
+    // ----------------------
     function renderRegister() {
         return (
             <>
@@ -262,52 +270,76 @@ export default function OnboardingCard() {
                             className="font-medium hover:underline transition-colors cursor-pointer"
                             style={{ color: "rgba(1, 149, 159, 1)" }}
                         >
-                            Masuk
-                        </span>
+              Masuk
+            </span>
                     </div>
                 </CardHeader>
 
                 <CardContent className="grid p-0" style={{ gap: isMobile ? "6vw" : "3vw" }}>
-                    <FormField
-                        id="email"
-                        label="Alamat email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        error={emailError}
-                    />
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className="text-slate-700 font-medium"
+                                            style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
+                                        >
+                                            Alamat email
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="email"
+                                                {...field}
+                                                className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                                style={{
+                                                    padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                                                    fontSize: isMobile ? "3.5vw" : "0.857vw",
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage
+                                            className="text-red-500"
+                                            style={{
+                                                fontSize: isMobile ? "3vw" : "0.7vw",
+                                                marginTop: isMobile ? "1vw" : "0.3vw",
+                                            }}
+                                        />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <Button
+                                type="submit"
+                                className="w-full font-bold transition-colors shadow-md hover:shadow-lg mt-4"
+                                style={{
+                                    background: "rgba(251, 192, 55, 1)",
+                                    color: "rgba(64, 64, 64, 1)",
+                                    fontSize: isMobile ? "4vw" : "1.143vw",
+                                    height: isMobile ? "12vw" : "2.857vw",
+                                }}
+                            >
+                                Daftar dengan email
+                            </Button>
+                        </form>
+                    </Form>
                 </CardContent>
 
                 <CardFooter className="flex flex-col p-0">
-                    <Button
-                        className="w-full font-bold transition-colors shadow-md hover:shadow-lg"
-                        style={{
-                            background: "rgba(251, 192, 55, 1)",
-                            color: "rgba(64, 64, 64, 1)",
-                            fontSize: isMobile ? "4vw" : "1.143vw",
-                            height: isMobile ? "12vw" : "2.857vw",
-                        }}
-                        onClick={handleSubmit}
-                    >
-                        Daftar dengan email
-                    </Button>
-
-                    <div
-                        className="relative w-full"
-                        style={{ marginBlock: isMobile ? "4vw" : "1vw" }}
-                    >
+                    <div className="relative w-full" style={{ marginBlock: isMobile ? "4vw" : "1vw" }}>
                         <Separator />
                     </div>
-
-                    <SocialButton
-                        icon="/asset/google-icon.svg"
-                        text="Daftar dengan Google"
-                    />
+                    <SocialButton icon="/asset/google-icon.svg" text="Daftar dengan Google" />
                 </CardFooter>
             </>
         )
     }
 
+    // ----------------------
+    // Email Sent
+    // ----------------------
     function renderEmailSent() {
         return (
             <>
@@ -328,14 +360,16 @@ export default function OnboardingCard() {
                             fontSize: isMobile ? "3.5vw" : "0.857vw",
                         }}
                     >
-                        Kami sudah mengirimkan link register ke <span className="font-bold">{email}</span> yang berlaku dalam <span className="font-bold">30 menit</span>.
+                        Kami sudah mengirimkan link register ke{" "}
+                        <span className="font-bold">{emailState}</span> yang berlaku dalam{" "}
+                        <span className="font-bold">30 menit</span>.
                     </CardDescription>
                 </CardHeader>
 
                 <CardContent>
                     <img
-                        src='/asset/email-sent.png'
-                        alt='email_sent'
+                        src="/asset/email-sent.png"
+                        alt="email_sent"
                         className="relative mx-auto"
                         style={{
                             width: isMobile ? "40vw" : "13.143vw",
@@ -347,6 +381,9 @@ export default function OnboardingCard() {
         )
     }
 
+    // ----------------------
+    // Render Root
+    // ----------------------
     return (
         <div
             className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100"
