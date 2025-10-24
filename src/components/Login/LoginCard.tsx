@@ -11,11 +11,25 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {useState} from "react";
 
 export default function LoginCard() {
+    const [email, setEmail] = useState("")
+    const [error, setError] = useState("")
+
+    const handleSubmit = () => {
+        if (!email) {
+            setError("Email tidak boleh kosong.")
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            setError("Format email tidak valid.")
+        } else {
+            setError("")
+        }
+    }
+
     return (
         <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-[5vw] md:p-4">
-            <Card className="w-full max-w-[90vw] md:max-w-[35vw] md:min-w-[400px] shadow-xl border-slate-200 relative rounded-sm p-[4vw] md:p-[2vw]">
+            <Card className="w-full max-w-[90vw] md:max-w-[35vw] md:min-w-[400px] shadow-xl border-slate-200 relative rounded-sm !p-[2.778vw] !md:p-[2.778vw]">
                 <img
                     src="/asset/rakamin-logo.png"
                     alt="logo"
@@ -23,30 +37,29 @@ export default function LoginCard() {
                 />
 
                 <CardHeader className="space-y-2 text-center md:text-left p-0 pb-[4vw] md:pb-[1.5vw]">
-                    <CardTitle className="font-bold text-slate-900 text-[6vw] md:text-[1.8vw] leading-tight">
+                    <CardTitle className="font-bold text-slate-900 text-[1.389vw] leading-tight">
                         Bergabung dengan Rakamin
                     </CardTitle>
 
-                    <div className="text-left text-slate-600 mt-2 text-[3.5vw] md:text-[0.9vw]">
+                    <div className="text-left text-slate-600 mt-2 text-[0.972vw]">
                         Sudah punya akun?{" "}
                         <a
                             href="#"
-                            className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors"
+                            className="font-medium hover:underline transition-colors"
+                            style={{
+                                color: "rgba(1, 149, 159, 1)"
+                            }}
                         >
                             Masuk
                         </a>
                     </div>
-
-                    <CardDescription className="text-slate-600 text-[3.5vw] md:text-[0.9vw] pt-2">
-                        Masukkan email Anda untuk mendaftar akun
-                    </CardDescription>
                 </CardHeader>
 
                 <CardContent className="grid gap-[3vw] md:gap-[1.2vw] p-0 pb-[4vw] md:pb-[1.5vw]">
                     <div className="grid gap-[2vw] md:gap-[0.5vw]">
                         <Label
                             htmlFor="email"
-                            className="text-slate-700 font-medium text-[3.5vw] md:text-[0.9vw]"
+                            className="text-slate-700 font-medium text-[0.833vw]"
                         >
                             Alamat email
                         </Label>
@@ -54,7 +67,11 @@ export default function LoginCard() {
                             id="email"
                             type="email"
                             placeholder=""
-                            className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all text-[3.5vw] md:text-[0.9vw] h-[10vw] md:h-[2.5vw] px-[3vw] md:px-[0.8vw]"
+                            onChange={(e) => setEmail(e.target.value)}
+                            className={`border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all text-[3.5vw] md:text-[0.9vw] h-[10vw] md:h-[2.5vw] ${error ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""} `}
+                            style={{
+                                padding: "0.556vw 1.111vw",
+                            }}
                         />
                     </div>
                 </CardContent>
@@ -65,7 +82,7 @@ export default function LoginCard() {
                         style={{
                             background: "rgba(251, 192, 55, 1)"
                         }}
-
+                        onClick={handleSubmit}
                     >
                         Daftar dengan email
                     </Button>
