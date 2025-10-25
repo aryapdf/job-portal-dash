@@ -13,8 +13,9 @@ export default function AdminContent() {
 
   return (
     <div
-      className="w-full h-full relative flex flex-col md:flex-row justify-between"
+      className="w-full h-full relative flex justify-between"
       style={{
+        flexDirection: isMobile ? "column" : "row",
         padding: isMobile ? "5vw 4vw" : "2.571vw 1.714vw",
         gap: isMobile ? "5vw" : "0"
       }}

@@ -1,184 +1,406 @@
 "use client"
 
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {useSelector} from "react-redux";
-import {RootState} from "@/store";
-import {Card, CardDescription, CardFooter, CardTitle} from "@/components/ui/card";
+import { useState } from "react"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import {
+    Form,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormControl,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
+import SocialButton from "@/components/Button/SocialButton"
 
-export default function Page() {
-  const deviceType = useSelector((state: RootState) => state.screen.deviceType)
-  const isMobile = deviceType === "mobile"
 
-  const style: any = {
-    container: {
-      width: "100vw",
-      flex: "1 1 auto",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-  };
+export default function OnboardingCard() {
+    const deviceType = useSelector((state: RootState) => state.screen.deviceType)
+    const isMobile = deviceType === "mobile"
 
-  return (
-    <div style={style.container}>
-      <div
-        className="w-full h-full relative flex flex-col !md:flex-row justify-between"
-        style={{
-          padding: isMobile ? "5vw 4vw" : "2.571vw 1.714vw",
-          gap: isMobile ? "5vw" : "0"
-        }}
-      >
-        {/* Main Content Area */}
-        <div
-          className="h-full overflow-hidden overflow-y-scroll rounded-sm flex flex-col"
-          style={{
-            width: isMobile ? "100%" : "74.5vw",
-            gap: isMobile ? "5vw" : "1.429vw"
-          }}
-        >
-          {/* Search Bar */}
-          <div
-            className="flex w-full items-center rounded-md"
+    const [loading, setLoading] = useState(false)
+    const [status, setStatus] = useState<"register" | "email_sent" | "login">("login")
+    const [passwordMode, setPasswordMode] = useState(false)
+    const [emailState, setEmailState] = useState("")
+
+
+    //validator
+    const formSchema = z.object({
+        email: z
+            .string()
+            .min(1, "Email tidak boleh kosong")
+            .email("Format email tidak valid"),
+        password: passwordMode
+            ? z
+                .string()
+                .min(8, "Minimal 8 karakter")
+                .regex(/[A-Z]/, "Harus mengandung huruf besar")
+                .regex(/[0-9]/, "Harus mengandung angka")
+            : z.string().optional(),
+    })
+
+    // react-hook-form setup
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: { email: "", password: "" },
+    })
+
+
+    // Submit handler
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
+        setLoading(true)
+        setEmailState(data.email)
+        setTimeout(() => {
+            setLoading(false)
+            setStatus("email_sent")
+        }, 2000)
+    }
+
+    // Helper components
+    const Separator = () => (
+        <div className="relative w-full">
+            <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-slate-300" />
+            </div>
+            <div className="relative flex justify-center">
+        <span
+            className="bg-white text-slate-500"
             style={{
-              padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",
-              border: "1px solid rgba(237, 237, 237, 1)",
+                fontSize: isMobile ? "3.5vw" : "0.857vw",
+                paddingInline: isMobile ? "2vw" : "0.857vw",
             }}
-          >
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="rounded-sm h-fit"
-              style={{
-                width: "100%",
-                border: "none",
-                outline: "none",
-                boxShadow: "none",
-                fontSize: isMobile ? "4vw" : "inherit"
-              }}
-            />
-            <img
-              src="/asset/magnifying-glass-icon.svg"
-              alt="icon"
-              style={{
-                height: isMobile ? "5vw" : "1.143vw",
-                width: isMobile ? "5vw" : "1.143vw",
-              }}
-            />
-          </div>
+        >
+          or
+        </span>
+            </div>
+        </div>
+    )
 
-          {/* Empty State */}
-          <div className="flex flex-col flex-1 items-center justify-center rounded-md relative">
+    const Logo = () => (
+        <img
+            src="/asset/rakamin-logo.png"
+            alt="logo"
+            className="absolute left-0 object-contain"
+            style={{
+                top: isMobile ? "-10vw" : "-5.286vw",
+                width: isMobile ? "20vw" : "10.357vw",
+            }}
+        />
+    )
+
+    // ----------------------
+    // Login Form
+    // ----------------------
+    function renderLogin() {
+        return (
+            <>
+                <Logo />
+                <CardHeader className="text-left p-0 gap-0">
+                    <CardTitle
+                        className="font-bold text-slate-900"
+                        style={{
+                            marginBottom: isMobile ? "3vw" : "1.143vw",
+                            fontSize: isMobile ? "5vw" : "1.429vw",
+                        }}
+                    >
+                        Masuk ke Rakamin
+                    </CardTitle>
+                    <div
+                        className="text-left text-slate-600 mt-2"
+                        style={{ fontSize: isMobile ? "3.5vw" : "0.972vw" }}
+                    >
+                        Belum punya akun?{" "}
+                        <span
+                            onClick={() => setStatus("register")}
+                            className="font-medium hover:underline transition-colors cursor-pointer"
+                            style={{ color: "rgba(1, 149, 159, 1)" }}
+                        >
+                          Daftar menggunakan email
+                        </span>
+                    </div>
+                </CardHeader>
+
+                <CardContent className="grid p-0" style={{ gap: isMobile ? "6vw" : "1.143vw" }}>
+                    <Form {...form}>
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            className="grid"
+                            style={{ gap: isMobile ? "6vw" : "1.143vw" }}
+                        >
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className="text-slate-700 font-medium"
+                                            style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
+                                        >
+                                            Alamat email
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="email"
+                                                {...field}
+                                                className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                                style={{
+                                                    padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                                                    fontSize: isMobile ? "3.5vw" : "0.857vw",
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage
+                                            className="text-red-500"
+                                            style={{
+                                                fontSize: isMobile ? "3vw" : "0.7vw",
+                                                marginTop: isMobile ? "1vw" : "0.3vw",
+                                            }}
+                                        />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {passwordMode && (
+                                <FormField
+                                    control={form.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                className="text-slate-700 font-medium"
+                                                style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
+                                            >
+                                                Kata sandi
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="password"
+                                                    {...field}
+                                                    className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                                    style={{
+                                                        padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                                                        fontSize: isMobile ? "3.5vw" : "0.857vw",
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage
+                                                className="text-red-500"
+                                                style={{
+                                                    fontSize: isMobile ? "3vw" : "0.7vw",
+                                                    marginTop: isMobile ? "1vw" : "0.3vw",
+                                                }}
+                                            />
+                                        </FormItem>
+                                    )}
+                                />
+                            )}
+
+                            <Button
+                                type="submit"
+                                className="w-full font-bold transition-colors shadow-md hover:shadow-lg"
+                                style={{
+                                    background: "rgba(251, 192, 55, 1)",
+                                    color: "rgba(64, 64, 64, 1)",
+                                    fontSize: isMobile ? "4vw" : "1.143vw",
+                                    height: isMobile ? "12vw" : "2.857vw",
+                                }}
+                            >
+                                {passwordMode ? "Masuk" : "Kirim link login"}
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+
+                <CardFooter className="flex flex-col p-0" style={{ gap: isMobile ? "6vw" : "1.143vw" }}>
+                    <Separator />
+
+                    <SocialButton
+                        icon={passwordMode ? "/asset/mail-icon.svg" : "/asset/key-icon.svg"}
+                        text={passwordMode ? "Kirim link login melalui email" : "Masuk dengan kata sandi"}
+                        onClick={() => setPasswordMode((prev) => !prev)}
+                    />
+
+                    <SocialButton icon="/asset/google-icon.svg" text="Masuk dengan Google" />
+                </CardFooter>
+            </>
+        )
+    }
+
+    // ----------------------
+    // Register
+    // ----------------------
+    function renderRegister() {
+        return (
+            <>
+                <Logo />
+                <CardHeader className="text-left p-0 gap-0">
+                    <CardTitle
+                        className="font-bold text-slate-900"
+                        style={{
+                            marginBottom: isMobile ? "3vw" : "1.143vw",
+                            fontSize: isMobile ? "5vw" : "1.429vw",
+                        }}
+                    >
+                        Bergabung dengan Rakamin
+                    </CardTitle>
+                    <div
+                        className="text-left text-slate-600 mt-2"
+                        style={{ fontSize: isMobile ? "3.5vw" : "0.972vw" }}
+                    >
+                        Sudah punya akun?{" "}
+                        <span
+                            onClick={() => setStatus("login")}
+                            className="font-medium hover:underline transition-colors cursor-pointer"
+                            style={{ color: "rgba(1, 149, 159, 1)" }}
+                        >
+              Masuk
+            </span>
+                    </div>
+                </CardHeader>
+
+                <CardContent className="grid p-0" style={{ gap: isMobile ? "6vw" : "3vw" }}>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel
+                                            className="text-slate-700 font-medium"
+                                            style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
+                                        >
+                                            Alamat email
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="email"
+                                                {...field}
+                                                className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
+                                                style={{
+                                                    padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                                                    fontSize: isMobile ? "3.5vw" : "0.857vw",
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage
+                                            className="text-red-500"
+                                            style={{
+                                                fontSize: isMobile ? "3vw" : "0.7vw",
+                                                marginTop: isMobile ? "1vw" : "0.3vw",
+                                            }}
+                                        />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <Button
+                                type="submit"
+                                className="w-full font-bold transition-colors shadow-md hover:shadow-lg mt-4"
+                                style={{
+                                    background: "rgba(251, 192, 55, 1)",
+                                    color: "rgba(64, 64, 64, 1)",
+                                    fontSize: isMobile ? "4vw" : "1.143vw",
+                                    height: isMobile ? "12vw" : "2.857vw",
+                                }}
+                            >
+                                Daftar dengan email
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+
+                <CardFooter className="flex flex-col p-0">
+                    <div className="relative w-full" style={{ marginBlock: isMobile ? "4vw" : "1vw" }}>
+                        <Separator />
+                    </div>
+                    <SocialButton icon="/asset/google-icon.svg" text="Daftar dengan Google" />
+                </CardFooter>
+            </>
+        )
+    }
+
+    // ----------------------
+    // Email Sent
+    // ----------------------
+    function renderEmailSent() {
+        return (
+            <>
+                <CardHeader className="text-center p-0 gap-0">
+                    <CardTitle
+                        className="font-semibold text-neutral-900"
+                        style={{
+                            marginBottom: isMobile ? "3vw" : "1.143vw",
+                            fontSize: isMobile ? "4vw" : "1.714vw",
+                        }}
+                    >
+                        Periksa Email Anda
+                    </CardTitle>
+                    <CardDescription
+                        style={{
+                            color: "rgba(76, 76, 76, 1)",
+                            marginBottom: isMobile ? "3vw" : "1.143vw",
+                            fontSize: isMobile ? "3.5vw" : "0.857vw",
+                        }}
+                    >
+                        Kami sudah mengirimkan link register ke{" "}
+                        <span className="font-bold">{emailState}</span> yang berlaku dalam{" "}
+                        <span className="font-bold">30 menit</span>.
+                    </CardDescription>
+                </CardHeader>
+
+                <CardContent>
+                    <img
+                        src="/asset/email-sent.png"
+                        alt="email_sent"
+                        className="relative mx-auto"
+                        style={{
+                            width: isMobile ? "40vw" : "13.143vw",
+                            height: isMobile ? "40vw" : "13.143vw",
+                            marginInline: 'auto'
+                        }}
+                    />
+                </CardContent>
+            </>
+        )
+    }
+
+    // ----------------------
+    // Render Root
+    // ----------------------
+    return (
+        <div
+            className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100"
+            style={{ padding: isMobile ? "8vw" : "5vw" }}
+        >
             <Card
-              className="w-fit h-fit text-center items-center rounded-md"
-              style={{
-                gap: "unset",
-                border: "none",
-                boxShadow: "none",
-                padding: isMobile ? "5vw" : "0"
-              }}
+                className="w-full shadow-xl border-slate-200 relative rounded-sm"
+                style={{
+                    maxWidth: isMobile ? "90vw" : "35vw",
+                    padding: isMobile ? "5vw" : "2.778vw",
+                    gap: isMobile ? "3vw" : "1.143vw",
+                }}
             >
-              <img
-                src="/asset/empty-state.png"
-                alt="empty state"
-                style={{
-                  width: isMobile ? "50vw" : "21.857vw",
-                  height: isMobile ? "50vw" : "21.429vw",
-                  marginBottom: isMobile ? "5vw" : "1.429vw"
-                }}
-              />
-              <CardTitle
-                className="font-semibold text-neutral-900 w-fit h-fit"
-                style={{
-                  fontSize: isMobile ? "5vw" : "1.429vw",
-                  marginBottom: isMobile ? "2vw" : "0.286vw",
-                }}
-              >
-                No job openings available
-              </CardTitle>
-              <CardDescription
-                className="w-fit h-fit"
-                style={{
-                  color: "rgba(76, 76, 76, 1)",
-                  marginBottom: isMobile ? "5vw" : "1.143vw",
-                  fontSize: isMobile ? "3.5vw" : "0.857vw",
-                }}
-              >
-                Create a job opening now and start the candidate process.
-              </CardDescription>
-              <CardFooter style={{ padding: isMobile ? "0" : "inherit" }}>
-                <Button
-                  className="w-full font-bold transition-colors shadow-md hover:shadow-lg"
-                  style={{
-                    background: "rgba(251, 192, 55, 1)",
-                    color: "rgba(64, 64, 64, 1)",
-                    fontSize: isMobile ? "4vw" : "1.143vw",
-                    height: isMobile ? "12vw" : "2.857vw",
-                    padding: isMobile ? "3vw 5vw" : "0.429vw 1.143vw",
-                    marginTop: isMobile ? "3vw" : "1vw"
-                  }}
-                >
-                  Create a new job
-                </Button>
-              </CardFooter>
+                <LoadingOverlay isLoading={loading} />
+
+                {status === "login" && renderLogin()}
+                {status === "register" && renderRegister()}
+                {status === "email_sent" && renderEmailSent()}
             </Card>
-          </div>
         </div>
-
-        {/* CTA Card */}
-        <div
-          className="flex flex-col rounded-xl h-fit overflow-hidden relative"
-          style={{
-            width: isMobile ? "100%" : "auto",
-            padding: isMobile ? "8vw 6vw" : "1.714vw",
-            background: "url('/asset/work-background.webp') no-repeat center/cover",
-            marginTop: isMobile ? "5vw" : "0"
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.72)",
-            }}
-          />
-
-          <div
-            className="relative font-bold"
-            style={{
-              fontSize: isMobile ? "4.5vw" : "1.286vw",
-              color: "rgba(224, 224, 224, 1)",
-              marginBottom: isMobile ? "2vw" : "0.286vw"
-            }}
-          >
-            Recruit the best candidates
-          </div>
-          <div
-            className="relative font-bold"
-            style={{
-              fontSize: isMobile ? "3.5vw" : "1vw",
-              color: "rgba(255, 255, 255, 1)",
-              marginBottom: isMobile ? "6vw" : "1.714vw"
-            }}
-          >
-            Create jobs, invite, and hire with ease
-          </div>
-
-          <Button
-            className="font-bold rounded-lg relative overflow-hidden cursor-pointer"
-            style={{
-              fontSize: isMobile ? "4vw" : "1.143vw",
-              color: "rgba(255, 255, 255, 1)",
-              background: "rgba(1, 149, 159, 1)",
-              height: isMobile ? "12vw" : "auto",
-              padding: isMobile ? "3vw 5vw" : "0.5vw 1vw"
-            }}
-          >
-            Create a new job
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+    )
 }
