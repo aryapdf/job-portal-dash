@@ -19,8 +19,13 @@ export function Layout({children}: {children: React.ReactNode; }) {
     return (<AuthListener>
         <ScreenListenerWrapper>
             {/*<ProtectedAuth>*/}
-            {showNavbar && <NavBar title={"Job List"}/>}
-            <main>
+            <main
+                className={"flex flex-col"}
+                style={{
+                    height: "100vh",
+                }}
+            >
+                {showNavbar && <NavBar title={"Job List"}/>}
                 {children}
             </main>
 

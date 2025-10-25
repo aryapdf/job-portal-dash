@@ -4,7 +4,7 @@ export default function Page() {
   const style: any = {
     container: {
       width: "100vw",
-      height: "100vh",
+      flex: "1 1 auto",
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
@@ -18,7 +18,14 @@ export default function Page() {
           ...style.container,
       }}
     >
-      <h1>This is admin page</h1>
+      <div
+        className="w-full relative"
+        style={{
+
+        }}
+      >
+
+      </div>
     </div>
   );
 }
