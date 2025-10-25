@@ -29,8 +29,7 @@ import SocialButton from "@/components/Button/SocialButton"
 
 
 export default function OnboardingCard() {
-    const deviceType = useSelector((state: RootState) => state.screen.deviceType)
-    const isMobile = deviceType === "mobile"
+    const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
 
     const [loading, setLoading] = useState(false)
     const [status, setStatus] = useState<"register" | "email_sent" | "login">("login")
@@ -54,14 +53,14 @@ export default function OnboardingCard() {
     })
 
     // react-hook-form setup
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: { email: "", password: "" },
     })
 
 
     // Submit handler
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
+    const onSubmit = (data:any) => {
         setLoading(true)
         setEmailState(data.email)
         setTimeout(() => {
