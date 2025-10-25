@@ -1,31 +1,18 @@
-"use client"
+import AdminContent from "@/components/Content/AdminContent";
 
 export default function Page() {
-  const style: any = {
-    container: {
-      width: "100vw",
-      flex: "1 1 auto",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-  };
-
   return (
     <div
-        style={{
-          ...style.container,
+      style={{
+        width: "100vw",
+        flex: "1 1 auto",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      <div
-        className="w-full relative"
-        style={{
-
-        }}
-      >
-
-      </div>
+      <AdminContent />
     </div>
   );
 }
