@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Nunito, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import React from "react";
+import {Layout} from "@/components/Layout";
 import {Providers} from "@/components/Providers";
 
 const nunito = Nunito({
@@ -22,13 +23,14 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({children,}: {children: React.ReactNode; }) {
+
     return (
         <html lang="en" className={`${nunito.variable} ${nunitoSans.variable}`}>
-        <body>
-        <Providers>
-            {children}
-        </Providers>
-        </body>
+            <body>
+                <Providers>
+                    <Layout>{children}</Layout>
+                </Providers>
+            </body>
         </html>
     );
 }

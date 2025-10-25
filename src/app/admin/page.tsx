@@ -1,3 +1,5 @@
+"use client"
+
 export default function Page() {
   const style: any = {
     container: {
@@ -11,7 +13,11 @@ export default function Page() {
   };
 
   return (
-    <div style={{ ...style.container }}>
+    <div
+        style={{
+          ...style.container,
+      }}
+    >
       <h1>This is admin page</h1>
     </div>
   );
