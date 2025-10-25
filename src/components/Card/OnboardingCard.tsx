@@ -38,9 +38,7 @@ export default function OnboardingCard() {
     const [emailState, setEmailState] = useState("")
 
 
-    // ----------------------
-    // Validation Schema
-    // ----------------------
+    //validator
     const formSchema = z.object({
         email: z
             .string()
@@ -64,7 +62,6 @@ export default function OnboardingCard() {
 
     // Submit handler
     const onSubmit = (data: z.infer<typeof formSchema>) => {
-        console.log('Teretekannn')
         setLoading(true)
         setEmailState(data.email)
         setTimeout(() => {
@@ -132,8 +129,8 @@ export default function OnboardingCard() {
                             className="font-medium hover:underline transition-colors cursor-pointer"
                             style={{ color: "rgba(1, 149, 159, 1)" }}
                         >
-              Daftar menggunakan email
-            </span>
+                          Daftar menggunakan email
+                        </span>
                     </div>
                 </CardHeader>
 
@@ -374,6 +371,7 @@ export default function OnboardingCard() {
                         style={{
                             width: isMobile ? "40vw" : "13.143vw",
                             height: isMobile ? "40vw" : "13.143vw",
+                            marginInline: 'auto'
                         }}
                     />
                 </CardContent>
