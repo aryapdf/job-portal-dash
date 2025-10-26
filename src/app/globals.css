@@ -104,6 +104,15 @@ a {
   --sidebar-ring: oklch(0.708 0 0);
 
   font-family: var(--font-nunito-sans), sans-serif;
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
 }
 
 .dark {

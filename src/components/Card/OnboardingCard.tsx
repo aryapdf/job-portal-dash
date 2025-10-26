@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/card"
 import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
 import SocialButton from "@/components/Button/SocialButton"
+import Separator from "@/components/Separator/Separator";
 
 
 export default function OnboardingCard() {
@@ -70,24 +71,7 @@ export default function OnboardingCard() {
     }
 
     // Helper components
-    const Separator = () => (
-        <div className="relative w-full">
-            <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-slate-300" />
-            </div>
-            <div className="relative flex justify-center">
-        <span
-            className="bg-white text-slate-500"
-            style={{
-                fontSize: isMobile ? "3.5vw" : "0.857vw",
-                paddingInline: isMobile ? "2vw" : "0.857vw",
-            }}
-        >
-          or
-        </span>
-            </div>
-        </div>
-    )
+
 
     const Logo = () => (
         <img
@@ -225,7 +209,7 @@ export default function OnboardingCard() {
                 </CardContent>
 
                 <CardFooter className="flex flex-col p-0" style={{ gap: isMobile ? "6vw" : "1.143vw" }}>
-                    <Separator />
+                    <Separator type={"or"} />
 
                     <SocialButton
                         icon={passwordMode ? "/asset/mail-icon.svg" : "/asset/key-icon.svg"}
@@ -325,7 +309,7 @@ export default function OnboardingCard() {
 
                 <CardFooter className="flex flex-col p-0">
                     <div className="relative w-full" style={{ marginBlock: isMobile ? "4vw" : "1vw" }}>
-                        <Separator />
+                        <Separator type={"or"} />
                     </div>
                     <SocialButton icon="/asset/google-icon.svg" text="Daftar dengan Google" />
                 </CardFooter>
