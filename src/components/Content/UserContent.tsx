@@ -9,6 +9,7 @@ import {useState} from "react";
 import {EmptyJobCard} from "@/components/Card/EmptyJobCard";
 import {Card} from "@/components/ui/card";
 import Separator from "@/components/Separator/Separator";
+import {useRouter} from "next/navigation";
 
 const MOCK_JOB_LIST = [
   {
@@ -36,6 +37,7 @@ const MOCK_JOB_LIST = [
 
 export default function UserContent() {
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
+  const router = useRouter()
   const [jobDialogOpen, setJobDialogOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(MOCK_JOB_LIST[0])
 
@@ -161,6 +163,7 @@ export default function UserContent() {
                       </div>
                     </div>
                     <Button
+                      onClick={() => router.push(`/user/job_form/${selectedJob.id}?job_title=${selectedJob.title}&company=${selectedJob.company}`)}
                       className={`${
                         selectedJob.status === "active"
                           ? "bg-yellow-400 hover:bg-yellow-500 text-slate-900"

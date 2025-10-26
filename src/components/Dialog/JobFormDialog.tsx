@@ -244,7 +244,7 @@ export default function JobFormDialog(props: Props) {
                     className="data-[state=on]:border-cyan-500 data-[state=on]:text-cyan-500 data-[state=on]:bg-transparent disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
                       borderRadius: '1000px',
-                      padding: "8px 16px",
+                      padding: "0.571vw 1.143vw",
                       fontSize: isMobile ? "3vw" : "0.857vw"
                     }}
                   >
@@ -266,8 +266,8 @@ export default function JobFormDialog(props: Props) {
         showCloseButton={false}
         style={{
           gap: 0,
-          maxWidth: "900px",
-          maxHeight: "780px",
+          maxWidth: "64.286vw",
+          maxHeight: "55.714vw",
           overflowY: "scroll",
         }}
       >
@@ -275,7 +275,7 @@ export default function JobFormDialog(props: Props) {
         <DialogTitle
           className="flex items-center justify-between"
           style={{
-            padding: "24px",
+            padding: "1.714vw",
             backgroundColor: "rgba(255, 255, 255, 1)",
             borderBottom: "1px solid rgba(224, 224, 224, 1)"
           }}
@@ -284,7 +284,7 @@ export default function JobFormDialog(props: Props) {
           <Button
             onClick={() => props.onOpenChange(false)}
             className="flex items-center justify-center relative"
-            style={{ width: "24px", height: "24px", background: "transparent" }}
+            style={{ width: "1.714vw", height: "1.714vw", background: "transparent" }}
           >
             <img src="/asset/close-icon.svg" alt="Close" className="w-full h-full object-contain" />
           </Button>
@@ -293,13 +293,13 @@ export default function JobFormDialog(props: Props) {
         {/* Form Content */}
         <div
           className="flex flex-col items-center justify-center overflow-hidden"
-          style={{ padding: "16px 24px 24px" }}
+          style={{ padding: "1.143vw 1.714vw 1.714vw" }}
         >
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
               className="relative flex flex-col w-full"
-              style={{ gap: "16px" }}
+              style={{ gap: "1.143vw" }}
             >
               {/* Job Name */}
               <FormField
@@ -467,7 +467,7 @@ export default function JobFormDialog(props: Props) {
               <Separator type="dashed" />
 
               {/* Salary Range */}
-              <div className="flex w-full" style={{ gap: "16px" }}>
+              <div className="flex w-full" style={{ gap: "1.143vw" }}>
                 {/* Minimum Salary */}
                 <FormField
                   control={form.control}
@@ -585,14 +585,14 @@ export default function JobFormDialog(props: Props) {
                 />
               </div>
 
-              <Card style={{ width: "100%", padding: "16px", gap: "16px" }}>
+              <Card style={{ width: "100%", padding: "1.143vw", gap: "1.143vw" }}>
                 <CardHeader>
                   <CardTitle>
                     Minimum Profile Information Required
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent className={"flex flex-col"} style={{gap: "16px"}}>
+                <CardContent className={"flex flex-col"} style={{gap: "1.143vw"}}>
                   {REQUIREMENT_FIELDS.map((field, index) => (
                     <>
                       <RequirementToggleField
@@ -609,7 +609,7 @@ export default function JobFormDialog(props: Props) {
               </Card>
 
               {/* Submit Buttons */}
-              <div className="flex gap-3 justify-end" style={{ marginTop: "16px" }}>
+              <div className="flex gap-3 justify-end" style={{ marginTop: "1.143vw" }}>
                 <Button
                   type="button"
                   variant="outline"

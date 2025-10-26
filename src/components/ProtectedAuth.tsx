@@ -25,14 +25,14 @@ export default function ProtectedAuth({
         const isAdminPath = pathname.startsWith("/admin");
         const isUserPath = pathname.startsWith("/user");
         const isVerifyPath = pathname.startsWith("/verify");
-        const emailForSignIn = typeof window !== "undefined"
-          ? localStorage.getItem("emailForSignin")
-          : null;
+
+        const emailForSignIn =
+          typeof window !== "undefined" ? localStorage.getItem("emailForSignin") : null;
 
         setIsRedirecting(true);
 
         try {
-            // 1️⃣ Tidak login tapi di halaman yang butuh proteksi
+            // 1️⃣ Belum login & mencoba akses halaman yang butuh proteksi
             if (!loggedIn && !isPublicPath) {
                 if (isVerifyPath) {
                     // Izinkan akses ke /verify hanya jika punya emailForSignIn
@@ -64,17 +64,20 @@ export default function ProtectedAuth({
                 return;
             }
 
-            // 4️⃣ User login dan sedang di /verify (nggak perlu redirect)
+            // 4️⃣ Sudah login & sedang di /verify → balik ke halaman sebelumnya
             if (loggedIn && isVerifyPath) {
-                router.back(); // optional, tergantung UX-mu
+                router.back();
                 return;
             }
+
+            // ✅ Semua kondisi lain valid → lanjut render
         } catch (error: any) {
             console.error("ProtectedAuth error:", error.message);
         } finally {
             setIsRedirecting(false);
         }
     }, [loggedIn, pathname, role, router, publicPaths]);
+
 
 
     // Show loading during redirect
