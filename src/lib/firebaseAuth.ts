@@ -1,9 +1,24 @@
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithCustomToken,
+  signInWithCustomToken, fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import { auth } from "./firebase";
+
+
+// CHECK EMAIL - Cek apakah email sudah terdaftar
+export async function checkEmailExists(email: string) {
+  const res = await fetch("/api/check-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+
+  return data; // { exists, hasPassword, providers }
+}
 
 // LOGIN pakai email & password
 export async function loginUserUsingPassword(email: string, password: string) {

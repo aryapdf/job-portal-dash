@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
 import SocialButton from "@/components/Button/SocialButton"
 import Separator from "@/components/Separator/Separator"
-import { loginUserUsingPassword, sendMagicLink } from "@/lib/firebaseAuth"
+import {checkEmailExists, loginUserUsingPassword, sendMagicLink} from "@/lib/firebaseAuth"
 import { useRouter } from "next/navigation"
 import { setUser } from "@/store/userSlice"
 
@@ -79,6 +79,11 @@ export default function OnboardingCard() {
     setError("")
 
     try {
+      const checkEmail = await checkEmailExists(data.email)
+      if (!checkEmail.exists) {
+        setError("Email ini belum terdaftar sebagai akun di Rakamin Academy.")
+        return
+      }
       if (passwordMode) {
         const user = await loginUserUsingPassword(data.email, data.password)
         const role = data.email === "admin@gmail.com" ? "admin" : "user"
