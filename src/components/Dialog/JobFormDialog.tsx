@@ -125,13 +125,11 @@ const REQUIREMENT_FIELDS = [
   },
 ]
 
-
-
-
 export default function JobFormDialog(props: Props) {
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  // TODO: Make this modal responsive
   const formSchema:any = z.object({
     jobName: z.string().min(1, "Job name is required"),
     jobType: z.string().min(1, "Job type is required"),

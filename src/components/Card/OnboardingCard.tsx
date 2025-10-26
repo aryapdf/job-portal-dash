@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/store"
 import { useForm } from "react-hook-form"
@@ -13,13 +13,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
 import SocialButton from "@/components/Button/SocialButton"
 import Separator from "@/components/Separator/Separator"
-import { loginUserUsingPassword } from "@/lib/firebaseAuth"
+import {checkEmailExists, loginUserUsingPassword, sendMagicLink} from "@/lib/firebaseAuth"
 import { useRouter } from "next/navigation"
 import { setUser } from "@/store/userSlice"
 
-// ============================================
-// SCHEMAS - Static, tidak berubah saat render
-// ============================================
+// schemas
 const loginSchema = z.object({
   email: z.string().min(1, "Email tidak boleh kosong").email("Format email tidak valid"),
   password: z.string().min(1, "Password tidak boleh kosong"),
@@ -45,26 +43,35 @@ export default function OnboardingCard() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [status, setStatus] = useState<"register" | "email_sent" | "login">("login")
-  const [passwordMode, setPasswordMode] = useState(true)
+  const [passwordMode, setPasswordMode] = useState(false)
   const [emailState, setEmailState] = useState("")
 
-  // Form untuk login dengan password
+
+
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   })
 
-  // Form untuk email only (kirim link)
   const emailForm = useForm<EmailOnlyFormValues>({
     resolver: zodResolver(emailOnlySchema),
     defaultValues: { email: "" },
   })
 
-  // Form untuk register
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: { email: "" },
   })
+
+  useEffect(() => {
+    const resetAll = () => {
+      loginForm.reset();
+      emailForm.reset();
+      registerForm.reset();
+    }
+    resetAll()
+    console.log('form reset.')
+  }, [status, loginForm, emailForm, registerForm]);
 
   // Handle login dengan password
   const handleLogin = async (data: LoginFormValues) => {
@@ -72,20 +79,21 @@ export default function OnboardingCard() {
     setError("")
 
     try {
-      const user = await loginUserUsingPassword(data.email, data.password)
+      const checkEmail = await checkEmailExists(data.email)
+      if (!checkEmail) return
 
-      // admin = admin@gmail.com, qwe123
-      const role = data.email === "admin@gmail.com" ? "admin" : "user"
+      if (passwordMode) {
+        const user = await loginUserUsingPassword(data.email, data.password)
+        const role = data.email === "admin@gmail.com" ? "admin" : "user"
 
-      dispatch(setUser({
-        uid: user.uid,
-        email: user.email,
-        role: role,
-      }))
-
-      console.log("Login berhasil!")
-      console.log("email :", data.email)
-      router.push(role === "admin" ? "/admin" : "/user")
+        dispatch(setUser({ uid: user.uid, email: user.email, role }))
+        console.log("Login berhasil:", data.email)
+        router.push(role === "admin" ? "/admin" : "/user")
+      } else {
+        await sendMagicLink(data.email)
+        setStatus("email_sent")
+        console.log("Magic link dikirim ke:", data.email)
+      }
     } catch (error: any) {
       console.error("Login error:", error)
       setError(error.message || "Terjadi kesalahan saat login")
@@ -101,8 +109,8 @@ export default function OnboardingCard() {
     setEmailState(data.email)
 
     try {
-      // TODO: Implement send email link logic
-      // await sendLoginLink(data.email)
+
+      await sendMagicLink(data.email)
 
       setTimeout(() => {
         setLoading(false)
@@ -122,16 +130,18 @@ export default function OnboardingCard() {
     setEmailState(data.email)
 
     try {
-      // TODO: Implement register logic
-      // await registerUser(data.email)
+      const exists = await checkEmailExists(data.email)
+      if (exists) {
+        setError("Email ini sudah terdaftar sebagai akun di Rakamin Academy.")
+        return
+      }
 
-      setTimeout(() => {
-        setLoading(false)
-        setStatus("email_sent")
-      }, 2000)
+      await sendMagicLink(data.email)
+      setStatus("email_sent")
     } catch (error: any) {
       console.error("Register error:", error)
       setError(error.message || "Gagal mendaftar")
+    } finally {
       setLoading(false)
     }
   }
@@ -150,23 +160,58 @@ export default function OnboardingCard() {
   )
 
   const ErrorMessage = () => {
-    if (!error) return null
+    if (!error) return null;
+
+    const baseStyle = {
+      fontSize: isMobile ? "3vw" : "0.857vw",
+      marginBottom: isMobile ? "4vw" : "1vw",
+    };
+
+    if (error.includes("belum terdaftar")) {
+      return (
+        <div className="text-red-500 text-center p-2 rounded-md bg-red-50" style={baseStyle}>
+          {error}{" "}
+          <span
+            className="font-bold cursor-pointer underline"
+            onClick={() => {
+              setStatus("register");
+              setError("");
+            }}
+          >
+          Daftar
+        </span>
+        </div>
+      );
+    }
+
+    if (error.includes("sudah terdaftar")) {
+      return (
+        <div className="text-red-500 text-center p-2 rounded-md bg-red-50" style={baseStyle}>
+          {error}{" "}
+          <span
+            className="font-bold cursor-pointer underline"
+            onClick={() => {
+              setStatus("login");
+              setError("");
+            }}
+          >
+          Masuk
+        </span>
+        </div>
+      );
+    }
+
     return (
-      <div
-        className="text-red-500 text-center p-2 rounded-md bg-red-50"
-        style={{
-          fontSize: isMobile ? "3vw" : "0.857vw",
-          marginBottom: isMobile ? "4vw" : "1vw",
-        }}
-      >
+      <div className="text-red-500 text-center p-2 rounded-md bg-red-50" style={baseStyle}>
         {error}
       </div>
-    )
-  }
+    );
+  };
+
 
   function renderLogin() {
     const currentForm:any = passwordMode ? loginForm : emailForm
-    const onSubmit = passwordMode ? handleLogin : handleSendEmailLink
+    const onSubmit = status === 'login' ? handleLogin : handleRegister
 
     return (
       <>
@@ -347,7 +392,7 @@ export default function OnboardingCard() {
           <ErrorMessage />
 
           <Form {...registerForm}>
-            <form onSubmit={registerForm.handleSubmit(handleRegister)}>
+            <form onSubmit={registerForm.handleSubmit(handleRegister)} className={"flex flex-col"}  style={{ gap: isMobile ? "6vw" : "1.143vw" }} >
               <FormField
                 control={registerForm.control}
                 name="email"
@@ -442,6 +487,7 @@ export default function OnboardingCard() {
             style={{
               width: isMobile ? "40vw" : "13.143vw",
               height: isMobile ? "40vw" : "13.143vw",
+              margin: "auto"
             }}
           />
         </CardContent>

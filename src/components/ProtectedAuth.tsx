@@ -24,38 +24,58 @@ export default function ProtectedAuth({
         const isPublicPath = publicPaths.includes(pathname);
         const isAdminPath = pathname.startsWith("/admin");
         const isUserPath = pathname.startsWith("/user");
+        const isVerifyPath = pathname.startsWith("/verify");
+        const emailForSignIn = typeof window !== "undefined"
+          ? localStorage.getItem("emailForSignin")
+          : null;
 
-        // Not logged in and trying to access protected path
-        if (!loggedIn && !isPublicPath) {
-            setIsRedirecting(true);
-            router.replace("/sign_in");
-            return;
+        setIsRedirecting(true);
+
+        try {
+            // 1️⃣ Tidak login tapi di halaman yang butuh proteksi
+            if (!loggedIn && !isPublicPath) {
+                if (isVerifyPath) {
+                    // Izinkan akses ke /verify hanya jika punya emailForSignIn
+                    if (emailForSignIn) return;
+                    router.replace("/sign_in");
+                    return;
+                }
+
+                // Halaman terproteksi lainnya → redirect ke sign_in
+                router.replace("/sign_in");
+                return;
+            }
+
+            // 2️⃣ Sudah login tapi mencoba akses halaman publik
+            if (loggedIn && isPublicPath) {
+                const redirectPath = role === "admin" ? "/admin" : "/user";
+                router.replace(redirectPath);
+                return;
+            }
+
+            // 3️⃣ Role mismatch
+            if (loggedIn && role === "user" && isAdminPath) {
+                router.replace("/user");
+                return;
+            }
+
+            if (loggedIn && role === "admin" && isUserPath) {
+                router.replace("/admin");
+                return;
+            }
+
+            // 4️⃣ User login dan sedang di /verify (nggak perlu redirect)
+            if (loggedIn && isVerifyPath) {
+                router.back(); // optional, tergantung UX-mu
+                return;
+            }
+        } catch (error: any) {
+            console.error("ProtectedAuth error:", error.message);
+        } finally {
+            setIsRedirecting(false);
         }
-
-        // Logged in and on public path
-        if (loggedIn && isPublicPath) {
-            setIsRedirecting(true);
-            const redirectPath = role === "admin" ? "/admin" : "/user";
-            router.replace(redirectPath);
-            return;
-        }
-
-        // Wrong role for path
-        if (loggedIn && role === "user" && isAdminPath) {
-            setIsRedirecting(true);
-            router.replace("/user");
-            return;
-        }
-
-        if (loggedIn && role === "admin" && isUserPath) {
-            setIsRedirecting(true);
-            router.replace("/admin");
-            return;
-        }
-
-        // If we reach here, user is authorized
-        setIsRedirecting(false);
     }, [loggedIn, pathname, role, router, publicPaths]);
+
 
     // Show loading during redirect
     if (isRedirecting) {
