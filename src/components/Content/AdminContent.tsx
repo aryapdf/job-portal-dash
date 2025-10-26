@@ -8,6 +8,7 @@ import { RootState } from "@/store";
 import { Card, CardDescription, CardFooter, CardTitle } from "@/components/ui/card";
 import JobFormDialog from "@/components/Dialog/JobFormDialog";
 import {useState} from "react";
+import {EmptyJobCard} from "@/components/Card/EmptyJobCard";
 
 export default function AdminContent() {
   const deviceType = useSelector((state: RootState) => state.screen.deviceType)
@@ -67,60 +68,7 @@ export default function AdminContent() {
 
           {/* Empty State */}
           <div className="flex flex-col flex-1 items-center justify-center rounded-md relative">
-            <Card
-              className="w-fit h-fit text-center items-center rounded-md"
-              style={{
-                gap: "unset",
-                border: "none",
-                boxShadow: "none",
-                padding: isMobile ? "5vw" : "0"
-              }}
-            >
-              <img
-                src="/asset/empty-state.png"
-                alt="empty state"
-                style={{
-                  width: isMobile ? "50vw" : "21.857vw",
-                  height: isMobile ? "50vw" : "21.429vw",
-                  marginBottom: isMobile ? "5vw" : "1.429vw"
-                }}
-              />
-              <CardTitle
-                className="font-semibold text-neutral-900 w-fit h-fit"
-                style={{
-                  fontSize: isMobile ? "5vw" : "1.429vw",
-                  marginBottom: isMobile ? "2vw" : "0.286vw",
-                }}
-              >
-                No job openings available
-              </CardTitle>
-              <CardDescription
-                className="w-fit h-fit"
-                style={{
-                  color: "rgba(76, 76, 76, 1)",
-                  marginBottom: isMobile ? "5vw" : "1.143vw",
-                  fontSize: isMobile ? "3.5vw" : "0.857vw",
-                }}
-              >
-                Create a job opening now and start the candidate process.
-              </CardDescription>
-              <CardFooter style={{ padding: isMobile ? "0" : "inherit" }}>
-                <Button
-                  onClick={() => setJobDialogOpen(true)}
-                  className="w-full font-bold transition-colors shadow-md hover:shadow-lg"
-                  style={{
-                    background: "rgba(251, 192, 55, 1)",
-                    color: "rgba(64, 64, 64, 1)",
-                    fontSize: isMobile ? "4vw" : "1.143vw",
-                    height: isMobile ? "12vw" : "2.857vw",
-                    padding: isMobile ? "3vw 5vw" : "0.429vw 1.143vw",
-                    marginTop: isMobile ? "3vw" : "1vw"
-                  }}
-                >
-                  Create a new job
-                </Button>
-              </CardFooter>
-            </Card>
+            <EmptyJobCard type={"admin"} onClick={() => setJobDialogOpen(true)} />
           </div>
         </div>
 

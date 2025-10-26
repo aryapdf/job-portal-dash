@@ -605,7 +605,6 @@ export default function JobFormDialog(props: Props) {
                         options={field.options}
                         isMobile={isMobile}
                       />
-                      {index !== (REQUIREMENT_FIELDS.length - 1) && <Separator type="dashed" />}
                     </>
                   ))}
                 </CardContent>
