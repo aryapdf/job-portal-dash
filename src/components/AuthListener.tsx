@@ -12,10 +12,12 @@ export default function AuthListener({children}: {children: React.ReactNode}) {
   useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, async (user) => {
           if (user) {
-              let role: "admin" | "user" = "user";
+              let role:any;
               try {
                   const tokenResult = await user.getIdTokenResult();
-                  role = (tokenResult.claims.role as "admin" | "user") || "user";
+                  console.log('tokenResult', tokenResult);
+                  const email = tokenResult.claims.email;
+                  role = email === 'admin@gmail.com' ? 'admin' : 'user'
               } catch (error) {
                   console.error("Failed to get user role: ", error);
               }
