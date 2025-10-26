@@ -13,10 +13,10 @@ interface ProtectedAuthProps {
 
 export default function ProtectedAuth({
                                           children,
-                                          publicPaths = ["/sign_in"],
+                                          publicPaths = ["/sign_in", "/verify"],
                                       }: ProtectedAuthProps) {
     const router = useRouter();
-    const pathname = usePathname();
+    const pathname:any = usePathname();
     const { loggedIn, role } = useSelector((state: RootState) => state.user);
     const [isRedirecting, setIsRedirecting] = useState(false);
 

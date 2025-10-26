@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
 import SocialButton from "@/components/Button/SocialButton"
 import Separator from "@/components/Separator/Separator"
-import {checkEmailExists, loginUserUsingPassword, sendMagicLink} from "@/lib/firebaseAuth"
+import { loginUserUsingPassword, sendMagicLink } from "@/lib/firebaseAuth"
 import { useRouter } from "next/navigation"
 import { setUser } from "@/store/userSlice"
 
@@ -79,9 +79,6 @@ export default function OnboardingCard() {
     setError("")
 
     try {
-      const checkEmail = await checkEmailExists(data.email)
-      if (!checkEmail) return
-
       if (passwordMode) {
         const user = await loginUserUsingPassword(data.email, data.password)
         const role = data.email === "admin@gmail.com" ? "admin" : "user"
@@ -96,29 +93,8 @@ export default function OnboardingCard() {
       }
     } catch (error: any) {
       console.error("Login error:", error)
-      setError(error.message || "Terjadi kesalahan saat login")
+      setError(error.message)
     } finally {
-      setLoading(false)
-    }
-  }
-
-  // Handle kirim link email
-  const handleSendEmailLink = async (data: EmailOnlyFormValues) => {
-    setLoading(true)
-    setError("")
-    setEmailState(data.email)
-
-    try {
-
-      await sendMagicLink(data.email)
-
-      setTimeout(() => {
-        setLoading(false)
-        setStatus("email_sent")
-      }, 2000)
-    } catch (error: any) {
-      console.error("Send email error:", error)
-      setError(error.message || "Gagal mengirim email")
       setLoading(false)
     }
   }
@@ -130,11 +106,6 @@ export default function OnboardingCard() {
     setEmailState(data.email)
 
     try {
-      const exists = await checkEmailExists(data.email)
-      if (exists) {
-        setError("Email ini sudah terdaftar sebagai akun di Rakamin Academy.")
-        return
-      }
 
       await sendMagicLink(data.email)
       setStatus("email_sent")
@@ -271,6 +242,7 @@ export default function OnboardingCard() {
                         className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
                         style={{
                           padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                          height: isMobile ? "12vw" : "2.857vw",
                           fontSize: isMobile ? "3.5vw" : "0.857vw",
                         }}
                       />
@@ -305,6 +277,7 @@ export default function OnboardingCard() {
                           className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
                           style={{
                             padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                            height: isMobile ? "12vw" : "2.857vw",
                             fontSize: isMobile ? "3.5vw" : "0.857vw",
                           }}
                         />
