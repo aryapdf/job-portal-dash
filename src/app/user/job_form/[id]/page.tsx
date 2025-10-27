@@ -39,7 +39,7 @@ const buildSchema = (req: any) => {
       : z.string().optional(),
 
     gender: req.genderReq === "mandatory"
-      ? z.enum(["female", "male"], { errorMap: () => ({ message: "Pilih jenis kelamin" }) })
+      ? z.enum(["female", "male"])
       : z.enum(["female", "male"]).optional(),
 
     domicile: req.domicileReq === "mandatory"
