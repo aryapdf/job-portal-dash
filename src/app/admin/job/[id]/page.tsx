@@ -13,10 +13,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {EmptyJobCard} from "@/components/Card/EmptyJobCard";
+import {useSelector} from "react-redux";
+import {RootState} from "@/store";
 
 export default function Page() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
 
   const jobId = params.id as string;
   const jobName = searchParams.get("job-title");
@@ -25,15 +28,15 @@ export default function Page() {
 
   const style = {
     tableHead: {
-      fontSize: "12px",
+      fontSize: isMobile ? "1.56vw" : "0.86vw",
       fontWeight: "bold",
-      padding: "26px 16px",
+      padding: `${isMobile ? "3.39vw" : "1.86vw"} ${isMobile ? "2.08vw" : "1.14vw"}`,
       backgroundColor: "rgba(250, 250, 250, 1)",
     },
     tableCell: {
-      fontSize: "14px",
-      padding: "16px",
-      borderBottom: "1px solid rgba(237, 237, 237, 1",
+      fontSize: isMobile ? "1.82vw" : "1vw",
+      padding: isMobile ? "2.08vw" : "1.14vw",
+      borderBottom: `1px solid rgba(237, 237, 237, 1)`,
     }
   }
 
@@ -53,15 +56,26 @@ export default function Page() {
       display: "flex",
       flexDirection: "column",
     }}>
-      <div className={"flex flex-col w-full h-full relative"} style={{padding: "24px", gap:"24px"}}>
-        <div className={"font-bold"} style={{color: "rgba(29, 31, 32, 1)", fontSize: "18px"}}>{jobName}</div>
+      <div className={"flex flex-col w-full h-full relative"} style={{
+        padding: isMobile ? "3.13vw" : "1.71vw",
+        gap: isMobile ? "3.13vw" : "1.71vw"
+      }}>
+        <div className={"font-bold"} style={{
+          color: "rgba(29, 31, 32, 1)",
+          fontSize: isMobile ? "2.34vw" : "1.29vw"
+        }}>
+          {jobName}
+        </div>
 
-        <div className={"rounded-md flex-1 flex flex-col items-center justify-center"} style={{padding: "24px", border: "1px solid rgba(224, 224, 224, 1)"}}>
+        <div className={"rounded-md flex-1 flex flex-col"} style={{
+          padding: isMobile ? "3.13vw" : "1.71vw",
+          border: `1px solid rgba(224, 224, 224, 1)`
+        }}>
           {candidates.length === 0
             ? (
-              <>
+              <div className={"w-full h-full flex items-center justify-center"}>
                 <EmptyJobCard type={"candidates"} />
-              </>
+              </div>
             )
             : (
               <>
@@ -70,9 +84,9 @@ export default function Page() {
                     <TableRow>
                       <TableHead style={{
                         ...style.tableHead,
-                        borderBottom: "1px solid rgba(237, 237, 237, 1",
-                        borderLeft: "1px solid rgba(237, 237, 237, 1",
-                        borderRight: "1px solid rgba(237, 237, 237, 1"
+                        borderBottom: `1px solid rgba(237, 237, 237, 1)`,
+                        borderLeft: `1px solid rgba(237, 237, 237, 1)`,
+                        borderRight: `1px solid rgba(237, 237, 237, 1)`
                       }}>NAMA LENGKAP</TableHead>
                       <TableHead style={{...style.tableHead}}>EMAIL ADDRESS</TableHead>
                       <TableHead style={{...style.tableHead}}>PHONE NUMBERS</TableHead>
@@ -93,9 +107,9 @@ export default function Page() {
                         <TableCell
                           style={{
                             ...style.tableCell,
-                            borderBottom: "1px solid rgba(237, 237, 237, 1",
-                            borderLeft: "1px solid rgba(237, 237, 237, 1",
-                            borderRight: "1px solid rgba(237, 237, 237, 1"
+                            borderBottom: `1px solid rgba(237, 237, 237, 1)`,
+                            borderLeft: `1px solid rgba(237, 237, 237, 1)`,
+                            borderRight: `1px solid rgba(237, 237, 237, 1)`
                           }}
                         >{candidate.fullName}</TableCell>
                         <TableCell style={{...style.tableCell}}>{candidate.email}</TableCell>

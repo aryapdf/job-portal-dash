@@ -63,6 +63,7 @@ const buildSchema = (req: any) => {
 }
 
 export default function Page() {
+  // TODO : kasih fontsize responsive disini
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
   const params = useParams()
   const router = useRouter()
@@ -180,21 +181,28 @@ export default function Page() {
 
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <Card style={{ width: "700px", padding: "40px", borderRadius: "unset" }}>
+      <Card style={{
+        width: isMobile ? "91.15vw" : "50vw",
+        padding: isMobile ? "5.21vw" : "2.86vw",
+        borderRadius: "unset"
+      }}>
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center" style={{gap: "16px"}}>
+          <div className="flex items-center" style={{gap: isMobile ? "2.08vw" : "1.14vw"}}>
             <Button
               onClick={() => {router.push("/user")}}
               className="flex items-center justify-center border-1 cursor-pointer"
               style={{
                 background: "transparent",
-                padding: "4px"
+                padding: isMobile ? "0.52vw" : "0.29vw"
               }}
             >
               <img
                 src="/asset/arrow-left.svg" alt=""
                 className={"w-full h-full object-contain"}
-                style={{ width: "20px", height: "20px"}}
+                style={{
+                  width: isMobile ? "2.60vw" : "1.43vw",
+                  height: isMobile ? "2.60vw" : "1.43vw"
+                }}
               />
             </Button>
             <div className="font-bold" style={{color: "rgba(29, 31, 32, 1)"}}>
@@ -215,12 +223,18 @@ export default function Page() {
                 {photoPreview ? (
                   <img
                     src={photoPreview} alt="Preview" className="rounded-lg object-cover border"
-                    style={{width: "128px", height: "128px"}}
+                    style={{
+                      width: isMobile ? "16.67vw" : "9.14vw",
+                      height: isMobile ? "16.67vw" : "9.14vw"
+                    }}
                   />
                 ) : (
                   <div
                     className="rounded-lg bg-gray-100 border flex items-center justify-center text-gray-400 text-sm"
-                    style={{width: "128px", height: "128px"}}
+                    style={{
+                      width: isMobile ? "16.67vw" : "9.14vw",
+                      height: isMobile ? "16.67vw" : "9.14vw"
+                    }}
                   >
                     No Photo
                   </div>
@@ -231,7 +245,7 @@ export default function Page() {
                     variant="outline"
                     type="button" size="sm"
                     className="flex items-center gap-2"
-                    style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",}}
+                    style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
                     onClick={() => setShowCamera(true)}
                   >
                     <Upload className="w-4 h-4" /> Take a Picture
@@ -252,7 +266,7 @@ export default function Page() {
                     </FormLabel>
                     <FormControl><Input
                       placeholder="Budi Yanto" {...field}
-                      style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",}}
+                      style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
                     /></FormControl>
                     <FormMessage />
                   </FormItem>
@@ -276,7 +290,7 @@ export default function Page() {
                           <Button
                             variant="outline"
                             className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}
-                            style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw"}}
+                            style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw"}}
                           >
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             {field.value ? format(field.value, "dd MMMM yyyy") : "Select date"}
@@ -341,7 +355,7 @@ export default function Page() {
                     <FormControl>
                       <Input
                         placeholder="Kota Jakarta Barat - DKI Jakarta" {...field}
-                        style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",}}
+                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
                       />
                     </FormControl>
                     <FormMessage />
@@ -368,7 +382,7 @@ export default function Page() {
                     <FormControl>
                       <Input
                         type="email" placeholder="your@email.com" {...field}
-                        style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",}}
+                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
                       />
                     </FormControl>
                     <FormMessage />
@@ -390,7 +404,7 @@ export default function Page() {
                     <FormControl>
                       <Input
                         placeholder="https://linkedin.com/in/username" {...field}
-                        style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",}}
+                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
                       />
                     </FormControl>
                     <FormMessage />
