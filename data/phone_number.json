@@ -1,0 +1,842 @@
+[
+  {
+    "name": "Afghanistan",
+    "code": "AF",
+    "dialCode": "+93",
+    "flagEmoji": "🇦🇫",
+    "format": "XXX XXX XXXX",
+    "placeholder": "700 123 4567"
+  },
+  {
+    "name": "Albania",
+    "code": "AL",
+    "dialCode": "+355",
+    "flagEmoji": "🇦🇱",
+    "format": "XX XXX XXXX",
+    "placeholder": "69 123 4567"
+  },
+  {
+    "name": "Algeria",
+    "code": "DZ",
+    "dialCode": "+213",
+    "flagEmoji": "🇩🇿",
+    "format": "XXX XX XX XX",
+    "placeholder": "551 23 45 67"
+  },
+  {
+    "name": "Andorra",
+    "code": "AD",
+    "dialCode": "+376",
+    "flagEmoji": "🇦🇩",
+    "format": "XXX XXX",
+    "placeholder": "312 345"
+  },
+  {
+    "name": "Angola",
+    "code": "AO",
+    "dialCode": "+244",
+    "flagEmoji": "🇦🇴",
+    "format": "XXX XXX XXX",
+    "placeholder": "923 123 456"
+  },
+  {
+    "name": "Argentina",
+    "code": "AR",
+    "dialCode": "+54",
+    "flagEmoji": "🇦🇷",
+    "format": "XX XXXX-XXXX",
+    "placeholder": "11 1234-5678"
+  },
+  {
+    "name": "Armenia",
+    "code": "AM",
+    "dialCode": "+374",
+    "flagEmoji": "🇦🇲",
+    "format": "XX XXX XXX",
+    "placeholder": "77 123 456"
+  },
+  {
+    "name": "Australia",
+    "code": "AU",
+    "dialCode": "+61",
+    "flagEmoji": "🇦🇺",
+    "format": "XXX XXX XXX",
+    "placeholder": "412 345 678"
+  },
+  {
+    "name": "Austria",
+    "code": "AT",
+    "dialCode": "+43",
+    "flagEmoji": "🇦🇹",
+    "format": "XXX XXXXXXX",
+    "placeholder": "664 1234567"
+  },
+  {
+    "name": "Azerbaijan",
+    "code": "AZ",
+    "dialCode": "+994",
+    "flagEmoji": "🇦🇿",
+    "format": "XX XXX XX XX",
+    "placeholder": "50 123 45 67"
+  },
+  {
+    "name": "Bahamas",
+    "code": "BS",
+    "dialCode": "+1242",
+    "flagEmoji": "🇧🇸",
+    "format": "XXX-XXXX",
+    "placeholder": "359-1234"
+  },
+  {
+    "name": "Bahrain",
+    "code": "BH",
+    "dialCode": "+973",
+    "flagEmoji": "🇧🇭",
+    "format": "XXXX XXXX",
+    "placeholder": "3612 3456"
+  },
+  {
+    "name": "Bangladesh",
+    "code": "BD",
+    "dialCode": "+880",
+    "flagEmoji": "🇧🇩",
+    "format": "XXXX-XXXXXX",
+    "placeholder": "1712-345678"
+  },
+  {
+    "name": "Belarus",
+    "code": "BY",
+    "dialCode": "+375",
+    "flagEmoji": "🇧🇾",
+    "format": "XX XXX-XX-XX",
+    "placeholder": "29 123-45-67"
+  },
+  {
+    "name": "Belgium",
+    "code": "BE",
+    "dialCode": "+32",
+    "flagEmoji": "🇧🇪",
+    "format": "XXX XX XX XX",
+    "placeholder": "475 12 34 56"
+  },
+  {
+    "name": "Brazil",
+    "code": "BR",
+    "dialCode": "+55",
+    "flagEmoji": "🇧🇷",
+    "format": "(XX) XXXXX-XXXX",
+    "placeholder": "(11) 91234-5678"
+  },
+  {
+    "name": "Cambodia",
+    "code": "KH",
+    "dialCode": "+855",
+    "flagEmoji": "🇰🇭",
+    "format": "XX XXX XXX",
+    "placeholder": "12 345 678"
+  },
+  {
+    "name": "Canada",
+    "code": "CA",
+    "dialCode": "+1",
+    "flagEmoji": "🇨🇦",
+    "format": "(XXX) XXX-XXXX",
+    "placeholder": "(416) 123-4567"
+  },
+  {
+    "name": "Chile",
+    "code": "CL",
+    "dialCode": "+56",
+    "flagEmoji": "🇨🇱",
+    "format": "X XXXX XXXX",
+    "placeholder": "9 1234 5678"
+  },
+  {
+    "name": "China",
+    "code": "CN",
+    "dialCode": "+86",
+    "flagEmoji": "🇨🇳",
+    "format": "XXX XXXX XXXX",
+    "placeholder": "138 0013 8000"
+  },
+  {
+    "name": "Colombia",
+    "code": "CO",
+    "dialCode": "+57",
+    "flagEmoji": "🇨🇴",
+    "format": "XXX XXX XXXX",
+    "placeholder": "300 123 4567"
+  },
+  {
+    "name": "Croatia",
+    "code": "HR",
+    "dialCode": "+385",
+    "flagEmoji": "🇭🇷",
+    "format": "XX XXX XXXX",
+    "placeholder": "91 234 5678"
+  },
+  {
+    "name": "Czech Republic",
+    "code": "CZ",
+    "dialCode": "+420",
+    "flagEmoji": "🇨🇿",
+    "format": "XXX XXX XXX",
+    "placeholder": "601 123 456"
+  },
+  {
+    "name": "Denmark",
+    "code": "DK",
+    "dialCode": "+45",
+    "flagEmoji": "🇩🇰",
+    "format": "XX XX XX XX",
+    "placeholder": "20 12 34 56"
+  },
+  {
+    "name": "Egypt",
+    "code": "EG",
+    "dialCode": "+20",
+    "flagEmoji": "🇪🇬",
+    "format": "XXX XXX XXXX",
+    "placeholder": "100 123 4567"
+  },
+  {
+    "name": "Finland",
+    "code": "FI",
+    "dialCode": "+358",
+    "flagEmoji": "🇫🇮",
+    "format": "XX XXX XXXX",
+    "placeholder": "50 123 4567"
+  },
+  {
+    "name": "France",
+    "code": "FR",
+    "dialCode": "+33",
+    "flagEmoji": "🇫🇷",
+    "format": "XX XX XX XX XX",
+    "placeholder": "06 12 34 56 78"
+  },
+  {
+    "name": "Germany",
+    "code": "DE",
+    "dialCode": "+49",
+    "flagEmoji": "🇩🇪",
+    "format": "XXX XXXXXXXX",
+    "placeholder": "151 12345678"
+  },
+  {
+    "name": "Greece",
+    "code": "GR",
+    "dialCode": "+30",
+    "flagEmoji": "🇬🇷",
+    "format": "XXX XXX XXXX",
+    "placeholder": "694 123 4567"
+  },
+  {
+    "name": "Hong Kong",
+    "code": "HK",
+    "dialCode": "+852",
+    "flagEmoji": "🇭🇰",
+    "format": "XXXX XXXX",
+    "placeholder": "9123 4567"
+  },
+  {
+    "name": "Hungary",
+    "code": "HU",
+    "dialCode": "+36",
+    "flagEmoji": "🇭🇺",
+    "format": "XX XXX XXXX",
+    "placeholder": "20 123 4567"
+  },
+  {
+    "name": "Iceland",
+    "code": "IS",
+    "dialCode": "+354",
+    "flagEmoji": "🇮🇸",
+    "format": "XXX XXXX",
+    "placeholder": "611 2345"
+  },
+  {
+    "name": "India",
+    "code": "IN",
+    "dialCode": "+91",
+    "flagEmoji": "🇮🇳",
+    "format": "XXXXX XXXXX",
+    "placeholder": "98765 43210"
+  },
+  {
+    "name": "Indonesia",
+    "code": "ID",
+    "dialCode": "+62",
+    "flagEmoji": "🇮🇩",
+    "format": "XXX-XXXX-XXXX",
+    "placeholder": "812-3456-7890"
+  },
+  {
+    "name": "Iran",
+    "code": "IR",
+    "dialCode": "+98",
+    "flagEmoji": "🇮🇷",
+    "format": "XXX XXX XXXX",
+    "placeholder": "912 123 4567"
+  },
+  {
+    "name": "Iraq",
+    "code": "IQ",
+    "dialCode": "+964",
+    "flagEmoji": "🇮🇶",
+    "format": "XXX XXX XXXX",
+    "placeholder": "790 123 4567"
+  },
+  {
+    "name": "Ireland",
+    "code": "IE",
+    "dialCode": "+353",
+    "flagEmoji": "🇮🇪",
+    "format": "XX XXX XXXX",
+    "placeholder": "85 123 4567"
+  },
+  {
+    "name": "Israel",
+    "code": "IL",
+    "dialCode": "+972",
+    "flagEmoji": "🇮🇱",
+    "format": "XX-XXX-XXXX",
+    "placeholder": "50-123-4567"
+  },
+  {
+    "name": "Italy",
+    "code": "IT",
+    "dialCode": "+39",
+    "flagEmoji": "🇮🇹",
+    "format": "XXX XXX XXXX",
+    "placeholder": "340 123 4567"
+  },
+  {
+    "name": "Jamaica",
+    "code": "JM",
+    "dialCode": "+1876",
+    "flagEmoji": "🇯🇲",
+    "format": "XXX-XXXX",
+    "placeholder": "876-1234"
+  },
+  {
+    "name": "Japan",
+    "code": "JP",
+    "dialCode": "+81",
+    "flagEmoji": "🇯🇵",
+    "format": "XX-XXXX-XXXX",
+    "placeholder": "90-1234-5678"
+  },
+  {
+    "name": "Jordan",
+    "code": "JO",
+    "dialCode": "+962",
+    "flagEmoji": "🇯🇴",
+    "format": "X XXXX XXXX",
+    "placeholder": "7 9012 3456"
+  },
+  {
+    "name": "Kazakhstan",
+    "code": "KZ",
+    "dialCode": "+7",
+    "flagEmoji": "🇰🇿",
+    "format": "XXX XXX XX XX",
+    "placeholder": "701 123 45 67"
+  },
+  {
+    "name": "Kenya",
+    "code": "KE",
+    "dialCode": "+254",
+    "flagEmoji": "🇰🇪",
+    "format": "XXX XXXXXX",
+    "placeholder": "712 345678"
+  },
+  {
+    "name": "Kuwait",
+    "code": "KW",
+    "dialCode": "+965",
+    "flagEmoji": "🇰🇼",
+    "format": "XXXX XXXX",
+    "placeholder": "9012 3456"
+  },
+  {
+    "name": "Kyrgyzstan",
+    "code": "KG",
+    "dialCode": "+996",
+    "flagEmoji": "🇰🇬",
+    "format": "XXX XXX XXX",
+    "placeholder": "555 123 456"
+  },
+  {
+    "name": "Latvia",
+    "code": "LV",
+    "dialCode": "+371",
+    "flagEmoji": "🇱🇻",
+    "format": "XX XXX XXX",
+    "placeholder": "21 234 567"
+  },
+  {
+    "name": "Lebanon",
+    "code": "LB",
+    "dialCode": "+961",
+    "flagEmoji": "🇱🇧",
+    "format": "XX XXX XXX",
+    "placeholder": "71 123 456"
+  },
+  {
+    "name": "Libya",
+    "code": "LY",
+    "dialCode": "+218",
+    "flagEmoji": "🇱🇾",
+    "format": "XX-XXX-XXXX",
+    "placeholder": "91-234-5678"
+  },
+  {
+    "name": "Liechtenstein",
+    "code": "LI",
+    "dialCode": "+423",
+    "flagEmoji": "🇱🇮",
+    "format": "XXX XX XX",
+    "placeholder": "661 23 45"
+  },
+  {
+    "name": "Lithuania",
+    "code": "LT",
+    "dialCode": "+370",
+    "flagEmoji": "🇱🇹",
+    "format": "XXX XXXXX",
+    "placeholder": "612 34567"
+  },
+  {
+    "name": "Luxembourg",
+    "code": "LU",
+    "dialCode": "+352",
+    "flagEmoji": "🇱🇺",
+    "format": "XXX XXX XXX",
+    "placeholder": "621 123 456"
+  },
+  {
+    "name": "Macao",
+    "code": "MO",
+    "dialCode": "+853",
+    "flagEmoji": "🇲🇴",
+    "format": "XXXX XXXX",
+    "placeholder": "6612 3456"
+  },
+  {
+    "name": "Malaysia",
+    "code": "MY",
+    "dialCode": "+60",
+    "flagEmoji": "🇲🇾",
+    "format": "XX-XXXX XXXX",
+    "placeholder": "12-3456 7890"
+  },
+  {
+    "name": "Maldives",
+    "code": "MV",
+    "dialCode": "+960",
+    "flagEmoji": "🇲🇻",
+    "format": "XXX-XXXX",
+    "placeholder": "771-2345"
+  },
+  {
+    "name": "Malta",
+    "code": "MT",
+    "dialCode": "+356",
+    "flagEmoji": "🇲🇹",
+    "format": "XXXX XXXX",
+    "placeholder": "9696 1234"
+  },
+  {
+    "name": "Mexico",
+    "code": "MX",
+    "dialCode": "+52",
+    "flagEmoji": "🇲🇽",
+    "format": "XXX XXX XXXX",
+    "placeholder": "55 1234 5678"
+  },
+  {
+    "name": "Monaco",
+    "code": "MC",
+    "dialCode": "+377",
+    "flagEmoji": "🇲🇨",
+    "format": "XX XX XX XX",
+    "placeholder": "06 12 34 56"
+  },
+  {
+    "name": "Mongolia",
+    "code": "MN",
+    "dialCode": "+976",
+    "flagEmoji": "🇲🇳",
+    "format": "XXXX XXXX",
+    "placeholder": "8812 3456"
+  },
+  {
+    "name": "Morocco",
+    "code": "MA",
+    "dialCode": "+212",
+    "flagEmoji": "🇲🇦",
+    "format": "XXX-XXXXXX",
+    "placeholder": "661-234567"
+  },
+  {
+    "name": "Myanmar",
+    "code": "MM",
+    "dialCode": "+95",
+    "flagEmoji": "🇲🇲",
+    "format": "XX XXX XXXX",
+    "placeholder": "09 123 4567"
+  },
+  {
+    "name": "Nepal",
+    "code": "NP",
+    "dialCode": "+977",
+    "flagEmoji": "🇳🇵",
+    "format": "XXX-XXX-XXXX",
+    "placeholder": "984-123-4567"
+  },
+  {
+    "name": "Netherlands",
+    "code": "NL",
+    "dialCode": "+31",
+    "flagEmoji": "🇳🇱",
+    "format": "X XX XX XX XX",
+    "placeholder": "6 12 34 56 78"
+  },
+  {
+    "name": "New Zealand",
+    "code": "NZ",
+    "dialCode": "+64",
+    "flagEmoji": "🇳🇿",
+    "format": "XX XXX XXXX",
+    "placeholder": "21 123 4567"
+  },
+  {
+    "name": "Nigeria",
+    "code": "NG",
+    "dialCode": "+234",
+    "flagEmoji": "🇳🇬",
+    "format": "XXX XXX XXXX",
+    "placeholder": "802 123 4567"
+  },
+  {
+    "name": "North Korea",
+    "code": "KP",
+    "dialCode": "+850",
+    "flagEmoji": "🇰🇵",
+    "format": "XXX XXX XXXX",
+    "placeholder": "191 234 5678"
+  },
+  {
+    "name": "Norway",
+    "code": "NO",
+    "dialCode": "+47",
+    "flagEmoji": "🇳🇴",
+    "format": "XXX XX XXX",
+    "placeholder": "412 34 567"
+  },
+  {
+    "name": "Oman",
+    "code": "OM",
+    "dialCode": "+968",
+    "flagEmoji": "🇴🇲",
+    "format": "XXXX XXXX",
+    "placeholder": "9123 4567"
+  },
+  {
+    "name": "Pakistan",
+    "code": "PK",
+    "dialCode": "+92",
+    "flagEmoji": "🇵🇰",
+    "format": "XXX XXXXXXX",
+    "placeholder": "300 1234567"
+  },
+  {
+    "name": "Palestine",
+    "code": "PS",
+    "dialCode": "+970",
+    "flagEmoji": "🇵🇸",
+    "format": "XXX XXX XXX",
+    "placeholder": "599 123 456"
+  },
+  {
+    "name": "Peru",
+    "code": "PE",
+    "dialCode": "+51",
+    "flagEmoji": "🇵🇪",
+    "format": "XXX XXX XXX",
+    "placeholder": "987 654 321"
+  },
+  {
+    "name": "Philippines",
+    "code": "PH",
+    "dialCode": "+63",
+    "flagEmoji": "🇵🇭",
+    "format": "XXX XXX XXXX",
+    "placeholder": "917 123 4567"
+  },
+  {
+    "name": "Poland",
+    "code": "PL",
+    "dialCode": "+48",
+    "flagEmoji": "🇵🇱",
+    "format": "XXX XXX XXX",
+    "placeholder": "501 234 567"
+  },
+  {
+    "name": "Portugal",
+    "code": "PT",
+    "dialCode": "+351",
+    "flagEmoji": "🇵🇹",
+    "format": "XXX XXX XXX",
+    "placeholder": "912 345 678"
+  },
+  {
+    "name": "Qatar",
+    "code": "QA",
+    "dialCode": "+974",
+    "flagEmoji": "🇶🇦",
+    "format": "XXXX XXXX",
+    "placeholder": "3312 3456"
+  },
+  {
+    "name": "Romania",
+    "code": "RO",
+    "dialCode": "+40",
+    "flagEmoji": "🇷🇴",
+    "format": "XXX XXX XXX",
+    "placeholder": "721 234 567"
+  },
+  {
+    "name": "Russia",
+    "code": "RU",
+    "dialCode": "+7",
+    "flagEmoji": "🇷🇺",
+    "format": "XXX XXX-XX-XX",
+    "placeholder": "903 123-45-67"
+  },
+  {
+    "name": "Saudi Arabia",
+    "code": "SA",
+    "dialCode": "+966",
+    "flagEmoji": "🇸🇦",
+    "format": "XX XXX XXXX",
+    "placeholder": "50 123 4567"
+  },
+  {
+    "name": "Serbia",
+    "code": "RS",
+    "dialCode": "+381",
+    "flagEmoji": "🇷🇸",
+    "format": "XX XXX XXXX",
+    "placeholder": "64 123 4567"
+  },
+  {
+    "name": "Singapore",
+    "code": "SG",
+    "dialCode": "+65",
+    "flagEmoji": "🇸🇬",
+    "format": "XXXX XXXX",
+    "placeholder": "8123 4567"
+  },
+  {
+    "name": "Slovakia",
+    "code": "SK",
+    "dialCode": "+421",
+    "flagEmoji": "🇸🇰",
+    "format": "XXX XXX XXX",
+    "placeholder": "902 123 456"
+  },
+  {
+    "name": "Slovenia",
+    "code": "SI",
+    "dialCode": "+386",
+    "flagEmoji": "🇸🇮",
+    "format": "XX XXX XXX",
+    "placeholder": "31 234 567"
+  },
+  {
+    "name": "South Africa",
+    "code": "ZA",
+    "dialCode": "+27",
+    "flagEmoji": "🇿🇦",
+    "format": "XX XXX XXXX",
+    "placeholder": "82 123 4567"
+  },
+  {
+    "name": "South Korea",
+    "code": "KR",
+    "dialCode": "+82",
+    "flagEmoji": "🇰🇷",
+    "format": "XX-XXXX-XXXX",
+    "placeholder": "10-1234-5678"
+  },
+  {
+    "name": "Spain",
+    "code": "ES",
+    "dialCode": "+34",
+    "flagEmoji": "🇪🇸",
+    "format": "XXX XX XX XX",
+    "placeholder": "612 34 56 78"
+  },
+  {
+    "name": "Sri Lanka",
+    "code": "LK",
+    "dialCode": "+94",
+    "flagEmoji": "🇱🇰",
+    "format": "XX XXX XXXX",
+    "placeholder": "77 123 4567"
+  },
+  {
+    "name": "Sweden",
+    "code": "SE",
+    "dialCode": "+46",
+    "flagEmoji": "🇸🇪",
+    "format": "XX-XXX XX XX",
+    "placeholder": "70-123 45 67"
+  },
+  {
+    "name": "Switzerland",
+    "code": "CH",
+    "dialCode": "+41",
+    "flagEmoji": "🇨🇭",
+    "format": "XX XXX XX XX",
+    "placeholder": "78 123 45 67"
+  },
+  {
+    "name": "Syria",
+    "code": "SY",
+    "dialCode": "+963",
+    "flagEmoji": "🇸🇾",
+    "format": "XXX XXX XXX",
+    "placeholder": "944 123 456"
+  },
+  {
+    "name": "Taiwan",
+    "code": "TW",
+    "dialCode": "+886",
+    "flagEmoji": "🇹🇼",
+    "format": "XXXX XXX XXX",
+    "placeholder": "0912 345 678"
+  },
+  {
+    "name": "Tajikistan",
+    "code": "TJ",
+    "dialCode": "+992",
+    "flagEmoji": "🇹🇯",
+    "format": "XX XXX XXXX",
+    "placeholder": "93 123 4567"
+  },
+  {
+    "name": "Thailand",
+    "code": "TH",
+    "dialCode": "+66",
+    "flagEmoji": "🇹🇭",
+    "format": "XX XXX XXXX",
+    "placeholder": "81 234 5678"
+  },
+  {
+    "name": "Tunisia",
+    "code": "TN",
+    "dialCode": "+216",
+    "flagEmoji": "🇹🇳",
+    "format": "XX XXX XXX",
+    "placeholder": "20 123 456"
+  },
+  {
+    "name": "Turkey",
+    "code": "TR",
+    "dialCode": "+90",
+    "flagEmoji": "🇹🇷",
+    "format": "XXX XXX XX XX",
+    "placeholder": "532 123 45 67"
+  },
+  {
+    "name": "Turkmenistan",
+    "code": "TM",
+    "dialCode": "+993",
+    "flagEmoji": "🇹🇲",
+    "format": "XX XXX XXX",
+    "placeholder": "65 123 456"
+  },
+  {
+    "name": "Ukraine",
+    "code": "UA",
+    "dialCode": "+380",
+    "flagEmoji": "🇺🇦",
+    "format": "XX XXX XX XX",
+    "placeholder": "67 123 45 67"
+  },
+  {
+    "name": "United Arab Emirates",
+    "code": "AE",
+    "dialCode": "+971",
+    "flagEmoji": "🇦🇪",
+    "format": "XX XXX XXXX",
+    "placeholder": "50 123 4567"
+  },
+  {
+    "name": "United Kingdom",
+    "code": "GB",
+    "dialCode": "+44",
+    "flagEmoji": "🇬🇧",
+    "format": "XXXX XXX XXXX",
+    "placeholder": "7911 123456"
+  },
+  {
+    "name": "United States",
+    "code": "US",
+    "dialCode": "+1",
+    "flagEmoji": "🇺🇸",
+    "format": "(XXX) XXX-XXXX",
+    "placeholder": "(555) 123-4567"
+  },
+  {
+    "name": "Uruguay",
+    "code": "UY",
+    "dialCode": "+598",
+    "flagEmoji": "🇺🇾",
+    "format": "XXXX XXXX",
+    "placeholder": "9123 4567"
+  },
+  {
+    "name": "Uzbekistan",
+    "code": "UZ",
+    "dialCode": "+998",
+    "flagEmoji": "🇺🇿",
+    "format": "XX XXX XX XX",
+    "placeholder": "90 123 45 67"
+  },
+  {
+    "name": "Venezuela",
+    "code": "VE",
+    "dialCode": "+58",
+    "flagEmoji": "🇻🇪",
+    "format": "XXX-XXXXXXX",
+    "placeholder": "412-1234567"
+  },
+  {
+    "name": "Vietnam",
+    "code": "VN",
+    "dialCode": "+84",
+    "flagEmoji": "🇻🇳",
+    "format": "XXX XXX XXXX",
+    "placeholder": "912 345 678"
+  },
+  {
+    "name": "Yemen",
+    "code": "YE",
+    "dialCode": "+967",
+    "flagEmoji": "🇾🇪",
+    "format": "XXX XXX XXX",
+    "placeholder": "712 345 678"
+  },
+  {
+    "name": "Zimbabwe",
+    "code": "ZW",
+    "dialCode": "+263",
+    "flagEmoji": "🇿🇼",
+    "format": "XX XXX XXXX",
+    "placeholder": "77 123 4567"
+  }
+]

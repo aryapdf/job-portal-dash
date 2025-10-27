@@ -18,5 +18,25 @@
     "status": "active",
     "createdAt": "2025-10-27T06:45:38.083Z",
     "updatedAt": "2025-10-27T06:45:38.083Z"
+  },
+  {
+    "id": "e1142c5e-be94-4e5b-bf43-cc1c849bd69f",
+    "jobName": "Back End Engineer",
+    "jobType": "contract",
+    "jobDescription": "Bisa back end",
+    "candidateNumber": 1,
+    "fullNameReq": "mandatory",
+    "photoProfileReq": "mandatory",
+    "genderReq": "optional",
+    "domicileReq": "off",
+    "emailReq": "mandatory",
+    "phoneNumberReq": "mandatory",
+    "linkedinReq": "optional",
+    "dateOfBirthReq": "off",
+    "minSalary": 5000000,
+    "maxSalary": 5000000,
+    "status": "active",
+    "createdAt": "2025-10-27T08:17:41.441Z",
+    "updatedAt": "2025-10-27T08:17:41.441Z"
   }
 ]

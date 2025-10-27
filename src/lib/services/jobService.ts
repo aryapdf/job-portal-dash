@@ -74,7 +74,7 @@ export const getJobDetail = async (id: string) => {
     });
 
     const result = await response.json();
-    return result.data;
+    return result.data[0];
   } catch (error) {
     console.error('Error get job detail :', error)
   }
