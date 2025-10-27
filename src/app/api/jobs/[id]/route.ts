@@ -10,6 +10,7 @@ export async function GET(
 ) {
   try {
     const { id } = params;
+
     if (!id) {
       return NextResponse.json(
         { success: false, error: 'Job ID is required' },
