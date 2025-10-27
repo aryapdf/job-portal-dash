@@ -31,3 +31,26 @@ export function formatJobType (jobType: string) {
   };
   return types[jobType] || jobType;
 };
+
+export function formatPhoneNumber(inputNumber, countryCode, countries) {
+  const country = countries.find(c => c.code === countryCode);
+  if (!country) return inputNumber;
+
+  const digits = inputNumber.replace(/\D/g, '');
+  const pattern = country.format;
+
+  let formatted = '';
+  let digitIndex = 0;
+
+  // loop pattern, ganti 'X' dengan digit
+  for (let i = 0; i < pattern.length; i++) {
+    if (pattern[i] === 'X') {
+      formatted += digits[digitIndex] ?? '';
+      digitIndex++;
+    } else {
+      formatted += pattern[i];
+    }
+  }
+
+  return formatted.trim();
+}

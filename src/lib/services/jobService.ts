@@ -20,7 +20,6 @@ export interface JobData {
   updatedAt?: string | null;
 }
 
-// Create a new job
 export const createJob = async (jobData) => {
   try {
     const response = await fetch('/api/jobs', {
@@ -45,7 +44,6 @@ export const createJob = async (jobData) => {
   }
 };
 
-// Get all jobs
 export const getAllJobs = async () => {
   try {
     const response = await fetch('/api/jobs', {

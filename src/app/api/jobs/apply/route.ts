@@ -1,0 +1,36 @@
+import { NextResponse } from 'next/server';
+import fs from 'fs/promises';
+import path from 'path';
+import { randomUUID } from 'crypto';
+
+const JOBS_PATH = path.join(process.cwd(), 'data', 'jobs.json');
+const APPS_PATH = path.join(process.cwd(), 'data', 'applications.json');
+
+export async function POST(req: Request, { params }: { params: { id: string } }) {
+  try {
+    const { id: jobId } = params;
+    const body = await req.json();
+
+    const jobs = JSON.parse(await fs.readFile(JOBS_PATH, 'utf-8') || '[]');
+    const job = jobs.find((j: any) => j.id === jobId);
+    if (!job) {
+      return NextResponse.json({ success: false, error: 'Job not found' }, { status: 404 });
+    }
+
+    const applications = JSON.parse(await fs.readFile(APPS_PATH, 'utf-8') || '[]');
+    const newApp = {
+      id: randomUUID(),
+      jobId,
+      ...body,
+      appliedAt: new Date().toISOString(),
+      status: 'pending'
+    };
+
+    applications.push(newApp);
+    await fs.writeFile(APPS_PATH, JSON.stringify(applications, null, 2));
+
+    return NextResponse.json({ success: true, data: newApp });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+  }
+}
