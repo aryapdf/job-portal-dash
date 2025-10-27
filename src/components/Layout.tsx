@@ -14,7 +14,26 @@ function ScreenListenerWrapper({ children }: { children: React.ReactNode }) {
 
 export function Layout({children}: {children: React.ReactNode; }) {
     const pathname = usePathname();
-    const showNavbar = ["/admin", "/user"].includes(pathname);
+    const showNavbar =
+      pathname === "/admin" ||
+      pathname === "/user" ||
+      pathname.startsWith("/admin/job/");
+
+    const chooseTitle = () => {
+        if (pathname.startsWith("/admin/job")) {
+            return(
+              <div className={"flex items-center"} style={{gap: "6px"}}>
+                  <div>Job List</div>
+                  <img src="/asset/chevron-right.svg" alt="" style={{ width:"24px", height: "24px" }} />
+                  <div> Manage Candidate </div>
+              </div>
+            )
+        } else {
+            return("Job List")
+        }
+    }
+
+
 
     return (<AuthListener>
         <ScreenListenerWrapper>
@@ -25,7 +44,7 @@ export function Layout({children}: {children: React.ReactNode; }) {
                     height: "100vh",
                 }}
             >
-                {showNavbar && <NavBar title={"Job List"}/>}
+                {showNavbar && <NavBar title={chooseTitle()}/>}
                 {children}
             </main>
 

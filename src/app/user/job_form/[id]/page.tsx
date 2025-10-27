@@ -19,44 +19,44 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card } from "@/components/ui/card"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
-import { useParams, useSearchParams } from "next/navigation"
-import { getJobDetail } from "@/lib/services/jobService"
+import {useParams, useRouter, useSearchParams} from "next/navigation"
+import {applyJob, getJobDetail} from "@/lib/services/jobService"
 import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
 import CameraDialog from "@/components/Dialog/CameraDialog";
-import {Select, SelectContent, SelectItem, SelectTrigger} from "@/components/ui/select";
 import {PhoneNumberInput} from "@/components/Input/PhoneNumberInput";
+import {toast} from "sonner";
 
 // Helper untuk bikin rule Zod berdasarkan jobDetail
 const buildSchema = (req: any) => {
   return z.object({
     jobId: z.string(),
-    fullName: req.fullNameReq === "off"
-      ? z.string().optional()
-      : z.string().min(3, "Nama lengkap minimal 3 karakter"),
+    fullName: req.fullNameReq === "mandatory"
+      ? z.string().min(3, "Nama lengkap minimal 3 karakter")
+      : z.string().optional(),
 
-    dateOfBirth: req.dateOfBirthReq === "off"
-      ? z.date().optional()
-      : z.date({ required_error: "Tanggal lahir harus diisi" }),
+    dateOfBirth: req.dateOfBirthReq === "mandatory"
+      ? z.date({ required_error: "Tanggal lahir harus diisi" })
+      : z.date().optional(),
 
-    gender: req.genderReq === "off"
-      ? z.enum(["female", "male"]).optional()
-      : z.enum(["female", "male"], { required_error: "Pilih jenis kelamin" }),
+    gender: req.genderReq === "mandatory"
+      ? z.enum(["female", "male"], { required_error: "Pilih jenis kelamin" })
+      : z.enum(["female", "male"]).optional(),
 
-    domicile: req.domicileReq === "off"
-      ? z.string().optional()
-      : z.string().min(2, "Domicile wajib diisi"),
+    domicile: req.domicileReq === "mandatory"
+      ? z.string().min(2, "Domicile wajib diisi")
+      : z.string().optional(),
 
-    phoneNumber: req.phoneNumberReq === "off"
-      ? z.string().optional()
-      : z.string().min(10, "Nomor HP tidak valid"),
+    phoneNumber: req.phoneNumberReq === "mandatory"
+      ? z.string().min(10, "Nomor HP tidak valid")
+      : z.string().optional(),
 
-    email: req.emailReq === "off"
-      ? z.string().optional()
-      : z.string().email("Format email tidak valid"),
+    email: req.emailReq === "mandatory"
+      ? z.string().email("Format email tidak valid")
+      : z.string().optional(),
 
-    linkedin: req.linkedinReq === "off"
-      ? z.string().optional()
-      : z.string().url("Masukkan URL LinkedIn yang valid"),
+    linkedin: req.linkedinReq === "mandatory"
+      ? z.string().url("Masukkan URL LinkedIn yang valid")
+      : z.string().optional(),
 
     photo: z.any().optional(),
   })
@@ -65,13 +65,14 @@ const buildSchema = (req: any) => {
 export default function Page() {
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
   const params = useParams()
+  const router = useRouter()
   const searchParams = useSearchParams()
 
   const [loading, setLoading] = useState(true)
   const [showCamera, setShowCamera] = useState(false)
   const [photo, setPhoto] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
-  const [calendarOpen, setCalendarOpen] = useState()
+  const [calendarOpen, setCalendarOpen] = useState<any>(false)
   const [jobDetail, setJobDetail] = useState<any>(null)
 
   const jobId: any = params.id
@@ -123,7 +124,46 @@ export default function Page() {
     setShowCamera(false)
   }
 
-  const onSubmit = (values: any) => {
+  const uploadPhoto = async (file: File) => {
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    const res = await fetch("/api/upload-photo", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) throw new Error("Upload failed");
+
+    const data = await res.json();
+    return data.url;
+  }
+
+  const onSubmit = async (values: any) => {
+    try {
+      setLoading(true)
+      let photoUrl = null
+      if (photo) {
+        photoUrl = await uploadPhoto(photo);
+      }
+
+      const payload = {
+        ...values,
+        photo: photoUrl,
+      };
+
+      const result = await applyJob(payload.jobId, payload );
+      toast.success("Successfully apply job!", {
+        description: "Good luck!",
+      })
+      router.push("/user")
+      console.log("Form submitted:", payload);
+    } catch (error:any) {
+      console.error(error.message);
+    } finally {
+      setLoading(false)
+    }
+
     console.log("Form submitted:", values)
   }
 
@@ -142,8 +182,24 @@ export default function Page() {
     <div className="w-full h-full flex justify-center items-center">
       <Card style={{ width: "700px", padding: "40px", borderRadius: "unset" }}>
         <div className="flex items-center justify-between mb-6">
-          <div className="text-xl font-semibold text-gray-800">
-            Apply {jobTitle} at {company}
+          <div className="flex items-center" style={{gap: "16px"}}>
+            <Button
+              onClick={() => {router.push("/user")}}
+              className="flex items-center justify-center border-1 cursor-pointer"
+              style={{
+                background: "transparent",
+                padding: "4px"
+              }}
+            >
+              <img
+                src="/asset/arrow-left.svg" alt=""
+                className={"w-full h-full object-contain"}
+                style={{ width: "20px", height: "20px"}}
+              />
+            </Button>
+            <div className="font-bold" style={{color: "rgba(29, 31, 32, 1)"}}>
+              Apply {jobTitle} at {company}
+            </div>
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <span className="text-blue-600">ℹ️</span> This field required to fill

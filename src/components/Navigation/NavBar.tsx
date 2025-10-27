@@ -5,7 +5,7 @@ import {RootState} from "@/store";
 import {auth} from "@/lib/firebase";
 
 interface Props {
-  title?: string;
+  title?: any;
   profileImg?: string;
 }
 
@@ -13,9 +13,6 @@ export default function NavBar(props: Props) {
   const deviceType = useSelector((state:RootState) => state.screen.deviceType);
   const isMobile =  deviceType === "mobile";
   const loggedIn = useSelector((state:RootState) => state.user.loggedIn);
-
-
-
 
   return (
       <nav
@@ -45,7 +42,7 @@ export default function NavBar(props: Props) {
               </div>
             )}
             <img
-              src={props.profileImg ? props.profileImg : 'asset/profile-placeholder.png'} alt={'profile'}
+              src={props.profileImg ? props.profileImg : '/asset/profile-placeholder.png'} alt={'profile'}
               style={{
                 width: '2vw',
                 height: '2vw'

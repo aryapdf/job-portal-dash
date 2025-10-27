@@ -20,7 +20,7 @@ export interface JobData {
   updatedAt?: string | null;
 }
 
-export const createJob = async (jobData) => {
+export const createJob = async (jobData:any) => {
   try {
     const response = await fetch('/api/jobs', {
       method: 'POST',
@@ -48,7 +48,7 @@ export const getAllJobs = async () => {
   try {
     const response = await fetch('/api/jobs', {
       method: 'GET',
-      cache: 'no-store', // Disable caching untuk data real-time
+      cache: 'no-store',
     });
 
     const result = await response.json();
@@ -75,6 +75,28 @@ export const getJobDetail = async (id: string) => {
     return result.data;
   } catch (error) {
     console.error('Error get job detail :', error)
+  }
+}
+
+export const applyJob = async (jobId:any, data:any) => {
+  try {
+    const res = await fetch(`/api/jobs/apply`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to submit application');
+    }
+
+    return await res.json();
+  } catch (err: any) {
+    console.error(err);
+    throw err;
   }
 }
 

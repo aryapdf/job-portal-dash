@@ -12,10 +12,12 @@ import { EmptyJobCard } from "@/components/Card/EmptyJobCard";
 import { getAllJobs, JobData } from "@/lib/services/jobService";
 import {LoadingOverlay} from "@/components/Loading/LoadingOverlay";
 import {formatDate, formatJobType, formatRupiah} from "@/lib/helper/formatter";
+import {useRouter} from "next/navigation";
 
 export default function AdminContent() {
   const deviceType = useSelector((state: RootState) => state.screen.deviceType);
   const isMobile = deviceType === "mobile";
+  const router = useRouter();
 
   const [jobDialogOpen, setJobDialogOpen] = useState(false);
   const [jobs, setJobs] = useState<JobData[]>([]);
@@ -135,7 +137,7 @@ export default function AdminContent() {
             // No Search Results
             <div className="flex flex-col flex-1 items-center justify-center rounded-md">
               <p className="text-slate-600" style={{ fontSize: isMobile ? "4vw" : "1.143vw" }}>
-                No jobs found matching "{searchQuery}"
+                No jobs found matching &#34;{searchQuery}&#34;
               </p>
             </div>
           ) : filteredJobs.length === 0 ? (
@@ -178,8 +180,8 @@ export default function AdminContent() {
                           padding: isMobile ? "1vw 2.5vw" : "0.286vw 0.714vw"
                         }}
                       >
-                                                started on {formatDate(job.createdAt)}
-                                            </span>
+                          started on {formatDate(job.createdAt)}
+                      </span>
                     </div>
 
                     {/* Job Title & Type */}
@@ -204,16 +206,20 @@ export default function AdminContent() {
 
                     {/* Salary and Button Row */}
                     <div className="flex items-center justify-between">
-                                          <span
-                                            className="text-slate-700"
-                                            style={{
-                                              fontSize: isMobile ? "3.5vw" : "1vw"
-                                            }}
-                                          >
-                                            {formatRupiah(job.minSalary)} - {formatRupiah(job.maxSalary)}
-                                          </span>
+                      <span
+                        className="text-slate-700"
+                        style={{
+                          fontSize: isMobile ? "3.5vw" : "1vw"
+                        }}
+                      >
+                        {formatRupiah(job.minSalary)} - {formatRupiah(job.maxSalary)}
+                      </span>
                       <Button
-                        className="rounded-md font-bold"
+                        onClick={() => {
+                          setLoading(true);
+                          router.push(`/admin/job/${job.id}`)
+                        }}
+                        className="rounded-md font-bold cursor-pointer"
                         style={{
                           fontSize: isMobile ? "3.5vw" : "0.857vw",
                           padding: isMobile ? "2vw 4vw" : "0.429vw 1.143vw",

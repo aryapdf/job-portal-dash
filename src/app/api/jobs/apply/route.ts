@@ -6,10 +6,10 @@ import { randomUUID } from 'crypto';
 const JOBS_PATH = path.join(process.cwd(), 'data', 'jobs.json');
 const APPS_PATH = path.join(process.cwd(), 'data', 'applications.json');
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request) {
   try {
-    const { id: jobId } = params;
     const body = await req.json();
+    const jobId = body.jobId;
 
     const jobs = JSON.parse(await fs.readFile(JOBS_PATH, 'utf-8') || '[]');
     const job = jobs.find((j: any) => j.id === jobId);

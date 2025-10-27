@@ -46,17 +46,13 @@ export default function OnboardingCard() {
   const [passwordMode, setPasswordMode] = useState(false)
   const [emailState, setEmailState] = useState("")
 
-
-
-  const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<{
+    email: string
+    password?: string
+  }>({
+    resolver: zodResolver(passwordMode ? loginSchema : emailOnlySchema),
     defaultValues: { email: "", password: "" },
-  })
-
-  const emailForm = useForm<EmailOnlyFormValues>({
-    resolver: zodResolver(emailOnlySchema),
-    defaultValues: { email: "" },
-  })
+  });
 
   const registerForm = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -65,13 +61,12 @@ export default function OnboardingCard() {
 
   useEffect(() => {
     const resetAll = () => {
-      loginForm.reset();
-      emailForm.reset();
+      form.reset()
       registerForm.reset();
     }
     resetAll()
     console.log('form reset.')
-  }, [status, loginForm, emailForm, registerForm]);
+  }, [status, form, registerForm]);
 
   // Handle login dengan password
   const handleLogin = async (data: LoginFormValues) => {
@@ -186,7 +181,7 @@ export default function OnboardingCard() {
 
 
   function renderLogin() {
-    const currentForm:any = passwordMode ? loginForm : emailForm
+    const currentForm:any = form
     const onSubmit = status === 'login' ? handleLogin : handleRegister
 
     return (
@@ -265,7 +260,7 @@ export default function OnboardingCard() {
 
               {passwordMode && (
                 <FormField
-                  control={loginForm.control}
+                  control={form.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
