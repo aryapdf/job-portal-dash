@@ -177,7 +177,7 @@ export default function JobFormDialog(props: Props) {
     maxSalary: 0,
   }
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form:any = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues
   })
@@ -298,7 +298,7 @@ export default function JobFormDialog(props: Props) {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="relative flex flex-col w-full"
+              className="relative flex flex-col w-full overflow-scroll"
               style={{ gap: "1.143vw" }}
             >
               {/* Job Name */}
@@ -594,7 +594,6 @@ export default function JobFormDialog(props: Props) {
 
                 <CardContent className={"flex flex-col"} style={{gap: "1.143vw"}}>
                   {REQUIREMENT_FIELDS.map((field, index) => (
-                    <>
                       <RequirementToggleField
                         key={field.name}
                         control={form.control}
@@ -603,7 +602,6 @@ export default function JobFormDialog(props: Props) {
                         options={field.options}
                         isMobile={isMobile}
                       />
-                    </>
                   ))}
                 </CardContent>
               </Card>
