@@ -30,16 +30,17 @@ export async function GET(request: NextRequest) {
 
     const jobs = await readJobs();
 
-    const filteredJobs = status
-      ? jobs.filter((job: any) => job.status === status)
-      : jobs;
-
-    // urutkan berdasarkan createdAt desc
-    filteredJobs.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const id = searchParams.get('id')
+    let returnedJob;
+    if (id) {
+      returnedJob = Array.isArray(jobs) && jobs.find((j: any) => j.id === id)
+    } else {
+      returnedJob = jobs
+    }
 
     return NextResponse.json({
       success: true,
-      data: filteredJobs,
+      data: returnedJob,
     });
   } catch (error: any) {
     console.error('Error fetching jobs:', error);

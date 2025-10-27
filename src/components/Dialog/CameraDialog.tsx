@@ -76,17 +76,14 @@ export default function CameraDialog({ open, onClose, onCapture }: {
         style={{
           padding: "24px",
           width: "637px",
-          height: "641px"
         }}
       >
-        <DialogHeader>
-          <DialogTitle>Take a Picture</DialogTitle>
-        </DialogHeader>
+        <DialogTitle className={"w-fit h-fit"}>Take a Picture</DialogTitle>
         <div className="flex flex-col gap-3 items-center">
           <video ref={videoRef} autoPlay playsInline className="w-full rounded-md bg-black" />
-          <canvas ref={canvasRef} className="hidden" />
+          <canvas ref={canvasRef} className="hidden w-full"  />
           <div className="flex gap-2 mt-3">
-            {!captured && <Button onClick={handleCapture} style={{ padding: "4px 16px", fontSize: "14px" }}>Capture</Button>}
+            {<Button onClick={handleCapture} style={{ padding: "4px 16px", fontSize: "14px" }}>Capture</Button>}
             <Button variant="outline" onClick={onClose} style={{ padding: "4px 16px", fontSize: "14px" }} >
               {captured ? "Close" : "Cancel"}
             </Button>

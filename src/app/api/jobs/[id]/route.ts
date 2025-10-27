@@ -20,9 +20,7 @@ export async function GET(
 
     const data = await fs.readFile(JOBS_FILE_PATH, 'utf-8');
     const jobs = JSON.parse(data || '[]');
-    const job = Array.isArray(jobs)
-      ? jobs.find((j: any) => j.id === id)
-      : jobs[id];
+    const job = Array.isArray(jobs) && jobs.find((j: any) => j.id === id)
 
     if (!job) {
       return NextResponse.json(
