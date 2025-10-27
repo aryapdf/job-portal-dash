@@ -24,25 +24,21 @@ export default function AdminContent() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch jobs dari Firestore
   const fetchJobs = async () => {
     try {
       const fetchedJobs = await getAllJobs();
       setJobs(fetchedJobs);
     } catch (error) {
       console.error("Error fetching jobs:", error);
-      // Tidak perlu alert, biarkan tetap loading state
     } finally {
       setLoading(false);
     }
   };
 
-  // Load jobs saat component mount
   useEffect(() => {
     fetchJobs();
   }, []);
 
-  // Filter jobs berdasarkan search query
   const filteredJobs = jobs.filter((job) => {
     const query = searchQuery.toLowerCase();
     return (
@@ -52,7 +48,6 @@ export default function AdminContent() {
     );
   });
 
-  // Get status badge color
   const getStatusColor = (status?: string) => {
     switch (status) {
       case "active":
@@ -66,7 +61,6 @@ export default function AdminContent() {
     }
   };
 
-  // Handler untuk refresh jobs setelah create
   const handleJobCreated = async () => {
     // Refresh data setelah job dibuat
     await fetchJobs();
@@ -217,7 +211,7 @@ export default function AdminContent() {
                       <Button
                         onClick={() => {
                           setLoading(true);
-                          router.push(`/admin/job/${job.id}`)
+                          router.push(`/admin/job/${job.id}?job-title=${job.jobName}`)
                         }}
                         className="rounded-md font-bold cursor-pointer"
                         style={{

@@ -4,7 +4,7 @@ import {useSelector} from "react-redux";
 import {RootState} from "@/store";
 
 interface Props {
-  type: "admin" | "user"
+  type: "admin" | "user" | "candidates"
   onClick?: () => void;
 }
 
@@ -112,6 +112,49 @@ export function EmptyJobCard(props: Props) {
             }}
           >
             Please wait for the next batch of openings.
+          </CardDescription>
+          <CardFooter style={{padding: isMobile ? "0" : "inherit"}}>
+          </CardFooter>
+        </Card>
+      )}
+
+      {props.type === "candidates" && (
+        <Card
+          className="w-fit h-fit text-center items-center rounded-md"
+          style={{
+            gap: "unset",
+            border: "none",
+            boxShadow: "none",
+            padding: isMobile ? "5vw" : "0"
+          }}
+        >
+          <img
+            src="/asset/empty-candidate-state.png"
+            alt="empty state"
+            style={{
+              width: isMobile ? "50vw" : "18.286vw",
+              height: isMobile ? "50vw" : "17.143vw",
+              marginBottom: isMobile ? "5vw" : "1.429vw"
+            }}
+          />
+          <CardTitle
+            className="font-semibold text-neutral-900 w-fit h-fit"
+            style={{
+              fontSize: isMobile ? "5vw" : "1.429vw",
+              marginBottom: isMobile ? "2vw" : "0.286vw",
+            }}
+          >
+            No candidates found
+          </CardTitle>
+          <CardDescription
+            className="w-fit h-fit"
+            style={{
+              color: "rgba(76, 76, 76, 1)",
+              marginBottom: isMobile ? "5vw" : "1.143vw",
+              fontSize: isMobile ? "3.5vw" : "0.857vw",
+            }}
+          >
+            Share your job vacancies so that more candidates will apply.
           </CardDescription>
           <CardFooter style={{padding: isMobile ? "0" : "inherit"}}>
           </CardFooter>

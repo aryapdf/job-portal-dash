@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": "aacbf24d-cb8b-4ac3-8796-ef603133b1fa",
+    "jobId": "e1142c5e-be94-4e5b-bf43-cc1c849bd69f",
+    "fullName": "Budi Yanto",
+    "gender": "male",
+    "domicile": "",
+    "phoneNumber": "8772181273",
+    "email": "arya@gmail.com",
+    "linkedin": "",
+    "photo": null,
+    "appliedAt": "2025-10-27T14:19:34.391Z",
+    "status": "pending"
+  }
+]
