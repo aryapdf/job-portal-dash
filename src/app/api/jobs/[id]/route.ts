@@ -4,12 +4,9 @@ import path from 'path';
 
 const JOBS_FILE_PATH = path.join(process.cwd(), 'data', 'jobs.json');
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
 
     if (!id) {
       return NextResponse.json(

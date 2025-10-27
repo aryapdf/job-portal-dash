@@ -35,11 +35,11 @@ const buildSchema = (req: any) => {
       : z.string().optional(),
 
     dateOfBirth: req.dateOfBirthReq === "mandatory"
-      ? z.date({ required_error: "Tanggal lahir harus diisi" })
-      : z.date().optional(),
+      ? z.string().min(1, "Tanggal lahir harus diisi")
+      : z.string().optional(),
 
     gender: req.genderReq === "mandatory"
-      ? z.enum(["female", "male"], { required_error: "Pilih jenis kelamin" })
+      ? z.enum(["female", "male"], { errorMap: () => ({ message: "Pilih jenis kelamin" }) })
       : z.enum(["female", "male"]).optional(),
 
     domicile: req.domicileReq === "mandatory"
@@ -286,7 +286,6 @@ export default function Page() {
                       <PopoverContent align="start" className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={field.value}
                           onSelect={(date) => {
                             field.onChange(date)
                             setCalendarOpen(false) // Tutup popover

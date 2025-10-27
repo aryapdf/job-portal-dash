@@ -322,8 +322,6 @@ export default function OnboardingCard() {
               setError("")
             }}
           />
-
-          <SocialButton icon="/asset/google-icon.svg" text="Masuk dengan Google" />
         </CardFooter>
       </>
     )

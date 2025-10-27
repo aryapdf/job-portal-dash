@@ -35,7 +35,7 @@ export default function NavBar(props: Props) {
           <div className="flex items-center" style={{gap: 8}}>
             {loggedIn && (
               <div
-                className={"font-semibold text-slate-500 cursor-pointer"}
+                className={"font-bold text-slate-500 cursor-pointer"}
                 onClick={() => auth.signOut()}
               >
                 Logout

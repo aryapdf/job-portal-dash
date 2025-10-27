@@ -141,7 +141,7 @@ export function EmptyJobCard(props: Props) {
             className="font-semibold text-neutral-900 w-fit h-fit"
             style={{
               fontSize: isMobile ? "5vw" : "1.429vw",
-              marginBottom: isMobile ? "2vw" : "0.286vw",
+              marginBottom: isMobile ? "5vw" : "1.429vw",
             }}
           >
             No candidates found
