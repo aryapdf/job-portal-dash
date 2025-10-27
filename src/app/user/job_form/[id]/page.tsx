@@ -23,6 +23,8 @@ import { useParams, useSearchParams } from "next/navigation"
 import { getJobDetail } from "@/lib/services/jobService"
 import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
 import CameraDialog from "@/components/Dialog/CameraDialog";
+import {Select, SelectContent, SelectItem, SelectTrigger} from "@/components/ui/select";
+import {PhoneNumberInput} from "@/components/Input/PhoneNumberInput";
 
 // Helper untuk bikin rule Zod berdasarkan jobDetail
 const buildSchema = (req: any) => {
@@ -44,7 +46,7 @@ const buildSchema = (req: any) => {
       ? z.string().optional()
       : z.string().min(2, "Domicile wajib diisi"),
 
-    phone: req.phoneNumberReq === "off"
+    phoneNumber: req.phoneNumberReq === "off"
       ? z.string().optional()
       : z.string().min(10, "Nomor HP tidak valid"),
 
@@ -69,6 +71,7 @@ export default function Page() {
   const [showCamera, setShowCamera] = useState(false)
   const [photo, setPhoto] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [calendarOpen, setCalendarOpen] = useState()
   const [jobDetail, setJobDetail] = useState<any>(null)
 
   const jobId: any = params.id
@@ -100,7 +103,7 @@ export default function Page() {
       fullName: "",
       gender: "female",
       domicile: "",
-      phone: "",
+      phoneNumber: "",
       email: "",
       linkedin: "",
     },
@@ -211,20 +214,29 @@ export default function Page() {
                     <FormLabel>
                       Date of birth {isRequired("dateOfBirthReq") && <span className="text-red-500">*</span>}
                     </FormLabel>
-                    <Popover>
+                    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant="outline" className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}
-                            style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",}}
+                            variant="outline"
+                            className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}
+                            style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw"}}
                           >
-                            {field.value ? format(field.value, "dd MMMM yyyy") : "Select date"}
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            {field.value ? format(field.value, "dd MMMM yyyy") : "Select date"}
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent align="start" className="w-auto p-0">
-                        <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={(date) => {
+                            field.onChange(date)
+                            setCalendarOpen(false) // Tutup popover
+                          }}
+                          initialFocus
+                        />
                       </PopoverContent>
                     </Popover>
                     <FormMessage />
@@ -285,24 +297,7 @@ export default function Page() {
 
             {/* Phone */}
             {renderIf("phoneNumberReq") && (
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Phone number {isRequired("phoneNumberReq") && <span className="text-red-500">*</span>}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="tel" placeholder="+62 811xxxxxxxx" {...field}
-                        style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",}}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <PhoneNumberInput control={form.control} isMobile={isMobile} isRequired={isRequired("phoneNumberReq")} />
             )}
 
             {/* Email */}
