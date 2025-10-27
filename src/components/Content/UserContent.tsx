@@ -5,41 +5,44 @@ import { Input } from "@/components/ui/input";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import JobFormDialog from "@/components/Dialog/JobFormDialog";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {EmptyJobCard} from "@/components/Card/EmptyJobCard";
 import {Card} from "@/components/ui/card";
 import Separator from "@/components/Separator/Separator";
 import {useRouter} from "next/navigation";
-
-const MOCK_JOB_LIST = [
-  {
-    id: "job_20251001_0001",
-    slug: "ux-designer",
-    title: "UX Designer",
-    company: "Rakamin",
-    location: "Jakarta Selatan",
-    status: "active",
-    job_type: "Full-Time",
-    salary_range: {
-      min: 7000000,
-      max: 15000000,
-      currency: "IDR",
-      display_text: "Rp7.000.000 - Rp15.000.000"
-    },
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam commodo malesuada vestibulum. Nullam pretium aliquam lectus, ac hendrerit turpis rutrum non. Ut facilisis, erat mattis tempor dignissim, risus urna tincidunt urna, rutrum vulputate elit nulla eu odio. Morbi auctor dolor nunc, ut finibus massa sollicitudin vel. Morbi mattis mi ac ipsum tincidunt, id tincidunt ipsum venenatis. Morbi nibh purus, finibus vitae diam a, malesuada bibendum dui. Curabitur ac metus eu odio scelerisque tempor. Phasellus fringilla in sapien id elementum. Sed aliquam scelerisque tempor. Morbi scelerisque faucibus velit ac imperdiet. In lacinia quis sem non consequat. Cras vulputate nunc felis, eget aliquam turpis molestie ac. Donec at ligula enim. ",
-    list_card: {
-      badge: "Active",
-      started_on_text: "started on 1 Oct 2025",
-      cta: "Manage Job"
-    }
-  },
-]
+import {getAllJobs, JobData} from "@/lib/services/jobService";
+import {LoadingOverlay} from "@/components/Loading/LoadingOverlay";
+import {formatJobType, formatRupiah} from "@/lib/helper/formatter";
 
 export default function UserContent() {
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
   const router = useRouter()
+  const [loading, setLoading] = useState(true)
   const [jobDialogOpen, setJobDialogOpen] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(MOCK_JOB_LIST[0])
+  const [jobList, setJobList] = useState<JobData[]>([]);
+  const [selectedJob, setSelectedJob] = useState<any>(null)
+
+  const fetchJobs = async () => {
+    try {
+      const fetchedJobs = await getAllJobs();
+      console.log('fetchedJobs :', fetchedJobs)
+      setJobList(fetchedJobs);
+
+      if (fetchedJobs.length > 0) {
+        setSelectedJob(fetchedJobs[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+      // Tidak perlu alert, biarkan tetap loading state
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, []);
+
 
   // TODO : make responsive
   return (
@@ -59,90 +62,94 @@ export default function UserContent() {
         >
 
           <div className="flex flex-1 items-center justify-center rounded-md relative">
-            {!MOCK_JOB_LIST
-              ? <EmptyJobCard type={"user"} /> :
-              <div className="w-full h-full flex gap-4">
-                {/* Left Side - Job Cards List */}
-                <div
-                  className="flex flex-col gap-3 overflow-y-auto pr-2"
-                  style={{
-                    width: isMobile ? "100%" : "340px",
-                    maxHeight: "calc(100vh - 200px)"
-                  }}
-                >
-                  {MOCK_JOB_LIST.map((job) => (
-                    <Card
-                      key={job.id}
-                      onClick={() => setSelectedJob(job)}
-                      className={`p-4 cursor-pointer transition-all border-2 hover:shadow-md ${
-                        selectedJob.id === job.id
-                          ? "border-teal-600 bg-cyan-50/50"
-                          : "border-slate-200 hover:border-slate-300"
-                      }`}
+            {loading ? (
+              <LoadingOverlay isLoading={loading} />
+            ) : (
+              <>
+                {!jobList
+                  ? <EmptyJobCard type={"user"} /> :
+                  <div className="w-full h-full flex gap-4">
+                    {/* Left Side - Job Cards List */}
+                    <div
+                      className="flex flex-col gap-3 overflow-y-auto pr-2"
                       style={{
-                        borderRadius: "12px",
-                        padding: "12px 16px",
-                        gap: "16px"
+                        width: isMobile ? "100%" : "340px",
+                        maxHeight: "calc(100vh - 200px)"
                       }}
                     >
-                      {/* Company Logo */}
-                      <div className="flex items-start gap-3 mb-3">
-                        <img
-                          src="/asset/code-logo.png" alt=""
+                      {jobList.map((job) => (
+                        <Card
+                          key={job.id}
+                          onClick={() => setSelectedJob(job)}
+                          className={`p-4 cursor-pointer transition-all border-2 hover:shadow-md ${
+                            selectedJob?.id === job.id
+                              ? "border-teal-600 bg-cyan-50/50"
+                              : "border-slate-200 hover:border-slate-300"
+                          }`}
                           style={{
-                            width: "48px",
-                            height: "48px"
+                            borderRadius: "12px",
+                            padding: "12px 16px",
+                            gap: "16px"
                           }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="font-bold  truncate" style={{fontSize: "16px", color: "rgba(64, 64, 64, 1)"}}>
-                            {job.title}
+                        >
+                          {/* Company Logo */}
+                          <div className="flex items-start gap-3 mb-3">
+                            <img
+                              src="/asset/code-logo.png" alt=""
+                              style={{
+                                width: "48px",
+                                height: "48px"
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="font-bold  truncate" style={{fontSize: "16px", color: "rgba(64, 64, 64, 1)"}}>
+                                {job.jobName}
+                              </div>
+                              <div style={{fontSize: "14px", color: "rgba(64, 64, 64, 1)"}}>Rakamin</div>
+                            </div>
                           </div>
-                          <div style={{fontSize: "14px", color: "rgba(64, 64, 64, 1)"}}>{job.company}</div>
-                        </div>
-                      </div>
 
-                      <div className={"relative flex flex-col"} style={{gap: "4px"}}>
-                        <div className="flex items-center text-slate-600 mb-2">
+                          <div className={"relative flex flex-col"} style={{gap: "4px"}}>
+                            <div className="flex items-center text-slate-600 mb-2">
+                              <img
+                                src="/asset/location-icon.svg" alt=""
+                                style={{
+                                  width: "16px",
+                                  height: "16px"
+                                }}
+                              />
+                              <span className="text-sm">Jakarta</span>
+                            </div>
+
+                            <div className="flex items-center gap-1 text-slate-600">
+                              <img
+                                src="/asset/money-icon.svg" alt=""
+                                style={{
+                                  width: "16px",
+                                  height: "16px"
+                                }}
+                              />
+                              <span className="text-sm">{formatRupiah(job.minSalary)} - {formatRupiah(job.maxSalary)}</span>
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+
+                    {/* Right Side - Job Details */}
+                    <Card className="flex-1 p-6" style={{ borderRadius: "12px", padding: "24px" }}>
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-start" style={{gap: "24px"}}>
                           <img
-                            src="/asset/location-icon.svg" alt=""
+                            src="/asset/code-logo.png" alt=""
                             style={{
-                              width: "16px",
-                              height: "16px"
+                              width: "48px",
+                              height: "48px"
                             }}
                           />
-                          <span className="text-sm">{job.location}</span>
-                        </div>
-
-                        <div className="flex items-center gap-1 text-slate-600">
-                          <img
-                            src="/asset/money-icon.svg" alt=""
-                            style={{
-                              width: "16px",
-                              height: "16px"
-                            }}
-                          />
-                          <span className="text-sm">{job.salary_range.display_text}</span>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-
-                {/* Right Side - Job Details */}
-                <Card className="flex-1 p-6" style={{ borderRadius: "12px", padding: "24px" }}>
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-start" style={{gap: "24px"}}>
-                      <img
-                        src="/asset/code-logo.png" alt=""
-                        style={{
-                          width: "48px",
-                          height: "48px"
-                        }}
-                      />
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
                           <span
                             className={`rounded-sm text-xs font-semibold`}
                             style={{
@@ -153,37 +160,40 @@ export default function UserContent() {
                               marginBottom: "8px"
                             }}
                           >
-                            {selectedJob.job_type}
+                            {formatJobType(selectedJob?.jobType)}
                           </span>
+                            </div>
+                            <div className="font-bold" style={{fontSize: "18px"}}>
+                              {selectedJob?.jobName}
+                            </div>
+                            <div className="text-slate-600">Rakamin</div>
+                          </div>
                         </div>
-                        <div className="font-bold" style={{fontSize: "18px"}}>
-                          {selectedJob.title}
-                        </div>
-                        <div className="text-slate-600">{selectedJob.company}</div>
+                        <Button
+                          onClick={() => router.push(`/user/job_form/${selectedJob?.id}?job_title=${selectedJob?.jobName}&company=Rakamin`)}
+                          className={`${
+                            selectedJob?.status === "active"
+                              ? "bg-yellow-400 hover:bg-yellow-500 text-slate-900"
+                              : "bg-slate-200 hover:bg-slate-300 text-slate-700"
+                          } font-semibold cursor-pointer`}
+                          style={{ padding: "4px 16px", fontSize: "14px" }}
+                        >
+                          {selectedJob?.status === "active" ? "Apply" : "Closed"}
+                        </Button>
                       </div>
-                    </div>
-                    <Button
-                      onClick={() => router.push(`/user/job_form/${selectedJob.id}?job_title=${selectedJob.title}&company=${selectedJob.company}`)}
-                      className={`${
-                        selectedJob.status === "active"
-                          ? "bg-yellow-400 hover:bg-yellow-500 text-slate-900"
-                          : "bg-slate-200 hover:bg-slate-300 text-slate-700"
-                      } font-semibold cursor-pointer`}
-                      style={{ padding: "4px 16px", fontSize: "14px" }}
-                    >
-                      {selectedJob.status === "active" ? "Apply" : "Closed"}
-                    </Button>
-                  </div>
 
-                  <Separator type={"dashed"} />
+                      <Separator type={"dashed"} />
 
-                  {/* Job Description */}
-                  <div>
-                    {selectedJob.description}
+                      {/* Job Description */}
+                      <div>
+                        {selectedJob?.jobDescription}
+                      </div>
+                    </Card>
                   </div>
-                </Card>
-              </div>
-            }
+                }
+              </>
+            )}
+
           </div>
         </div>
       </div>

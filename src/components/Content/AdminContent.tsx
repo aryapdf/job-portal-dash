@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { EmptyJobCard } from "@/components/Card/EmptyJobCard";
 import { getAllJobs, JobData } from "@/lib/services/jobService";
 import {LoadingOverlay} from "@/components/Loading/LoadingOverlay";
+import {formatDate, formatJobType, formatRupiah} from "@/lib/helper/formatter";
 
 export default function AdminContent() {
   const deviceType = useSelector((state: RootState) => state.screen.deviceType);
@@ -49,23 +50,6 @@ export default function AdminContent() {
     );
   });
 
-  // Format salary
-  const formatSalary = (amount: number) => {
-    return `Rp${amount.toLocaleString("id-ID")}`;
-  };
-
-  // Format date
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return "";
-    const date = typeof timestamp === 'string' ? new Date(timestamp) :
-      timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    });
-  };
-
   // Get status badge color
   const getStatusColor = (status?: string) => {
     switch (status) {
@@ -78,18 +62,6 @@ export default function AdminContent() {
       default:
         return "bg-gray-100 text-gray-800";
     }
-  };
-
-  // Format job type display
-  const formatJobType = (jobType: string) => {
-    const types: { [key: string]: string } = {
-      full_time: "Full-time",
-      contract: "Contract",
-      part_time: "Part-time",
-      internship: "Internship",
-      freelance: "Freelance"
-    };
-    return types[jobType] || jobType;
   };
 
   // Handler untuk refresh jobs setelah create
@@ -238,7 +210,7 @@ export default function AdminContent() {
                                               fontSize: isMobile ? "3.5vw" : "1vw"
                                             }}
                                           >
-                                            {formatSalary(job.minSalary)} - {formatSalary(job.maxSalary)}
+                                            {formatRupiah(job.minSalary)} - {formatRupiah(job.maxSalary)}
                                           </span>
                       <Button
                         className="rounded-md font-bold"
