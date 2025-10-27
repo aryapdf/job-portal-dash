@@ -19,13 +19,16 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Separator from "@/components/Separator/Separator"
-import { useRef } from "react"
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {ToggleGroup, ToggleGroupItem} from "@/components/ui/toggle-group";
+import { useRef, useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { toast } from "sonner"
+import { createJob } from "@/lib/services/jobService"
 
 interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onJobCreated?: () => void
 }
 
 interface ToggleOption {
@@ -50,87 +53,14 @@ const JOB_TYPES = [
   { name: "Freelance", value: "freelance" },
 ]
 
-const REQUIREMENT_FIELDS = [
-  {
-    name: "fullNameReq",
-    label: "Full Name",
-    options: [
-      { value: "mandatory", label: "Mandatory", toggle: true },
-      { value: "optional", label: "Optional", toggle: false },
-      { value: "off", label: "Off", toggle: false }
-    ]
-  },
-  {
-    name: "photoProfileReq",
-    label: "Photo Profile",
-    options: [
-      { value: "mandatory", label: "Mandatory", toggle: true },
-      { value: "optional", label: "Optional", toggle: false },
-      { value: "off", label: "Off", toggle: false }
-    ]
-  },
-  {
-    name: "genderReq",
-    label: "Gender",
-    options: [
-      { value: "mandatory", label: "Mandatory", toggle: true },
-      { value: "optional", label: "Optional", toggle: true },
-      { value: "off", label: "Off", toggle: true }
-    ]
-  },
-  {
-    name: "domicileReq",
-    label: "Domicile",
-    options: [
-      { value: "mandatory", label: "Mandatory", toggle: true },
-      { value: "optional", label: "Optional", toggle: true },
-      { value: "off", label: "Off", toggle: true }
-    ]
-  },
-  {
-    name: "emailReq",
-    label: "Email",
-    options: [
-      { value: "mandatory", label: "Mandatory", toggle: true },
-      { value: "optional", label: "Optional", toggle: false },
-      { value: "off", label: "Off", toggle: false }
-    ]
-  },
-  {
-    name: "phoneNumberReq",
-    label: "Phone Number",
-    options: [
-      { value: "mandatory", label: "Mandatory", toggle: true },
-      { value: "optional", label: "Optional", toggle: true },
-      { value: "off", label: "Off", toggle: true }
-    ]
-  },
-  {
-    name: "linkedinReq",
-    label: "LinkedIn",
-    options: [
-      { value: "mandatory", label: "Mandatory", toggle: true },
-      { value: "optional", label: "Optional", toggle: true },
-      { value: "off", label: "Off", toggle: true }
-    ]
-  },
-  {
-    name: "dateOfBirthReq",
-    label: "Date of Birth",
-    options: [
-      { value: "mandatory", label: "Mandatory", toggle: true },
-      { value: "optional", label: "Optional", toggle: true },
-      { value: "off", label: "Off", toggle: true }
-    ]
-  },
-]
+const REQUIREMENT_FIELDS = require('@/lib/data/requirement_fields.json')
 
 export default function JobFormDialog(props: Props) {
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // TODO: Make this modal responsive
-  const formSchema:any = z.object({
+  const formSchema: any = z.object({
     jobName: z.string().min(1, "Job name is required"),
     jobType: z.string().min(1, "Job type is required"),
     jobDescription: z.string().min(1, "Job description is required"),
@@ -138,8 +68,6 @@ export default function JobFormDialog(props: Props) {
       .number()
       .min(1, "At least 1 candidate needed")
       .positive("Must be a positive number"),
-
-    // Requirement fields with enum validation
     fullNameReq: z.enum(["mandatory", "optional", "off"]),
     photoProfileReq: z.enum(["mandatory", "optional", "off"]),
     genderReq: z.enum(["mandatory", "optional", "off"]),
@@ -148,7 +76,6 @@ export default function JobFormDialog(props: Props) {
     phoneNumberReq: z.enum(["mandatory", "optional", "off"]),
     linkedinReq: z.enum(["mandatory", "optional", "off"]),
     dateOfBirthReq: z.enum(["mandatory", "optional", "off"]),
-
     minSalary: z.coerce
       .number()
       .min(0, "Minimum salary cannot be negative"),
@@ -160,7 +87,7 @@ export default function JobFormDialog(props: Props) {
     path: ["maxSalary"],
   })
 
-  const defaultValues:any = {
+  const defaultValues: any = {
     jobName: "",
     jobType: "",
     jobDescription: "",
@@ -169,7 +96,7 @@ export default function JobFormDialog(props: Props) {
     photoProfileReq: "mandatory",
     genderReq: "mandatory",
     domicileReq: "mandatory",
-    emailReq: "mandatory", // Email is mandatory by default
+    emailReq: "mandatory",
     phoneNumberReq: "mandatory",
     linkedinReq: "mandatory",
     dateOfBirthReq: "mandatory",
@@ -177,7 +104,7 @@ export default function JobFormDialog(props: Props) {
     maxSalary: 0,
   }
 
-  const form:any = useForm<z.infer<typeof formSchema>>({
+  const form: any = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues
   })
@@ -204,10 +131,31 @@ export default function JobFormDialog(props: Props) {
     onChange(value ? parseInt(value) : 0)
   }
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data)
-    // TODO: Add your submit logic here
-    props.onOpenChange(false)
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true)
+
+    try {
+      const jobId = await createJob(data)
+
+      toast.success("Job created successfully!", {
+        description: "Your job posting is now live.",
+      })
+
+      form.reset(defaultValues)
+
+      if (props.onJobCreated) {
+        props.onJobCreated()
+      }
+
+      props.onOpenChange(false)
+    } catch (error) {
+      console.error('Error creating job:', error)
+      toast.error("Failed to create job", {
+        description: "Please try again later.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const RequiredAsterisk = () => (
@@ -240,7 +188,7 @@ export default function JobFormDialog(props: Props) {
                     key={option.value}
                     value={option.value}
                     aria-label={`Toggle ${option.value}`}
-                    disabled={!option.toggle} // ✅ Disabled based on toggle property
+                    disabled={!option.toggle}
                     className="data-[state=on]:border-cyan-500 data-[state=on]:text-cyan-500 data-[state=on]:bg-transparent disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
                       borderRadius: '1000px',
@@ -271,7 +219,6 @@ export default function JobFormDialog(props: Props) {
           overflowY: "scroll",
         }}
       >
-        {/* Header */}
         <DialogTitle
           className="flex items-center justify-between"
           style={{
@@ -290,7 +237,6 @@ export default function JobFormDialog(props: Props) {
           </Button>
         </DialogTitle>
 
-        {/* Form Content */}
         <div
           className="flex flex-col items-center justify-center overflow-hidden"
           style={{ padding: "1.143vw 1.714vw 1.714vw" }}
@@ -301,7 +247,6 @@ export default function JobFormDialog(props: Props) {
               className="relative flex flex-col w-full overflow-scroll"
               style={{ gap: "1.143vw" }}
             >
-              {/* Job Name */}
               <FormField
                 control={form.control}
                 name="jobName"
@@ -335,7 +280,6 @@ export default function JobFormDialog(props: Props) {
                 )}
               />
 
-              {/* Job Type */}
               <FormField
                 control={form.control}
                 name="jobType"
@@ -388,7 +332,6 @@ export default function JobFormDialog(props: Props) {
                 )}
               />
 
-              {/* Job Description */}
               <FormField
                 control={form.control}
                 name="jobDescription"
@@ -424,7 +367,6 @@ export default function JobFormDialog(props: Props) {
                 )}
               />
 
-              {/* Number of Candidates */}
               <FormField
                 control={form.control}
                 name="candidateNumber"
@@ -466,9 +408,7 @@ export default function JobFormDialog(props: Props) {
 
               <Separator type="dashed" />
 
-              {/* Salary Range */}
               <div className="flex w-full" style={{ gap: "1.143vw" }}>
-                {/* Minimum Salary */}
                 <FormField
                   control={form.control}
                   name="minSalary"
@@ -526,7 +466,6 @@ export default function JobFormDialog(props: Props) {
                   )}
                 />
 
-                {/* Maximum Salary */}
                 <FormField
                   control={form.control}
                   name="maxSalary"
@@ -592,26 +531,26 @@ export default function JobFormDialog(props: Props) {
                   </CardTitle>
                 </CardHeader>
 
-                <CardContent className={"flex flex-col"} style={{gap: "1.143vw"}}>
-                  {REQUIREMENT_FIELDS.map((field, index) => (
-                      <RequirementToggleField
-                        key={field.name}
-                        control={form.control}
-                        name={field.name}
-                        label={field.label}
-                        options={field.options}
-                        isMobile={isMobile}
-                      />
+                <CardContent className={"flex flex-col"} style={{ gap: "1.143vw" }}>
+                  {REQUIREMENT_FIELDS.map((field) => (
+                    <RequirementToggleField
+                      key={field.name}
+                      control={form.control}
+                      name={field.name}
+                      label={field.label}
+                      options={field.options}
+                      isMobile={isMobile}
+                    />
                   ))}
                 </CardContent>
               </Card>
 
-              {/* Submit Buttons */}
               <div className="flex gap-3 justify-end" style={{ marginTop: "1.143vw" }}>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => props.onOpenChange(false)}
+                  disabled={isSubmitting}
                   style={{
                     fontSize: isMobile ? "3.5vw" : "0.857vw",
                     padding: isMobile ? "2.5vw 5vw" : "0.556vw 1.5vw",
@@ -621,6 +560,7 @@ export default function JobFormDialog(props: Props) {
                 </Button>
                 <Button
                   type="submit"
+                  disabled={isSubmitting}
                   className="font-bold"
                   style={{
                     background: "rgba(251, 192, 55, 1)",
@@ -629,7 +569,7 @@ export default function JobFormDialog(props: Props) {
                     padding: isMobile ? "2.5vw 5vw" : "0.556vw 1.5vw",
                   }}
                 >
-                  Publish Job
+                  {isSubmitting ? "Publishing..." : "Publish Job"}
                 </Button>
               </div>
             </form>

@@ -4,6 +4,7 @@ import "./globals.css";
 import React from "react";
 import {Layout} from "@/components/Layout";
 import {Providers} from "@/components/Providers";
+import { Toaster } from "sonner";
 
 const nunito = Nunito({
     variable: "--font-nunito",
@@ -28,7 +29,10 @@ export default function RootLayout({children,}: {children: React.ReactNode; }) {
         <html lang="en" className={`${nunito.variable} ${nunitoSans.variable}`}>
             <body>
                 <Providers>
-                    <Layout>{children}</Layout>
+                    <Layout>
+                        {children}
+                        <Toaster position={"bottom-left"} />
+                    </Layout>
                 </Providers>
             </body>
         </html>

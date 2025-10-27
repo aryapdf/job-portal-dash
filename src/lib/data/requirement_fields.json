@@ -1,0 +1,74 @@
+[
+  {
+    "name": "fullNameReq",
+    "label": "Full Name",
+    "options": [
+      { "value": "mandatory", "label": "Mandatory", "toggle": true },
+      { "value": "optional", "label": "Optional", "toggle": false },
+      { "value": "off", "label": "Off", "toggle": false }
+    ]
+  },
+  {
+    "name": "photoProfileReq",
+    "label": "Photo Profile",
+    "options": [
+      { "value": "mandatory", "label": "Mandatory", "toggle": true },
+      { "value": "optional", "label": "Optional", "toggle": false },
+      { "value": "off", "label": "Off", "toggle": false }
+    ]
+  },
+  {
+    "name": "genderReq",
+    "label": "Gender",
+    "options": [
+      { "value": "mandatory", "label": "Mandatory", "toggle": true },
+      { "value": "optional", "label": "Optional", "toggle": true },
+      { "value": "off", "label": "Off", "toggle": true }
+    ]
+  },
+  {
+    "name": "domicileReq",
+    "label": "Domicile",
+    "options": [
+      { "value": "mandatory", "label": "Mandatory", "toggle": true },
+      { "value": "optional", "label": "Optional", "toggle": true },
+      { "value": "off", "label": "Off", "toggle": true }
+    ]
+  },
+  {
+    "name": "emailReq",
+    "label": "Email",
+    "options": [
+      { "value": "mandatory", "label": "Mandatory", "toggle": true },
+      { "value": "optional", "label": "Optional", "toggle": false },
+      { "value": "off", "label": "Off", "toggle": false }
+    ]
+  },
+  {
+    "name": "phoneNumberReq",
+    "label": "Phone Number",
+    "options": [
+      { "value": "mandatory", "label": "Mandatory", "toggle": true },
+      { "value": "optional", "label": "Optional", "toggle": true },
+      { "value": "off", "label": "Off", "toggle": true }
+    ]
+  },
+  {
+    "name": "linkedinReq",
+    "label": "LinkedIn",
+    "options": [
+      { "value": "mandatory", "label": "Mandatory", "toggle": true },
+      { "value": "optional", "label": "Optional", "toggle": true },
+      { "value": "off", "label": "Off", "toggle": true }
+    ]
+  },
+  {
+    "name": "dateOfBirthReq",
+    "label": "Date of Birth",
+    "options": [
+      { "value": "mandatory", "label": "Mandatory", "toggle": true },
+      { "value": "optional", "label": "Optional", "toggle": true },
+      { "value": "off", "label": "Off", "toggle": true }
+    ]
+  }
+]
