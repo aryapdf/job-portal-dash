@@ -21,7 +21,7 @@ export interface JobData {
 }
 
 // Create a new job
-export const createJob = async (jobData: Omit<JobData, 'id' | 'createdAt' | 'updatedAt' | 'status'>): Promise<string> => {
+export const createJob = async (jobData) => {
   try {
     const response = await fetch('/api/jobs', {
       method: 'POST',
@@ -46,7 +46,7 @@ export const createJob = async (jobData: Omit<JobData, 'id' | 'createdAt' | 'upd
 };
 
 // Get all jobs
-export const getAllJobs = async (): Promise<JobData[]> => {
+export const getAllJobs = async () => {
   try {
     const response = await fetch('/api/jobs', {
       method: 'GET',
@@ -66,94 +66,17 @@ export const getAllJobs = async (): Promise<JobData[]> => {
   }
 };
 
-// Get jobs by status
-export const getJobsByStatus = async (status: "active" | "inactive" | "draft"): Promise<JobData[]> => {
+export const getJobDetail = async (id: string) => {
   try {
-    const response = await fetch(`/api/jobs?status=${status}`, {
+    const response = await fetch(`/api/jobs?id=${id}`, {
       method: 'GET',
-      cache: 'no-store',
+      cache: 'no-store'
     });
 
     const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Failed to fetch jobs');
-    }
-
     return result.data;
   } catch (error) {
-    console.error('Error getting jobs by status:', error);
-    throw error;
+    console.error('Error get job detail :', error)
   }
-};
+}
 
-// Update a job
-export const updateJob = async (jobId: string, jobData: Partial<JobData>): Promise<void> => {
-  try {
-    const response = await fetch(`/api/jobs/${jobId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(jobData),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Failed to update job');
-    }
-
-    console.log('Job updated successfully');
-  } catch (error) {
-    console.error('Error updating job:', error);
-    throw error;
-  }
-};
-
-// Delete a job
-export const deleteJob = async (jobId: string): Promise<void> => {
-  try {
-    const response = await fetch(`/api/jobs/${jobId}`, {
-      method: 'DELETE',
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Failed to delete job');
-    }
-
-    console.log('Job deleted successfully');
-  } catch (error) {
-    console.error('Error deleting job:', error);
-    throw error;
-  }
-};
-
-// Update job status
-export const updateJobStatus = async (
-  jobId: string,
-  status: "active" | "inactive" | "draft"
-): Promise<void> => {
-  try {
-    const response = await fetch(`/api/jobs/${jobId}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status }),
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result.success) {
-      throw new Error(result.error || 'Failed to update job status');
-    }
-
-    console.log('Job status updated successfully');
-  } catch (error) {
-    console.error('Error updating job status:', error);
-    throw error;
-  }
-};

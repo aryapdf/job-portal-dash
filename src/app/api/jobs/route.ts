@@ -1,87 +1,74 @@
-// File: src/app/api/jobs/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  orderBy,
-  where,
-  Timestamp
-} from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import fs from 'fs/promises';
+import path from 'path';
+import { randomUUID } from 'crypto';
 
-const JOBS_COLLECTION = 'jobs';
+const JOBS_FILE_PATH = path.join(process.cwd(), 'data', 'jobs.json');
 
-// GET - Get all jobs or filter by status
+// Helper: baca file JSON
+async function readJobs() {
+  try {
+    const data = await fs.readFile(JOBS_FILE_PATH, 'utf-8');
+    return JSON.parse(data);
+  } catch (err: any) {
+    if (err.code === 'ENOENT') return []; // kalau file belum ada
+    throw err;
+  }
+}
+
+// Helper: tulis file JSON
+async function writeJobs(jobs: any[]) {
+  await fs.mkdir(path.dirname(JOBS_FILE_PATH), { recursive: true });
+  await fs.writeFile(JOBS_FILE_PATH, JSON.stringify(jobs, null, 2), 'utf-8');
+}
+
+// GET - ambil semua jobs atau filter by status
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status');
 
-    let q;
-    if (status) {
-      q = query(
-        collection(db, JOBS_COLLECTION),
-        where('status', '==', status),
-        orderBy('createdAt', 'desc')
-      );
-    } else {
-      q = query(
-        collection(db, JOBS_COLLECTION),
-        orderBy('createdAt', 'desc')
-      );
-    }
+    const jobs = await readJobs();
 
-    const querySnapshot = await getDocs(q);
-    const jobs: any[] = [];
+    const filteredJobs = status
+      ? jobs.filter((job: any) => job.status === status)
+      : jobs;
 
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      jobs.push({
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate?.()?.toISOString() || null,
-        updatedAt: data.updatedAt?.toDate?.()?.toISOString() || null,
-      });
-    });
+    // urutkan berdasarkan createdAt desc
+    filteredJobs.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     return NextResponse.json({
       success: true,
-      data: jobs,
+      data: filteredJobs,
     });
   } catch (error: any) {
     console.error('Error fetching jobs:', error);
     return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to fetch jobs',
-        status: 500
-      },
+      { success: false, error: error.message || 'Failed to fetch jobs' },
+      { status: 500 }
     );
   }
 }
 
-// POST - Create a new job
+// POST - tambah job baru
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate required fields
     const requiredFields = ['jobName', 'jobType', 'jobDescription', 'candidateNumber'];
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json(
-          {
-            success: false,
-            error: `${field} is required`,
-            status: 400
-          },
+          { success: false, error: `${field} is required` },
+          { status: 400 }
         );
       }
     }
 
-    const jobData = {
+    const now = new Date().toISOString();
+
+    const newJob = {
+      id: randomUUID(),
       jobName: body.jobName,
       jobType: body.jobType,
       jobDescription: body.jobDescription,
@@ -97,28 +84,24 @@ export async function POST(request: NextRequest) {
       minSalary: body.minSalary || 0,
       maxSalary: body.maxSalary || 0,
       status: 'active',
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now(),
+      createdAt: now,
+      updatedAt: now,
     };
 
-    const docRef = await addDoc(collection(db, JOBS_COLLECTION), jobData);
+    const jobs = await readJobs();
+    jobs.push(newJob);
+    await writeJobs(jobs);
 
     return NextResponse.json({
       success: true,
-      data: {
-        id: docRef.id,
-        ...jobData,
-      },
       message: 'Job created successfully',
+      data: newJob,
     });
   } catch (error: any) {
     console.error('Error creating job:', error);
     return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to create job',
-        status: 500
-      },
+      { success: false, error: error.message || 'Failed to create job' },
+      { status: 500 }
     );
   }
 }

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "fc96dbd7-627e-4346-8721-5ac642b29f01",
+    "jobName": "Front End",
+    "jobType": "full_time",
+    "jobDescription": "Front End Developer\nTampan dan Menawan",
+    "candidateNumber": 1,
+    "fullNameReq": "mandatory",
+    "photoProfileReq": "mandatory",
+    "genderReq": "mandatory",
+    "domicileReq": "mandatory",
+    "emailReq": "mandatory",
+    "phoneNumberReq": "mandatory",
+    "linkedinReq": "mandatory",
+    "dateOfBirthReq": "mandatory",
+    "minSalary": 7000000,
+    "maxSalary": 8000000,
+    "status": "active",
+    "createdAt": "2025-10-27T06:45:38.083Z",
+    "updatedAt": "2025-10-27T06:45:38.083Z"
+  }
+]

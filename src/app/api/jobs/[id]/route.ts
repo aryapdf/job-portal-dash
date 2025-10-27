@@ -1,90 +1,41 @@
-// File: src/app/api/jobs/[id]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { doc, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { NextResponse } from 'next/server';
+import fs from 'fs/promises';
+import path from 'path';
 
-const JOBS_COLLECTION = 'jobs';
+const JOBS_FILE_PATH = path.join(process.cwd(), 'data', 'jobs.json');
 
-// PATCH - Update a job
-export async function PATCH(
-  request: NextRequest,
+export async function GET(
+  _request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const { id } = params;
-    const body = await request.json();
-
     if (!id) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Job ID is required',
-          status: 400
-        },
+        { success: false, error: 'Job ID is required' },
+        { status: 400 }
       );
     }
 
-    const jobRef = doc(db, JOBS_COLLECTION, id);
-    const updateData = {
-      ...body,
-      updatedAt: Timestamp.now(),
-    };
+    const data = await fs.readFile(JOBS_FILE_PATH, 'utf-8');
+    const jobs = JSON.parse(data || '[]');
+    const job = Array.isArray(jobs)
+      ? jobs.find((j: any) => j.id === id)
+      : jobs[id];
 
-    await updateDoc(jobRef, updateData);
-
-    return NextResponse.json({
-      success: true,
-      data: {
-        id,
-        ...updateData,
-      },
-      message: 'Job updated successfully',
-    });
-  } catch (error: any) {
-    console.error('Error updating job:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to update job',
-        status: 500
-      },
-    );
-  }
-}
-
-// DELETE - Delete a job
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const { id } = params;
-
-    if (!id) {
+    if (!job) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Job ID is required',
-          status: 400
-        },
+        { success: false, error: 'Job not found' },
+        { status: 404 }
       );
     }
 
-    const jobRef = doc(db, JOBS_COLLECTION, id);
-    await deleteDoc(jobRef);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Job deleted successfully',
-    });
+    return NextResponse.json({ success: true, data: job });
   } catch (error: any) {
-    console.error('Error deleting job:', error);
+    console.error('Error fetching job detail:', error);
     return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Failed to delete job',
-        status: 500
-      },
+      { success: false, error: error.message || 'Failed to fetch job detail' },
+      { status: 500 }
     );
   }
 }
