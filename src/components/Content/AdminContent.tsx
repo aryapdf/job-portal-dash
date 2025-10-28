@@ -115,7 +115,7 @@ export default function AdminContent() {
                 border: "none",
                 outline: "none",
                 boxShadow: "none",
-                fontSize: isMobile ? "4vw" : "inherit",
+                fontSize: isMobile ? "3.5vw" : "1vw",
               }}
             />
             <img
@@ -228,7 +228,7 @@ export default function AdminContent() {
                             fontSize: isMobile ? "3.5vw" : "0.857vw",
                             padding: isMobile
                               ? "2vw 4vw"
-                              : "0.429vw 1.143vw",
+                              : "0.86vw 1.143vw",
                             color: "white",
                             backgroundColor: "rgba(1, 149, 159, 1)",
                           }}
@@ -243,7 +243,7 @@ export default function AdminContent() {
                           className="rounded-md font-bold cursor-pointer"
                           style={{
                             fontSize: isMobile ? "3.5vw" : "0.857vw",
-                            padding: isMobile ? "2vw 4vw" : "0.429vw 1.143vw",
+                            padding: isMobile ? "2vw 4vw" : "0.86vw 1.143vw",
                             backgroundColor: "rgba(225, 20, 40, 1)",
                             color: "white",
                           }}

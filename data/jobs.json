@@ -38,5 +38,25 @@
     "status": "active",
     "createdAt": "2025-10-28T04:56:44.183Z",
     "updatedAt": "2025-10-28T04:56:44.183Z"
+  },
+  {
+    "id": "dcd5a8b0-bc70-4585-96ec-2a31cf2da499",
+    "jobName": "UI UX Designer",
+    "jobType": "part_time",
+    "jobDescription": "Yang penting bisa desain..",
+    "candidateNumber": 1,
+    "fullNameReq": "mandatory",
+    "photoProfileReq": "mandatory",
+    "genderReq": "off",
+    "domicileReq": "off",
+    "emailReq": "mandatory",
+    "phoneNumberReq": "off",
+    "linkedinReq": "mandatory",
+    "dateOfBirthReq": "off",
+    "minSalary": 8000000,
+    "maxSalary": 12000000,
+    "status": "active",
+    "createdAt": "2025-10-28T13:52:29.851Z",
+    "updatedAt": "2025-10-28T13:52:29.851Z"
   }
 ]

@@ -48,8 +48,11 @@ export default function DeleteJobDialog(props: Props) {
           padding: isMobile ? "5vw 4vw" : "2.571vw 1.714vw",
         }}>
         <DialogHeader>
-          <DialogTitle>Delete Job</DialogTitle>
-          <DialogDescription>
+          <DialogTitle
+            className="font-bold text-slate-900"
+            style={{fontSize: isMobile ? "4.5vw" : "1.286vw", paddingBottom: isMobile ? "3vw" : "1.559vw"}}
+          >Delete Job</DialogTitle>
+          <DialogDescription style={{fontSize: isMobile ? "3.5vw" : "0.857vw"}}>
             Are you sure you want to delete this job? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
@@ -62,7 +65,7 @@ export default function DeleteJobDialog(props: Props) {
               fontSize: isMobile ? "3.5vw" : "0.857vw",
               padding: isMobile
                 ? "2vw 4vw"
-                : "0.429vw 1.143vw",
+                : "0.86vw 1.143vw",
             }}
           >
             Cancel
@@ -75,7 +78,7 @@ export default function DeleteJobDialog(props: Props) {
               fontSize: isMobile ? "3.5vw" : "0.857vw",
               padding: isMobile
                 ? "2vw 4vw"
-                : "0.429vw 1.143vw",
+                : "0.86vw 1.143vw",
               color: "white",
             }}
           >

@@ -59,7 +59,7 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
               <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                 <SelectTrigger
                   style={{
-                    padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",
+                    padding: isMobile ? "3vw 4vw" : "1.143vw",
                     fontSize: isMobile ? "3.5vw" : "1vw",
                     width: isMobile ? "32vw" : "10vw"
                   }}
@@ -80,7 +80,7 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                 <SelectContent
                   style={{
                     width: isMobile ? "85vw" : "24.714vw",
-                    padding: isMobile ? "2vw 4vw" : "0.571vw 1.143vw"
+                    padding: isMobile ? "2vw 4vw" : "1.143vw"
                   }}
                 >
                   <div
@@ -111,7 +111,6 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                       }}
                     />
                   </div>
-                  <Separator type={"dashed"} />
                   <ScrollArea
                     style={{
                       height: isMobile ? "50vh" : "17.857vw"
@@ -154,7 +153,7 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                 {...field}
                 className="flex-1"
                 style={{
-                  padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",
+                  padding: isMobile ? "3vw 4vw" : "1.143vw",
                   fontSize: isMobile ? "3.5vw" : "1vw"
                 }}
                 onChange={(e) => {

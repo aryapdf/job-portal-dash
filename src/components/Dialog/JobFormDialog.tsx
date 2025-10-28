@@ -192,7 +192,7 @@ export default function JobFormDialog(props: Props) {
                     className="data-[state=on]:border-cyan-500 data-[state=on]:text-cyan-500 data-[state=on]:bg-transparent disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
                       borderRadius: '1000px',
-                      padding: "0.571vw 1.143vw",
+                      padding: "1.071vw 1.143vw",
                       fontSize: isMobile ? "3vw" : "0.857vw"
                     }}
                   >
@@ -215,7 +215,7 @@ export default function JobFormDialog(props: Props) {
         style={{
           gap: 0,
           maxWidth: "64.286vw",
-          maxHeight: "55.714vw",
+          maxHeight: "80vh",
           overflowY: "scroll",
         }}
       >
@@ -227,7 +227,7 @@ export default function JobFormDialog(props: Props) {
             borderBottom: "1px solid rgba(224, 224, 224, 1)"
           }}
         >
-          <div>Job Form</div>
+          <div style={{fontSize: isMobile ? "4vw" : "1.143vw"}}>Job Form</div>
           <Button
             onClick={() => props.onOpenChange(false)}
             className="flex items-center justify-center relative"
@@ -264,7 +264,7 @@ export default function JobFormDialog(props: Props) {
                         {...field}
                         className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
                         style={{
-                          padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                          padding: isMobile ? "2.5vw 4vw" : "1.1vw 1.111vw",
                           fontSize: isMobile ? "3.5vw" : "0.857vw",
                         }}
                       />
@@ -296,7 +296,7 @@ export default function JobFormDialog(props: Props) {
                         <SelectTrigger
                           className="w-full border-slate-300 transition-all"
                           style={{
-                            padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                            padding: isMobile ? "2.5vw 4vw" : "1.1vw 1.111vw",
                             fontSize: isMobile ? "3.5vw" : "0.857vw",
                           }}
                         >
@@ -310,7 +310,7 @@ export default function JobFormDialog(props: Props) {
                                 value={type.value}
                                 className="font-bold"
                                 style={{
-                                  padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                                  padding: isMobile ? "2.5vw 4vw" : "1.1vw 1.111vw",
                                   fontSize: isMobile ? "3.5vw" : "0.857vw",
                                 }}
                               >
@@ -350,7 +350,7 @@ export default function JobFormDialog(props: Props) {
                         className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all resize-none overflow-hidden"
                         rows={4}
                         style={{
-                          padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                          padding: isMobile ? "2.5vw 4vw" : "1.1vw 1.111vw",
                           fontSize: isMobile ? "3.5vw" : "0.857vw",
                         }}
                         onInput={handleTextareaResize}
@@ -390,7 +390,7 @@ export default function JobFormDialog(props: Props) {
                         }}
                         className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
                         style={{
-                          padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
+                          padding: isMobile ? "2.5vw 4vw" : "1.056vw 1.111vw",
                           fontSize: isMobile ? "3.5vw" : "0.857vw",
                         }}
                       />
@@ -524,7 +524,7 @@ export default function JobFormDialog(props: Props) {
                 />
               </div>
 
-              <Card style={{ width: "100%", padding: "1.143vw", gap: "1.143vw" }}>
+              <Card style={{ width: "100%", padding: "1.143vw", gap: "1.143vw",  fontSize: isMobile ? "3.5vw" : "0.857vw", }}>
                 <CardHeader>
                   <CardTitle>
                     Minimum Profile Information Required
@@ -532,7 +532,7 @@ export default function JobFormDialog(props: Props) {
                 </CardHeader>
 
                 <CardContent className={"flex flex-col"} style={{ gap: "1.143vw" }}>
-                  {REQUIREMENT_FIELDS.map((field) => (
+                  {REQUIREMENT_FIELDS.map((field:any) => (
                     <RequirementToggleField
                       key={field.name}
                       control={form.control}
@@ -553,7 +553,7 @@ export default function JobFormDialog(props: Props) {
                   disabled={isSubmitting}
                   style={{
                     fontSize: isMobile ? "3.5vw" : "0.857vw",
-                    padding: isMobile ? "2.5vw 5vw" : "0.556vw 1.5vw",
+                    padding: isMobile ? "2.5vw 5vw" : "1.056vw 1.5vw",
                   }}
                 >
                   Cancel
@@ -566,7 +566,7 @@ export default function JobFormDialog(props: Props) {
                     background: "rgba(251, 192, 55, 1)",
                     color: "rgba(64, 64, 64, 1)",
                     fontSize: isMobile ? "3.5vw" : "0.857vw",
-                    padding: isMobile ? "2.5vw 5vw" : "0.556vw 1.5vw",
+                    padding: isMobile ? "2.5vw 5vw" : "1.056vw 1.5vw",
                   }}
                 >
                   {isSubmitting ? "Publishing..." : "Publish Job"}

@@ -51,7 +51,7 @@ export function SearchSelectInput({
           disabled={disabled}
           className="justify-between w-full"
           style={{
-            padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+            padding: isMobile ? "3.5vw 4vw" : "1.41vw 1.143vw",
             fontSize: isMobile ? "3.5vw" : "1vw",
             opacity: disabled ? 0.6 : 1,
           }}
@@ -71,12 +71,13 @@ export function SearchSelectInput({
       >
         <Command
           style={{
-            padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+            padding: isMobile ? "3.5vw 4vw" : "1.41vw 1.143vw",
             fontSize: isMobile ? "3.5vw" : "1vw",
           }}
         >
           <CommandInput
             placeholder={`Search ${label || ""}...`}
+            style={{fontSize: isMobile ? "2vw" : "0.75vw"}}
           />
           <CommandList>
             <CommandEmpty>No result found.</CommandEmpty>
@@ -90,8 +91,8 @@ export function SearchSelectInput({
                     setOpen(false)
                   }}
                   style={{
-                    padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
-                    fontSize: isMobile ? "3.5vw" : "1vw",
+                    padding: isMobile ? "3.5vw 4vw" : "0.515vw 0vw",
+                    fontSize: isMobile ? "2vw" : "0.75vw",
                   }}
                 >
                   <Check

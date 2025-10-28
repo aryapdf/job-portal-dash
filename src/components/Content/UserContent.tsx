@@ -251,9 +251,9 @@ export default function UserContent() {
                             selectedJob?.status === "active"
                               ? "bg-yellow-400 hover:bg-yellow-500 text-slate-900"
                               : "bg-slate-200 hover:bg-slate-300 text-slate-700"
-                          } font-semibold cursor-pointer`}
+                          } font-bold cursor-pointer`}
                           style={{
-                            padding: "0.286vw 1.143vw",
+                            padding: "1.143vw",
                             fontSize: "1vw",
                           }}
                         >

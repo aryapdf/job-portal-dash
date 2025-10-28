@@ -24,45 +24,32 @@ export default function CameraDialog({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
   const [captured, setCaptured] = useState(false)
-
   const [handDetector, setHandDetector] = useState<HandLandmarker | null>(null)
   const [detecting, setDetecting] = useState(false)
   const [gestureStep, setGestureStep] = useState(0)
-  const lastStepTime = useRef(0) // Fix: initialize to 0
-  const consecutiveFrames = useRef(0) // Track consecutive detections
+  const lastStepTime = useRef(0)
+  const consecutiveFrames = useRef(0)
 
-  // FIXED: Improved finger counting
   function getFingerCount(landmarks: any[]) {
     let count = 0
-
-    // Thumb (special case - check horizontal distance)
     const thumbTip = landmarks[4]
-    const thumbIP = landmarks[3]
     const thumbMCP = landmarks[2]
     const wrist = landmarks[0]
 
-    // Check if thumb is extended (away from palm)
-    const thumbDist = Math.abs(thumbTip.x - wrist.x)
-    const thumbBaseDist = Math.abs(thumbMCP.x - wrist.x)
-    if (thumbDist > thumbBaseDist * 1.3) count++
+    if (Math.abs(thumbTip.x - wrist.x) > Math.abs(thumbMCP.x - wrist.x) * 1.3) count++
 
-    // Other fingers - check if tip is higher than PIP joint
     const fingers = [
-      { tip: 8, pip: 6 },   // Index
-      { tip: 12, pip: 10 }, // Middle
-      { tip: 16, pip: 14 }, // Ring
-      { tip: 20, pip: 18 }  // Pinky
+      { tip: 8, pip: 6 },
+      { tip: 12, pip: 10 },
+      { tip: 16, pip: 14 },
+      { tip: 20, pip: 18 }
     ]
 
     for (const finger of fingers) {
       const tip = landmarks[finger.tip]
       const pip = landmarks[finger.pip]
       const mcp = landmarks[finger.pip - 1]
-
-      // Check if finger is extended
-      if (tip.y < pip.y && tip.y < mcp.y) {
-        count++
-      }
+      if (tip.y < pip.y && tip.y < mcp.y) count++
     }
 
     return count
@@ -84,7 +71,6 @@ export default function CameraDialog({
 
     if (open) {
       startCamera()
-      // Reset state when dialog opens
       setGestureStep(0)
       lastStepTime.current = 0
       consecutiveFrames.current = 0
@@ -103,16 +89,13 @@ export default function CameraDialog({
     }
   }, [open])
 
-  // === initialize MediaPipe ===
   useEffect(() => {
     if (!open) return
-
     let active = true
     async function initHandDetector() {
       const vision = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
       )
-
       const detector = await HandLandmarker.createFromOptions(vision, {
         baseOptions: {
           modelAssetPath:
@@ -135,10 +118,8 @@ export default function CameraDialog({
     const video = videoRef.current
     const canvas = canvasRef.current
     if (!video || !canvas) return
-
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
     ctx.drawImage(video, 0, 0)
@@ -153,7 +134,6 @@ export default function CameraDialog({
     }, "image/jpeg")
   }
 
-  // FIXED: Improved detection logic
   useEffect(() => {
     if (!handDetector || !videoRef.current) return
 
@@ -164,7 +144,6 @@ export default function CameraDialog({
 
     const detect = async () => {
       if (!isActive || !videoRef.current) return
-
       const now = Date.now()
       if (now - lastDetection < 100) {
         rafId = requestAnimationFrame(detect)
@@ -175,41 +154,26 @@ export default function CameraDialog({
       const video = videoRef.current
       if (video.readyState >= 2) {
         const result = await handDetector.detectForVideo(video, performance.now())
-
         if (result.landmarks?.length) {
           const hand = result.landmarks[0]
           const fingersUp = getFingerCount(hand)
-
           const expectedFingers = [1, 2, 3][gestureStep]
 
           if (fingersUp === expectedFingers) {
             consecutiveFrames.current++
-
-            // Need 3 consecutive frames to confirm gesture (about 300ms)
             if (consecutiveFrames.current >= 3) {
-              const timeSinceLast = now - lastStepTime.current
-
-              // For first step (0->1), allow immediate transition
-              // For other steps, require 500ms gap to prevent accidental triggers
               const minGap = gestureStep === 0 ? 0 : 500
-
-              if (timeSinceLast >= minGap) {
-                console.log(`Step ${gestureStep} -> ${gestureStep + 1}: ${fingersUp} fingers detected`)
+              if (now - lastStepTime.current >= minGap) {
                 setGestureStep(prev => prev + 1)
                 lastStepTime.current = now
                 consecutiveFrames.current = 0
               }
             }
-          } else {
-            // Reset consecutive frames if wrong gesture
-            consecutiveFrames.current = 0
-          }
+          } else consecutiveFrames.current = 0
 
-          // Auto-capture when reaching step 3
           if (gestureStep === 3 && now - lastCapture > 1000) {
             lastCapture = now
             handleCapture()
-            // Reset after capture
             setTimeout(() => {
               setGestureStep(0)
               lastStepTime.current = 0
@@ -217,19 +181,13 @@ export default function CameraDialog({
             }, 1000)
           }
 
-          // Reset if user idle too long (8 seconds)
           if (gestureStep > 0 && now - lastStepTime.current > 8000) {
-            console.log("Reset due to timeout")
             setGestureStep(0)
             lastStepTime.current = 0
             consecutiveFrames.current = 0
           }
-        } else {
-          // No hand detected
-          consecutiveFrames.current = 0
-        }
+        } else consecutiveFrames.current = 0
       }
-
       rafId = requestAnimationFrame(detect)
     }
 
@@ -255,15 +213,15 @@ export default function CameraDialog({
             fontSize: isMobile ? "5vw" : "1.429vw"
           }}
         >
-          Take a Picture
+          Raise Your Hand to Capture
         </DialogTitle>
+        <div className="text-left mt-2 text-sm font-medium text-slate-600">
+          We&#39;ll take the photo once your hand pose is detected.
+        </div>
         <div
           className="flex flex-col items-center relative"
           style={{ gap: isMobile ? "3vw" : "0.857vw" }}
         >
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-lg text-sm font-medium z-10">
-            {gestureStep < 3 ? `Step ${gestureStep + 1}/3` : "📸 Capturing..."}
-          </div>
           <video
             ref={videoRef}
             autoPlay
@@ -275,42 +233,79 @@ export default function CameraDialog({
           />
           <canvas ref={canvasRef} className="hidden w-full" />
           <div className="w-full mt-3">
-            <Progress value={gestureStep * 33.33} />
-            <p className="text-center mt-2 text-sm font-medium text-slate-600">
-              {gestureStep === 0 && "👆 Tunjukkan 1 jari untuk mulai"}
-              {gestureStep === 1 && "✌️ Bagus! Sekarang tunjukkan 2 jari"}
-              {gestureStep === 2 && "🤚 Mantap! Sekarang 3 jari untuk capture"}
-              {gestureStep === 3 && "📸 Mengambil foto..."}
-            </p>
-          </div>
-          <div
-            className="flex"
-            style={{
-              gap: isMobile ? "2vw" : "0.571vw",
-              marginTop: isMobile ? "3vw" : "0.857vw"
-            }}
-          >
-            <Button
-              onClick={handleCapture}
-              className="font-semibold"
-              style={{
-                padding: isMobile ? "2.5vw 4vw" : "0.286vw 1.143vw",
-                fontSize: isMobile ? "3.5vw" : "1vw"
-              }}
+            <div className="text-left mt-2 font-medium text-slate-600">
+              We&#39;ll take the photo once your hand pose is detected.
+            </div>
+            <div
+              className="mt-2 flex items-center justify-center w-full font-bold text-slate-600"
+              style={{ gap: isMobile ? "2vw" : "0.571vw", marginTop: isMobile ? "3.2vw" : "1.604vw"  }}
             >
-              Capture
-            </Button>
-            <Button
-              variant="outline"
-              onClick={onClose}
-              className="font-semibold"
-              style={{
-                padding: isMobile ? "2.5vw 4vw" : "0.286vw 1.143vw",
-                fontSize: isMobile ? "3.5vw" : "1vw"
-              }}
-            >
-              {captured ? "Close" : "Cancel"}
-            </Button>
+              <div
+                style={{
+                  padding: isMobile ? "0.833vw" : "0.857vw",
+                  background: "rgba(64, 64, 64, 1)"
+                }}
+              >
+                <img
+                  src={gestureStep === 0 ? "/asset/hand-gesture-one.png" : "/asset/hand-gesture-one-active.png"}
+                  style={{
+                    height: isMobile ? "6.39vw" : "5.604vw",
+                    objectFit: "contain",
+                  }}
+                  alt=""
+                />
+              </div>
+
+              <img
+                src="/asset/chevron-right.svg"
+                alt=""
+                style={{
+                  width: isMobile ? "6vw" : "1.714vw",
+                  height: isMobile ? "6vw" : "1.714vw"
+                }}
+              />
+
+              <div
+                style={{
+                  padding: isMobile ? "0.833vw" : "0.857vw",
+                  background: "rgba(64, 64, 64, 1)"
+                }}
+              >
+                <img
+                  src={gestureStep > 1 ? "/asset/hand-gesture-two-active.png" : "/asset/hand-gesture-two.png"}
+                  style={{
+                    height: isMobile ? "6.39vw" : "5.604vw",
+                    objectFit: "contain",
+                  }}
+                  alt=""
+                />
+              </div>
+
+              <img
+                src="/asset/chevron-right.svg"
+                alt=""
+                style={{
+                  width: isMobile ? "6vw" : "1.714vw",
+                  height: isMobile ? "6vw" : "1.714vw"
+                }}
+              />
+
+              <div
+                style={{
+                  padding: isMobile ? "0.833vw" : "0.857vw",
+                  background: "rgba(64, 64, 64, 1)"
+                }}
+              >
+                <img
+                  src={gestureStep > 2 ? "/asset/hand-gesture-three-active.png" : "/asset/hand-gesture-three.png"}
+                  style={{
+                    height: isMobile ? "6.39vw" : "5.604vw",
+                    objectFit: "contain",
+                  }}
+                  alt=""
+                />
+              </div>
+            </div>
           </div>
         </div>
       </DialogContent>

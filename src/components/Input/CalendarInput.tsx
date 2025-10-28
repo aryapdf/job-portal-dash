@@ -77,7 +77,7 @@ export default function CalendarInput({ value, onChange }: CustomCalendarFieldPr
             !value && "text-muted-foreground"
           )}
           style={{
-            padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+            padding: isMobile ? "3.5vw 4vw" : "1.41vw 1.143vw",
             fontSize: isMobile ? "3.5vw" : "1vw",
           }}
         >

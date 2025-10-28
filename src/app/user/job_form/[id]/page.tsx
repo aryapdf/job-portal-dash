@@ -200,7 +200,6 @@ export default function Page() {
         <div
           className="flex flex-col items-start"
           style={{
-            marginBottom: isMobile ? "5vw" : "1.714vw",
             gap: isMobile ? "3vw" : "0"
           }}
         >
@@ -208,7 +207,6 @@ export default function Page() {
             className="flex items-center w-full"
             style={{
               gap: isMobile ? "3vw" : "1.14vw",
-              marginBottom: isMobile ? "3vw" : "1.143vw"
             }}
           >
             <Button
@@ -305,7 +303,7 @@ export default function Page() {
                     size="sm"
                     className="flex items-center"
                     style={{
-                      padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",
+                      padding: isMobile ? "3vw 4vw" : "1.41vw 1.143vw",
                       fontSize: isMobile ? "3.5vw" : "1vw",
                       gap: isMobile ? "2vw" : "0.571vw"
                     }}
@@ -342,7 +340,7 @@ export default function Page() {
                         placeholder="Budi Yanto"
                         {...field}
                         style={{
-                          padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+                          padding: isMobile ? "3.5vw 4vw" : "1.41vw 1.143vw",
                           fontSize: isMobile ? "3.5vw" : "1vw"
                         }}
                       />
@@ -390,7 +388,8 @@ export default function Page() {
                   <FormItem>
                     <FormLabel
                       style={{
-                        fontSize: isMobile ? "3.5vw" : "1vw"
+                        fontSize: isMobile ? "3.5vw" : "1vw",
+                        marginBottom: isMobile ? "2vw" : "0.5vw"
                       }}
                     >
                       Pronoun (gender) {isRequired("genderReq") && <span className="text-red-500">*</span>}
@@ -402,14 +401,14 @@ export default function Page() {
                         className="flex"
                         style={{
                           gap: isMobile ? "5vw" : "2.286vw",
-                          flexDirection: isMobile ? "column" : "row"
+                          flexDirection: isMobile ? "column" : "row",
                         }}
                       >
                         <FormItem
                           className="flex items-center"
                           style={{gap: isMobile ? "2vw" : "0.571vw"}}
                         >
-                          <RadioGroupItem value="female" />
+                          <RadioGroupItem value="female" style={{color: "green"}} />
                           <FormLabel
                             className="font-normal text-gray-700"
                             style={{fontSize: isMobile ? "3.5vw" : "1vw"}}
@@ -474,7 +473,7 @@ export default function Page() {
                         placeholder="your@email.com"
                         {...field}
                         style={{
-                          padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+                          padding: isMobile ? "3.5vw 4vw" : "1.41vw 1.143vw",
                           fontSize: isMobile ? "3.5vw" : "1vw"
                         }}
                       />
@@ -504,7 +503,7 @@ export default function Page() {
                         placeholder="https://linkedin.com/in/username"
                         {...field}
                         style={{
-                          padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+                          padding: isMobile ? "3.5vw 4vw" : "1.41vw 1.143vw",
                           fontSize: isMobile ? "3.5vw" : "1vw"
                         }}
                       />
