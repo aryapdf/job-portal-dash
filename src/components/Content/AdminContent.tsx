@@ -1,5 +1,4 @@
-// File: components/AdminContent.tsx
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +8,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import JobFormDialog from "@/components/Dialog/JobFormDialog";
 import { useState, useEffect } from "react";
 import { EmptyJobCard } from "@/components/Card/EmptyJobCard";
-import { getAllJobs, JobData } from "@/lib/services/jobService";
-import {LoadingOverlay} from "@/components/Loading/LoadingOverlay";
-import {formatDate, formatJobType, formatRupiah} from "@/lib/helper/formatter";
-import {useRouter} from "next/navigation";
+import { getAllJobs } from "@/lib/services/jobService";
+import { LoadingOverlay } from "@/components/Loading/LoadingOverlay";
+import { useRouter } from "next/navigation";
+
+type JobData = {
+  id: string;
+  slug: string;
+  title: string;
+  status: "active" | "inactive" | "draft" | string;
+  salary_range: {
+    min: number;
+    max: number;
+    currency: string;
+    display_text: string;
+  };
+  list_card: {
+    badge: string;
+    started_on_text: string;
+    cta: string;
+  };
+};
 
 export default function AdminContent() {
   const deviceType = useSelector((state: RootState) => state.screen.deviceType);
@@ -26,8 +42,8 @@ export default function AdminContent() {
 
   const fetchJobs = async () => {
     try {
-      const fetchedJobs = await getAllJobs();
-      setJobs(fetchedJobs);
+      const response = await getAllJobs(); // assume it returns { data: [...] }
+      setJobs(response || []);
     } catch (error) {
       console.error("Error fetching jobs:", error);
     } finally {
@@ -39,16 +55,11 @@ export default function AdminContent() {
     fetchJobs();
   }, []);
 
-  const filteredJobs = jobs.filter((job) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      job.jobName.toLowerCase().includes(query) ||
-      job.jobType.toLowerCase().includes(query) ||
-      job.jobDescription.toLowerCase().includes(query)
-    );
-  });
+  const filteredJobs = jobs.filter((job) =>
+    job.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const getStatusColor = (status?: string) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -62,7 +73,6 @@ export default function AdminContent() {
   };
 
   const handleJobCreated = async () => {
-    // Refresh data setelah job dibuat
     await fetchJobs();
   };
 
@@ -79,7 +89,7 @@ export default function AdminContent() {
         style={{
           flexDirection: isMobile ? "column" : "row",
           padding: isMobile ? "5vw 4vw" : "2.571vw 1.714vw",
-          gap: isMobile ? "5vw" : "0"
+          gap: isMobile ? "5vw" : "0",
         }}
       >
         {/* Main Content Area */}
@@ -87,7 +97,7 @@ export default function AdminContent() {
           className="h-full overflow-hidden overflow-y-scroll rounded-sm flex flex-col"
           style={{
             width: isMobile ? "100%" : "74.5vw",
-            gap: isMobile ? "5vw" : "1.429vw"
+            gap: isMobile ? "5vw" : "1.429vw",
           }}
         >
           {/* Search Bar */}
@@ -100,7 +110,7 @@ export default function AdminContent() {
           >
             <Input
               type="search"
-              placeholder="Search by job details"
+              placeholder="Search by job title"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="rounded-sm h-fit"
@@ -109,7 +119,7 @@ export default function AdminContent() {
                 border: "none",
                 outline: "none",
                 boxShadow: "none",
-                fontSize: isMobile ? "4vw" : "inherit"
+                fontSize: isMobile ? "4vw" : "inherit",
               }}
             />
             <img
@@ -128,23 +138,27 @@ export default function AdminContent() {
               <LoadingOverlay isLoading={loading} />
             </div>
           ) : filteredJobs.length === 0 && searchQuery ? (
-            // No Search Results
             <div className="flex flex-col flex-1 items-center justify-center rounded-md">
-              <p className="text-slate-600" style={{ fontSize: isMobile ? "4vw" : "1.143vw" }}>
+              <p
+                className="text-slate-600"
+                style={{ fontSize: isMobile ? "4vw" : "1.143vw" }}
+              >
                 No jobs found matching &#34;{searchQuery}&#34;
               </p>
             </div>
           ) : filteredJobs.length === 0 ? (
-            // Empty State
             <div className="flex flex-col flex-1 items-center justify-center rounded-md relative">
-              <EmptyJobCard type={"admin"} onClick={() => setJobDialogOpen(true)} />
+              <EmptyJobCard
+                type={"admin"}
+                onClick={() => setJobDialogOpen(true)}
+              />
             </div>
           ) : (
-            // Jobs List
+            // Job List
             <div
               className="flex flex-col rounded-md"
               style={{
-                gap: isMobile ? "3vw" : "1.143vw"
+                gap: isMobile ? "3vw" : "1.143vw",
               }}
             >
               {filteredJobs.map((job) => (
@@ -153,75 +167,76 @@ export default function AdminContent() {
                   className="rounded-xl border-none transition-all hover:shadow-md"
                   style={{
                     padding: isMobile ? "4vw" : "1.429vw",
-                    boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.1)"
+                    boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  <CardContent className="p-0 flex flex-col" style={{ gap: isMobile ? "3vw" : "0.857vw" }}>
-                    <div className="flex items-center" style={{gap: "16px"}}>
+                  <CardContent
+                    className="p-0 flex flex-col"
+                    style={{ gap: isMobile ? "3vw" : "0.857vw" }}
+                  >
+                    <div className="flex items-center" style={{ gap: "16px" }}>
                       <div
-                        className={`${getStatusColor(job.status)} font-medium rounded-md capitalize`}
+                        className={`${getStatusColor(
+                          job.status
+                        )} font-medium rounded-md capitalize`}
                         style={{
                           fontSize: isMobile ? "3vw" : "0.857vw",
-                          padding: isMobile ? "1vw 2.5vw" : "0.286vw 0.714vw"
+                          padding: isMobile
+                            ? "1vw 2.5vw"
+                            : "0.286vw 0.714vw",
                         }}
                       >
-                        {job.status || "Active"}
+                        {job.list_card.badge}
                       </div>
                       <span
                         className="text-slate-600 border-1 rounded-md"
                         style={{
                           fontSize: isMobile ? "3vw" : "0.857vw",
-                          padding: isMobile ? "1vw 2.5vw" : "0.286vw 0.714vw"
+                          padding: isMobile
+                            ? "1vw 2.5vw"
+                            : "0.286vw 0.714vw",
                         }}
                       >
-                          started on {formatDate(job.createdAt)}
+                        {job.list_card.started_on_text}
                       </span>
                     </div>
 
-                    {/* Job Title & Type */}
-                    <div>
-                      <h3
-                        className="font-bold text-slate-900"
-                        style={{
-                          fontSize: isMobile ? "4.5vw" : "1.286vw"
-                        }}
-                      >
-                        {job.jobName}
-                      </h3>
-                      <p
-                        className="text-slate-600 mt-1"
-                        style={{
-                          fontSize: isMobile ? "3vw" : "0.786vw"
-                        }}
-                      >
-                        {formatJobType(job.jobType)} • {job.candidateNumber} candidate{job.candidateNumber > 1 ? "s" : ""} needed
-                      </p>
-                    </div>
+                    {/* Title */}
+                    <h3
+                      className="font-bold text-slate-900"
+                      style={{
+                        fontSize: isMobile ? "4.5vw" : "1.286vw",
+                      }}
+                    >
+                      {job.title}
+                    </h3>
 
-                    {/* Salary and Button Row */}
+                    {/* Salary & CTA */}
                     <div className="flex items-center justify-between">
                       <span
                         className="text-slate-700"
                         style={{
-                          fontSize: isMobile ? "3.5vw" : "1vw"
+                          fontSize: isMobile ? "3.5vw" : "1vw",
                         }}
                       >
-                        {formatRupiah(job.minSalary)} - {formatRupiah(job.maxSalary)}
+                        {job.salary_range.display_text}
                       </span>
                       <Button
                         onClick={() => {
                           setLoading(true);
-                          router.push(`/admin/job/${job.id}?job-title=${job.jobName}`)
+                          router.push(`/admin/job/${job.id}`);
                         }}
                         className="rounded-md font-bold cursor-pointer"
                         style={{
                           fontSize: isMobile ? "3.5vw" : "0.857vw",
-                          padding: isMobile ? "2vw 4vw" : "0.429vw 1.143vw",
+                          padding: isMobile
+                            ? "2vw 4vw"
+                            : "0.429vw 1.143vw",
                           backgroundColor: "rgba(1, 149, 159, 1)",
-                          color: "white"
+                          color: "white",
                         }}
                       >
-                        Manage Job
+                        {job.list_card.cta}
                       </Button>
                     </div>
                   </CardContent>
@@ -237,8 +252,9 @@ export default function AdminContent() {
           style={{
             width: isMobile ? "100%" : "auto",
             padding: isMobile ? "8vw 6vw" : "1.714vw",
-            background: "url('/asset/work-background.webp') no-repeat center/cover",
-            marginTop: isMobile ? "5vw" : "0"
+            background:
+              "url('/asset/work-background.webp') no-repeat center/cover",
+            marginTop: isMobile ? "5vw" : "0",
           }}
         >
           <div
@@ -248,37 +264,33 @@ export default function AdminContent() {
               backgroundColor: "rgba(0, 0, 0, 0.72)",
             }}
           />
-
           <div
-            className="relative font-bold"
+            className="relative font-bold text-slate-200"
             style={{
               fontSize: isMobile ? "4.5vw" : "1.286vw",
-              color: "rgba(224, 224, 224, 1)",
-              marginBottom: isMobile ? "2vw" : "0.286vw"
+              marginBottom: isMobile ? "2vw" : "0.286vw",
             }}
           >
             Recruit the best candidates
           </div>
           <div
-            className="relative font-bold"
+            className="relative font-bold text-white"
             style={{
               fontSize: isMobile ? "3.5vw" : "1vw",
-              color: "rgba(255, 255, 255, 1)",
-              marginBottom: isMobile ? "6vw" : "1.714vw"
+              marginBottom: isMobile ? "6vw" : "1.714vw",
             }}
           >
             Create jobs, invite, and hire with ease
           </div>
-
           <Button
             className="font-bold rounded-lg relative overflow-hidden cursor-pointer"
             onClick={() => setJobDialogOpen(true)}
             style={{
               fontSize: isMobile ? "4vw" : "1.143vw",
-              color: "rgba(255, 255, 255, 1)",
+              color: "white",
               background: "rgba(1, 149, 159, 1)",
               height: isMobile ? "12vw" : "auto",
-              padding: isMobile ? "3vw 5vw" : "0.5vw 1vw"
+              padding: isMobile ? "3vw 5vw" : "0.5vw 1vw",
             }}
           >
             Create a new job

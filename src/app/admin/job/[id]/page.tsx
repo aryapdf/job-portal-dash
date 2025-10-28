@@ -68,7 +68,7 @@ export default function Page() {
           gap: isMobile ? "2.34vw" : "1.29vw"
         }}>
           <Button
-            onClick={() => {router.push("/user")}}
+            onClick={() => {router.push("/admin")}}
             className="flex items-center justify-center border-1 cursor-pointer"
             style={{
               background: "transparent",

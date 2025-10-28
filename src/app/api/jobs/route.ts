@@ -38,9 +38,58 @@ export async function GET(request: NextRequest) {
       returnedJob = jobs
     }
 
+    const formattedJobs = returnedJob.map((job: any, index: number) => {
+      const date = new Date(job.createdAt);
+      const formattedDate = date.toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      });
+
+      const slug = job.jobName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+
+      const dateCode = date
+        .toISOString()
+        .slice(0, 10)
+        .replace(/-/g, "");
+      const formattedId = `job_${dateCode}_${(index + 1)
+        .toString()
+        .padStart(4, "0")}`;
+
+      const formatter = new Intl.NumberFormat("id-ID");
+      const minText = formatter.format(job.minSalary);
+      const maxText = formatter.format(job.maxSalary);
+
+      return {
+        id: job.id,
+        slug,
+        title: job.jobName,
+        status: job.status,
+        salary_range: {
+          min: job.minSalary,
+          max: job.maxSalary,
+          currency: "IDR",
+          display_text: `Rp${minText} - Rp${maxText}`,
+        },
+        list_card: {
+          badge:
+            job.status === "active"
+              ? "Active"
+              : job.status === "closed"
+                ? "Closed"
+                : "Draft",
+          started_on_text: `started on ${formattedDate}`,
+          cta: "Manage Job",
+        },
+      };
+    });
+
     return NextResponse.json({
       success: true,
-      data: returnedJob,
+      data: formattedJobs,
     });
   } catch (error: any) {
     console.error('Error fetching jobs:', error);
@@ -102,6 +151,57 @@ export async function POST(request: NextRequest) {
     console.error('Error creating job:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'Failed to create job' },
+      { status: 500 }
+    );
+  }
+}
+
+// Delete
+export async function DELETE(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Job ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const jobs = await readJobs();
+
+    // pastikan data valid array
+    if (!Array.isArray(jobs)) {
+      return NextResponse.json(
+        { success: false, error: "Jobs data is invalid" },
+        { status: 500 }
+      );
+    }
+
+    const jobIndex = jobs.findIndex((job: any) => job.id === id);
+
+    if (jobIndex === -1) {
+      return NextResponse.json(
+        { success: false, error: "Job not found" },
+        { status: 404 }
+      );
+    }
+
+    // hapus dari array
+    const deletedJob = jobs.splice(jobIndex, 1)[0];
+
+    await writeJobs(jobs);
+
+    return NextResponse.json({
+      success: true,
+      message: "Job deleted successfully",
+      data: deletedJob,
+    });
+  } catch (error: any) {
+    console.error("Error deleting job:", error);
+    return NextResponse.json(
+      { success: false, error: error.message || "Failed to delete job" },
       { status: 500 }
     );
   }

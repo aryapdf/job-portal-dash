@@ -44,6 +44,31 @@ export const createJob = async (jobData:any) => {
   }
 };
 
+export const deleteJob = async (id: string) => {
+  try {
+    const response = await fetch(`/api/jobs?id=${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || "Failed to delete job");
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    throw error;
+  }
+};
+
+
 export const getAllJobs = async () => {
   try {
     const response = await fetch('/api/jobs', {
