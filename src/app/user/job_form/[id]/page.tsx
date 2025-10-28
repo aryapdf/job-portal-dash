@@ -172,7 +172,7 @@ export default function Page() {
   if (!jobDetail) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p>Job detail not found.</p>
+        <div>Job detail not found.</div>
       </div>
     )
   }

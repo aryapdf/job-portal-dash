@@ -48,7 +48,7 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
               fontSize: isMobile ? "3.5vw" : "0.857vw"
             }}
           >
-            Phone number {isRequired && <span className="text-red-500">*</span>}
+            Phone number {isRequired && <div className="text-red-500">*</div>}
           </FormLabel>
           <FormControl>
             <div
@@ -72,8 +72,8 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                         fontSize: isMobile ? "3.5vw" : "1vw"
                       }}
                     >
-                      <span>{currentCountry.flagEmoji}</span>
-                      <span>{currentCountry.dialCode}</span>
+                      <div>{currentCountry.flagEmoji}</div>
+                      <div>{currentCountry.dialCode}</div>
                     </div>
                   </SelectValue>
                 </SelectTrigger>

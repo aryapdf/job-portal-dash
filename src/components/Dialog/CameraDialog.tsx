@@ -2,12 +2,8 @@
 
 import { useRef, useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
-
-// === added for gesture detection ===
 import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 
 export default function CameraDialog({
@@ -29,6 +25,11 @@ export default function CameraDialog({
   const [gestureStep, setGestureStep] = useState(0)
   const lastStepTime = useRef(0)
   const consecutiveFrames = useRef(0)
+
+  // Countdown state
+  const [countdown, setCountdown] = useState<number | null>(null)
+  const [isCountingDown, setIsCountingDown] = useState(false)
+  const countdownStarted = useRef(false)
 
   function getFingerCount(landmarks: any[]) {
     let count = 0
@@ -74,6 +75,9 @@ export default function CameraDialog({
       setGestureStep(0)
       lastStepTime.current = 0
       consecutiveFrames.current = 0
+      setCountdown(null)
+      setIsCountingDown(false)
+      countdownStarted.current = false
     } else {
       if (stream) {
         stream.getTracks().forEach(track => track.stop())
@@ -134,13 +138,40 @@ export default function CameraDialog({
     }, "image/jpeg")
   }
 
+  // FIXED: Countdown effect dengan ref untuk prevent re-trigger
+  useEffect(() => {
+    if (gestureStep === 3 && !countdownStarted.current) {
+      countdownStarted.current = true
+      setIsCountingDown(true)
+      setCountdown(3)
+
+      // Countdown dari 3 ke 2 ke 1
+      setTimeout(() => setCountdown(2), 1000)
+      setTimeout(() => setCountdown(1), 2000)
+
+      // Capture setelah countdown selesai (di 3 detik)
+      setTimeout(() => {
+        setCountdown(null)
+        handleCapture()
+        setIsCountingDown(false)
+
+        // Reset gesture step setelah capture
+        setTimeout(() => {
+          setGestureStep(0)
+          lastStepTime.current = 0
+          consecutiveFrames.current = 0
+          countdownStarted.current = false
+        }, 500)
+      }, 3000)
+    }
+  }, [gestureStep])
+
   useEffect(() => {
     if (!handDetector || !videoRef.current) return
 
     let rafId: number
     let isActive = true
     let lastDetection = 0
-    let lastCapture = 0
 
     const detect = async () => {
       if (!isActive || !videoRef.current) return
@@ -159,34 +190,31 @@ export default function CameraDialog({
           const fingersUp = getFingerCount(hand)
           const expectedFingers = [1, 2, 3][gestureStep]
 
-          if (fingersUp === expectedFingers) {
-            consecutiveFrames.current++
-            if (consecutiveFrames.current >= 3) {
-              const minGap = gestureStep === 0 ? 0 : 500
-              if (now - lastStepTime.current >= minGap) {
-                setGestureStep(prev => prev + 1)
-                lastStepTime.current = now
-                consecutiveFrames.current = 0
+          // Jangan deteksi gesture baru kalau sedang countdown
+          if (!isCountingDown) {
+            if (fingersUp === expectedFingers) {
+              consecutiveFrames.current++
+              if (consecutiveFrames.current >= 3) {
+                const minGap = gestureStep === 0 ? 0 : 500
+                if (now - lastStepTime.current >= minGap) {
+                  setGestureStep(prev => prev + 1)
+                  lastStepTime.current = now
+                  consecutiveFrames.current = 0
+                }
               }
-            }
-          } else consecutiveFrames.current = 0
+            } else consecutiveFrames.current = 0
 
-          if (gestureStep === 3 && now - lastCapture > 1000) {
-            lastCapture = now
-            handleCapture()
-            setTimeout(() => {
+            if (gestureStep > 0 && gestureStep < 3 && now - lastStepTime.current > 8000) {
               setGestureStep(0)
               lastStepTime.current = 0
               consecutiveFrames.current = 0
-            }, 1000)
+            }
           }
-
-          if (gestureStep > 0 && now - lastStepTime.current > 8000) {
-            setGestureStep(0)
-            lastStepTime.current = 0
+        } else {
+          if (!isCountingDown) {
             consecutiveFrames.current = 0
           }
-        } else consecutiveFrames.current = 0
+        }
       }
       rafId = requestAnimationFrame(detect)
     }
@@ -196,7 +224,7 @@ export default function CameraDialog({
       isActive = false
       cancelAnimationFrame(rafId)
     }
-  }, [handDetector, gestureStep])
+  }, [handDetector, gestureStep, isCountingDown])
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -222,15 +250,39 @@ export default function CameraDialog({
           className="flex flex-col items-center relative"
           style={{ gap: isMobile ? "3vw" : "0.857vw" }}
         >
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="w-full rounded-md bg-black"
-            style={{
-              borderRadius: isMobile ? "2vw" : "0.571vw"
-            }}
-          />
+          {/* Video with countdown overlay */}
+          <div className="relative w-full">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="w-full rounded-md bg-black"
+              style={{
+                borderRadius: isMobile ? "2vw" : "0.571vw"
+              }}
+            />
+
+            {/* Countdown Overlay */}
+            {countdown !== null && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-md"
+                   style={{
+                     borderRadius: isMobile ? "2vw" : "0.571vw"
+                   }}
+              >
+                <div
+                  className="text-white font-bold"
+                  style={{
+                    fontSize: isMobile ? "30vw" : "15vw",
+                    textShadow: "0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(255,255,255,0.5)",
+                    animation: "pulse 0.5s ease-in-out"
+                  }}
+                >
+                  {countdown}
+                </div>
+              </div>
+            )}
+          </div>
+
           <canvas ref={canvasRef} className="hidden w-full" />
           <div className="w-full mt-3">
             <div className="text-left mt-2 font-medium text-slate-600">
@@ -252,7 +304,7 @@ export default function CameraDialog({
                     height: isMobile ? "6.39vw" : "5.604vw",
                     objectFit: "contain",
                   }}
-                  alt=""
+                  alt="1 finger"
                 />
               </div>
 
@@ -277,7 +329,7 @@ export default function CameraDialog({
                     height: isMobile ? "6.39vw" : "5.604vw",
                     objectFit: "contain",
                   }}
-                  alt=""
+                  alt="2 fingers"
                 />
               </div>
 
@@ -302,7 +354,7 @@ export default function CameraDialog({
                     height: isMobile ? "6.39vw" : "5.604vw",
                     objectFit: "contain",
                   }}
-                  alt=""
+                  alt="3 fingers"
                 />
               </div>
             </div>
