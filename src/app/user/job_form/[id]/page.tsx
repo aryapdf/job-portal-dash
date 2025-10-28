@@ -25,6 +25,7 @@ import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
 import CameraDialog from "@/components/Dialog/CameraDialog"
 import { PhoneNumberInput } from "@/components/Input/PhoneNumberInput"
 import { toast } from "sonner"
+import {DomicileInput} from "@/components/Input/DomicileInput";
 
 // Helper untuk bikin rule Zod berdasarkan field
 const buildSchema = (fields: any) => {
@@ -465,31 +466,9 @@ export default function Page() {
 
             {/* Domicile */}
             {renderIf("domicileReq") && (
-              <FormField
+              <DomicileInput
                 control={form.control}
-                name="domicile"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      style={{
-                        fontSize: isMobile ? "3.5vw" : "1vw"
-                      }}
-                    >
-                      Domicile {isRequired("domicileReq") && <span className="text-red-500">*</span>}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Kota Jakarta Barat - DKI Jakarta"
-                        {...field}
-                        style={{
-                          padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
-                          fontSize: isMobile ? "3.5vw" : "1vw"
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage style={{fontSize: isMobile ? "3vw" : "0.857vw"}} />
-                  </FormItem>
-                )}
+                isRequired={isRequired("domicileReq")}
               />
             )}
 
