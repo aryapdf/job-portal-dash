@@ -68,5 +68,19 @@
     "photo": "/asset/photo/photo-1761665207855.jpg",
     "appliedAt": "2025-10-28T15:26:47.884Z",
     "status": "pending"
+  },
+  {
+    "id": "cd386c90-0fb4-4f0d-8cd3-e49fd6d0da3f",
+    "jobId": "fc96dbd7-627e-4346-8721-5ac642b29f01",
+    "fullName": "Jeje",
+    "dateOfBirth": "2025-10-14T17:00:00.000Z",
+    "gender": "male",
+    "domicile": "Lombok Utara, Nusa Tenggara Barat",
+    "phoneNumber": "8812371231",
+    "email": "99asdf9i@gmail.com",
+    "linkedin": "https://linkedin.com/in/99813",
+    "photo": "/asset/photo/photo-1761666327212.jpg",
+    "appliedAt": "2025-10-28T15:45:27.233Z",
+    "status": "pending"
   }
 ]
