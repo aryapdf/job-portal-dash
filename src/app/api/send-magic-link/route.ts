@@ -55,22 +55,52 @@ export async function POST(req: NextRequest) {
     const magicLink = `${baseUrl}/verify?token=${customToken}&email=${encodeURIComponent(email)}`;
 
     await resend.emails.send({
-      from: "Rakamin Academy <onboarding@resend.dev>",
+      from: "Job Portal Dash <onboarding@resend.dev>",
       to: email,
-      subject: "Masuk ke Rakamin Academy",
+      subject: "Masuk ke Admin Dashboard",
       html: `
-        <div style="font-family:sans-serif;max-width:480px;margin:auto;text-align:center;padding:24px;border:1px solid #eee;border-radius:12px">
-          <h2 style="color:#222">Masuk ke Rakamin Academy</h2>
-          <p style="color:#555;font-size:15px">Halo! Klik tombol di bawah untuk masuk dengan aman.</p>
-          <a href="${magicLink}" 
-             style="background-color:#2563eb;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block;margin-top:16px">
-             Masuk Sekarang
-          </a>
-          <p style="margin-top:24px;font-size:13px;color:#777">
-            Link ini berlaku selama 1 jam. Jika kamu tidak meminta ini, abaikan saja email ini.
-          </p>
-        </div>
-      `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin:0;padding:0;background-color:#f4f4f4;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#f4f4f4;">
+          <tr>
+            <td style="padding:20px 0;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="480" style="margin:0 auto;background-color:#ffffff;border:1px solid #eeeeee;border-radius:12px;">
+                <tr>
+                  <td style="padding:24px;text-align:center;">
+                    <h2 style="color:#1d1f20;font-size:32px;margin:0 0 54px 0;font-weight:bold;font-family:sans-serif;">Job Portal Dash</h2>
+                    
+                    <p style="color:#555555;font-size:18px;margin:0 0 40px 0;text-align:left;line-height:1.5;font-family:sans-serif;">
+                      Hai! <br/><br/>
+                      Berikut adalah <strong>link masuk</strong> yang kamu request dari <span style="color:#007dfe;">jobPortalDash.com</span>
+                    </p>
+                    
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto 16px;">
+                      <tr>
+                        <td style="background-color:#01959f;border-radius:8px;">
+                          <a href="${magicLink}" style="background-color:#01959f;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block;font-family:sans-serif;font-size:16px;">
+                            Masuk ke Dashboard
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                    
+                    <p style="margin:24px 0 0 0;font-size:13px;color:#9e9e9e;line-height:1.5;font-family:sans-serif;">
+                      Untuk keamanan, link hanya dapat diakses dalam 30 menit. Jika kamu tidak ada permintaan untuk login melalui link, abaikan pesan ini.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        </body>
+      </html>
+  `
     });
 
     return NextResponse.json({ success: true });
