@@ -205,7 +205,7 @@ export default function Page() {
                 }}
               />
             </Button>
-            <div className="font-bold" style={{color: "rgba(29, 31, 32, 1)"}}>
+            <div className="font-bold" style={{color: "rgba(29, 31, 32, 1)", fontSize: "18px"}}>
               Apply {jobTitle} at {company}
             </div>
           </div>
