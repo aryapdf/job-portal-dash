@@ -220,6 +220,9 @@ export default function Page() {
             {/* Photo */}
             {renderIf("photoProfileReq") && (
               <div className="flex flex-col gap-3 w-fit h-fit">
+                <div>
+                  Photo Profile
+                </div>
                 {photoPreview ? (
                   <img
                     src={photoPreview} alt="Preview" className="rounded-lg object-cover border"
@@ -230,13 +233,13 @@ export default function Page() {
                   />
                 ) : (
                   <div
-                    className="rounded-lg bg-gray-100 border flex items-center justify-center text-gray-400 text-sm"
+                    className="flex items-center justify-center"
                     style={{
                       width: isMobile ? "16.67vw" : "9.14vw",
                       height: isMobile ? "16.67vw" : "9.14vw"
                     }}
                   >
-                    No Photo
+                    <img src="/asset/photo-placeholder.svg" alt="photo placeholder" className={"relative w-full h-full"}/>
                   </div>
                 )}
                 <label className="cursor-pointer">
@@ -248,7 +251,7 @@ export default function Page() {
                     style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
                     onClick={() => setShowCamera(true)}
                   >
-                    <Upload className="w-4 h-4" /> Take a Picture
+                    <Upload className="w-4 h-4" style={{fontSize: isMobile ? "1.82vw" : "1vw"}} /> Take a Picture
                   </Button>
                 </label>
               </div>
@@ -266,7 +269,7 @@ export default function Page() {
                     </FormLabel>
                     <FormControl><Input
                       placeholder="Budi Yanto" {...field}
-                      style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
+                      style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
                     /></FormControl>
                     <FormMessage />
                   </FormItem>
@@ -290,7 +293,7 @@ export default function Page() {
                           <Button
                             variant="outline"
                             className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}
-                            style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw"}}
+                            style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
                           >
                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             {field.value ? format(field.value, "dd MMMM yyyy") : "Select date"}
@@ -328,11 +331,11 @@ export default function Page() {
                       <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-8">
                         <FormItem className="flex items-center space-x-2">
                           <RadioGroupItem value="female" />
-                          <FormLabel className="font-normal text-gray-700">She/her (Female)</FormLabel>
+                          <FormLabel className="font-normal text-gray-700" style={{fontSize: isMobile ? "1.82vw" : "1vw"}}>She/her (Female)</FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-2">
                           <RadioGroupItem value="male" />
-                          <FormLabel className="font-normal text-gray-700">He/him (Male)</FormLabel>
+                          <FormLabel className="font-normal text-gray-700" style={{fontSize: isMobile ? "1.82vw" : "1vw"}}>He/him (Male)</FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -355,7 +358,7 @@ export default function Page() {
                     <FormControl>
                       <Input
                         placeholder="Kota Jakarta Barat - DKI Jakarta" {...field}
-                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
+                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
                       />
                     </FormControl>
                     <FormMessage />
@@ -382,7 +385,7 @@ export default function Page() {
                     <FormControl>
                       <Input
                         type="email" placeholder="your@email.com" {...field}
-                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
+                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
                       />
                     </FormControl>
                     <FormMessage />
@@ -404,7 +407,7 @@ export default function Page() {
                     <FormControl>
                       <Input
                         placeholder="https://linkedin.com/in/username" {...field}
-                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
+                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
                       />
                     </FormControl>
                     <FormMessage />

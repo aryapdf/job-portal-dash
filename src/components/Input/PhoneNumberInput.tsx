@@ -51,10 +51,10 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
               {/* Country Code Selector */}
               <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                 <SelectTrigger
-                  style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw"}}
+                  style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
                 >
                   <SelectValue>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2" style={{fontSize: isMobile ? "1.82vw" : "1vw"}}>
                       <span>{currentCountry.flagEmoji}</span>
                       <span>{currentCountry.dialCode}</span>
                     </div>
@@ -69,11 +69,12 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                       onChange={(e) => setSearchTerm(e.target.value)}
                       style={{
                         border: "none",
-                        boxShadow: "none"
+                        boxShadow: "none",
+                        fontSize: isMobile ? "1.82vw" : "1vw"
                       }}
                     />
                   </div>
-                  <Separator type={"dash"} />
+                  <Separator type={"dashed"} />
                   <ScrollArea style={{height: "250px"}}>
                     <SelectGroup>
                       {filteredCountries.map((country) => (
@@ -81,7 +82,7 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                           key={country.code}
                           value={country.code}
                           className={"flex justify-between"}
-                          style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw", width: "100%"}}
+                          style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw", width: "100%", fontSize: isMobile ? "1.82vw" : "1vw"}}
                         >
                           <div>{country.flagEmoji}{" "}{country.name}</div>
                           <div className="text-muted-foreground ml-auto">{country.dialCode}</div>
@@ -98,10 +99,10 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                 placeholder={currentCountry.placeholder}
                 {...field}
                 className="flex-1"
-                style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw"}}
+                style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
                 onChange={(e) => {
                   // Format input sesuai country format
-                  const value = e.target.value.replace(/\D/g, '') // Hanya angka
+                  const value = e.target.value.replace(/\D/g, '')
                   field.onChange(value)
                 }}
               />
