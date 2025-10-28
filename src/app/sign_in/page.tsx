@@ -1,4 +1,5 @@
 import OnboardingCard from "@/components/Card/OnboardingCard";
+import { Suspense } from "react";
 
 export default function Home() {
   const style:any = {
@@ -16,7 +17,9 @@ export default function Home() {
       <div style={{
         ...style.container
       }}>
-        <OnboardingCard />
+        <Suspense fallback={<div>Loading...</div>}>
+          <OnboardingCard />
+        </Suspense>
       </div>
   );
 }
