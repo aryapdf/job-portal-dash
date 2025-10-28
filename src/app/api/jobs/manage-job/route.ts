@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 const APPS_PATH = path.join(process.cwd(), 'data', 'applications.json');
+const JOBS_PATH = path.join(process.cwd(), 'data', 'jobs.json');
 
 export async function GET(req: Request) {
   try {
@@ -16,11 +17,21 @@ export async function GET(req: Request) {
       );
     }
 
-    const data = await fs.readFile(APPS_PATH, "utf-8");
-    const applications = JSON.parse(data || "[]");
+    const dataApplications = await fs.readFile(APPS_PATH, "utf-8");
+    const applications = JSON.parse(dataApplications || "[]");
+
+    const dataJobs = await fs.readFile(JOBS_PATH, "utf-8");
+    const jobs = JSON.parse(dataJobs || "[]");
+
+    const selectedJob = jobs.find((job:any) => job.id === id)
     const candidates = applications.filter((candidate: any) => candidate.jobId === id);
 
-    return NextResponse.json({ success: true, data: candidates });
+    const response = {
+      jobName: selectedJob.jobName,
+      candidates: candidates
+    }
+
+    return NextResponse.json({ success: true, data: response });
   } catch (error: any) {
     console.error("Error fetching candidates :", error);
     return NextResponse.json(
