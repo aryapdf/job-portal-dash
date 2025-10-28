@@ -68,6 +68,8 @@ export async function GET(request: NextRequest) {
         slug,
         title: job.jobName,
         status: job.status,
+        type: job.jobType,
+        description: job.jobDescription,
         salary_range: {
           min: job.minSalary,
           max: job.maxSalary,

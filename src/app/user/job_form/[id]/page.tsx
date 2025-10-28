@@ -19,42 +19,42 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Card } from "@/components/ui/card"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
-import {useParams, useRouter, useSearchParams} from "next/navigation"
-import {applyJob, getJobDetail} from "@/lib/services/jobService"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { applyJob, getRequirementsForm } from "@/lib/services/jobService"
 import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
-import CameraDialog from "@/components/Dialog/CameraDialog";
-import {PhoneNumberInput} from "@/components/Input/PhoneNumberInput";
-import {toast} from "sonner";
+import CameraDialog from "@/components/Dialog/CameraDialog"
+import { PhoneNumberInput } from "@/components/Input/PhoneNumberInput"
+import { toast } from "sonner"
 
-// Helper untuk bikin rule Zod berdasarkan jobDetail
-const buildSchema = (req: any) => {
+// Helper untuk bikin rule Zod berdasarkan field
+const buildSchema = (fields: any) => {
   return z.object({
     jobId: z.string(),
-    fullName: req.fullNameReq === "mandatory"
+    fullName: fields.fullNameReq === "mandatory"
       ? z.string().min(3, "Nama lengkap minimal 3 karakter")
       : z.string().optional(),
 
-    dateOfBirth: req.dateOfBirthReq === "mandatory"
-      ? z.string().min(1, "Tanggal lahir harus diisi")
-      : z.string().optional(),
+    dateOfBirth: fields.dateOfBirthReq === "mandatory"
+      ? z.date().min(1, "Tanggal lahir harus diisi")
+      : z.date().optional(),
 
-    gender: req.genderReq === "mandatory"
+    gender: fields.genderReq === "mandatory"
       ? z.enum(["female", "male"])
       : z.enum(["female", "male"]).optional(),
 
-    domicile: req.domicileReq === "mandatory"
+    domicile: fields.domicileReq === "mandatory"
       ? z.string().min(2, "Domicile wajib diisi")
       : z.string().optional(),
 
-    phoneNumber: req.phoneNumberReq === "mandatory"
+    phoneNumber: fields.phoneNumberReq === "mandatory"
       ? z.string().min(10, "Nomor HP tidak valid")
       : z.string().optional(),
 
-    email: req.emailReq === "mandatory"
+    email: fields.emailReq === "mandatory"
       ? z.string().email("Format email tidak valid")
       : z.string().optional(),
 
-    linkedin: req.linkedinReq === "mandatory"
+    linkedin: fields.linkedinReq === "mandatory"
       ? z.string().url("Masukkan URL LinkedIn yang valid")
       : z.string().optional(),
 
@@ -72,20 +72,20 @@ export default function Page() {
   const [showCamera, setShowCamera] = useState(false)
   const [photo, setPhoto] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
-  const [calendarOpen, setCalendarOpen] = useState<any>(false)
+  const [calendarOpen, setCalendarOpen] = useState(false)
   const [jobDetail, setJobDetail] = useState<any>(null)
 
-  const jobId: any = params.id
+  const jobId = params.id as string
   const jobTitle = searchParams.get("job_title")
   const company = searchParams.get("company")
 
   useEffect(() => {
-    fetchJobs()
+    fetchForm()
   }, [])
 
-  const fetchJobs = async () => {
+  const fetchForm = async () => {
     try {
-      const fetched = await getJobDetail(jobId)
+      const fetched = await getRequirementsForm(jobId)
       if (fetched) {
         setJobDetail(fetched)
       }
@@ -96,7 +96,9 @@ export default function Page() {
     }
   }
 
-  const schema = useMemo(() => buildSchema(jobDetail || {}), [jobDetail])
+  const fields = jobDetail?.fields || {}
+  const schema = useMemo(() => buildSchema(fields), [fields])
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -110,7 +112,7 @@ export default function Page() {
     },
   })
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (e:any) => {
     const file = e.target.files?.[0]
     if (file) {
       setPhoto(file)
@@ -133,10 +135,10 @@ export default function Page() {
       body: formData,
     });
 
-    if (!res.ok) throw new Error("Upload failed");
+    if (!res.ok) throw new Error("Upload failed")
 
-    const data = await res.json();
-    return data.url;
+    const data = await res.json()
+    return data.url
   }
 
   const onSubmit = async (values: any) => {
@@ -144,39 +146,37 @@ export default function Page() {
       setLoading(true)
       let photoUrl = null
       if (photo) {
-        photoUrl = await uploadPhoto(photo);
+        photoUrl = await uploadPhoto(photo)
       }
 
       const payload = {
         ...values,
         photo: photoUrl,
-      };
+      }
 
-      const result = await applyJob(payload.jobId, payload );
-      toast.success("Successfully apply job!", {
+      await applyJob(payload.jobId, payload)
+      toast.success("Successfully applied!", {
         description: "Good luck!",
       })
       router.push("/user")
-      console.log("Form submitted:", payload);
-    } catch (error:any) {
-      console.error(error.message);
+    } catch (error: any) {
+      console.error(error.message)
     } finally {
       setLoading(false)
     }
-
-    console.log("Form submitted:", values)
   }
 
   if (loading) return <LoadingOverlay isLoading={true} />
+  if (!jobDetail) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Job detail not found.</p>
+      </div>
+    )
+  }
 
-  if (!jobDetail) return (
-    <div className="flex justify-center items-center h-screen">
-      <p>Job detail not found.</p>
-    </div>
-  )
-
-  const renderIf = (key: string) => jobDetail[key] !== "off"
-  const isRequired = (key: string) => jobDetail[key] === "mandatory"
+  const renderIf = (key: string) => fields[key] !== undefined
+  const isRequired = (key: string) => fields[key] === "mandatory"
 
   return (
     <div

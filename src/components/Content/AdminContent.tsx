@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { Card, CardContent } from "@/components/ui/card";
 import JobFormDialog from "@/components/Dialog/JobFormDialog";
+import DeleteJobDialog from "@/components/Dialog/DeleteJobDialog";
 import { useState, useEffect } from "react";
 import { EmptyJobCard } from "@/components/Card/EmptyJobCard";
 import { getAllJobs } from "@/lib/services/jobService";
@@ -31,11 +32,12 @@ type JobData = {
 };
 
 export default function AdminContent() {
-  const deviceType = useSelector((state: RootState) => state.screen.deviceType);
-  const isMobile = deviceType === "mobile";
+  const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile";;
   const router = useRouter();
 
   const [jobDialogOpen, setJobDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [jobs, setJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,12 +80,6 @@ export default function AdminContent() {
 
   return (
     <>
-      <JobFormDialog
-        open={jobDialogOpen}
-        onOpenChange={setJobDialogOpen}
-        onJobCreated={handleJobCreated}
-      />
-
       <div
         className="w-full h-full relative flex justify-between"
         style={{
@@ -221,23 +217,40 @@ export default function AdminContent() {
                       >
                         {job.salary_range.display_text}
                       </span>
-                      <Button
-                        onClick={() => {
-                          setLoading(true);
-                          router.push(`/admin/job/${job.id}`);
-                        }}
-                        className="rounded-md font-bold cursor-pointer"
-                        style={{
-                          fontSize: isMobile ? "3.5vw" : "0.857vw",
-                          padding: isMobile
-                            ? "2vw 4vw"
-                            : "0.429vw 1.143vw",
-                          backgroundColor: "rgba(1, 149, 159, 1)",
-                          color: "white",
-                        }}
-                      >
-                        {job.list_card.cta}
-                      </Button>
+                      <div className={"relative flex items-center"} style={{gap: isMobile ? "5vw" : "1.429vw",}}>
+                        <Button
+                          onClick={() => {
+                            setLoading(true);
+                            router.push(`/admin/job/${job.id}`);
+                          }}
+                          className="rounded-md font-bold cursor-pointer"
+                          style={{
+                            fontSize: isMobile ? "3.5vw" : "0.857vw",
+                            padding: isMobile
+                              ? "2vw 4vw"
+                              : "0.429vw 1.143vw",
+                            color: "white",
+                            backgroundColor: "rgba(1, 149, 159, 1)",
+                          }}
+                        >
+                          {job.list_card.cta}
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            setSelectedJobId(job.id);
+                            setDeleteDialogOpen(true);
+                          }}
+                          className="rounded-md font-bold cursor-pointer"
+                          style={{
+                            fontSize: isMobile ? "3.5vw" : "0.857vw",
+                            padding: isMobile ? "2vw 4vw" : "0.429vw 1.143vw",
+                            backgroundColor: "rgba(225, 20, 40, 1)",
+                            color: "white",
+                          }}
+                        >
+                          Delete Job
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -297,6 +310,20 @@ export default function AdminContent() {
           </Button>
         </div>
       </div>
+
+      <JobFormDialog
+        open={jobDialogOpen}
+        onOpenChange={setJobDialogOpen}
+        onJobCreated={handleJobCreated}
+      />
+
+      <DeleteJobDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        jobId={selectedJobId || undefined}
+        onDeleted={fetchJobs}
+      />
+
     </>
   );
 }

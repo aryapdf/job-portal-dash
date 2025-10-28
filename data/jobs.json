@@ -20,23 +20,23 @@
     "updatedAt": "2025-10-27T06:45:38.083Z"
   },
   {
-    "id": "e1142c5e-be94-4e5b-bf43-cc1c849bd69f",
+    "id": "684e198d-c9cd-4dbc-b575-96b12792e071",
     "jobName": "Back End Engineer",
-    "jobType": "contract",
-    "jobDescription": "Bisa back end",
+    "jobType": "full_time",
+    "jobDescription": "- Back End 2 Years Experience\n- Javascript, PHP\n- Good Looking",
     "candidateNumber": 1,
     "fullNameReq": "mandatory",
     "photoProfileReq": "mandatory",
-    "genderReq": "optional",
-    "domicileReq": "off",
+    "genderReq": "mandatory",
+    "domicileReq": "optional",
     "emailReq": "mandatory",
     "phoneNumberReq": "mandatory",
     "linkedinReq": "optional",
-    "dateOfBirthReq": "off",
-    "minSalary": 5000000,
-    "maxSalary": 5000000,
+    "dateOfBirthReq": "mandatory",
+    "minSalary": 8000000,
+    "maxSalary": 10000000,
     "status": "active",
-    "createdAt": "2025-10-27T08:17:41.441Z",
-    "updatedAt": "2025-10-27T08:17:41.441Z"
+    "createdAt": "2025-10-28T04:56:44.183Z",
+    "updatedAt": "2025-10-28T04:56:44.183Z"
   }
 ]

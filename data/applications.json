@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "ce86e586-303c-4c6c-b856-fa7a24c49c28",
+    "jobId": "fc96dbd7-627e-4346-8721-5ac642b29f01",
+    "fullName": "Budi Yanto",
+    "dateOfBirth": "2025-10-01T17:00:00.000Z",
+    "gender": "female",
+    "domicile": "Kota Jakarta",
+    "phoneNumber": "81368899879",
+    "email": "asdasd@gmail.com",
+    "linkedin": "https://linkedin.com/in/jjusafda",
+    "photo": null,
+    "appliedAt": "2025-10-28T06:21:28.591Z",
+    "status": "pending"
+  }
+]

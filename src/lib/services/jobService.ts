@@ -1,25 +1,4 @@
 // File: lib/services/jobService.ts
-export interface JobData {
-  id?: string;
-  jobName: string;
-  jobType: string;
-  jobDescription: string;
-  candidateNumber: number;
-  fullNameReq: "mandatory" | "optional" | "off";
-  photoProfileReq: "mandatory" | "optional" | "off";
-  genderReq: "mandatory" | "optional" | "off";
-  domicileReq: "mandatory" | "optional" | "off";
-  emailReq: "mandatory" | "optional" | "off";
-  phoneNumberReq: "mandatory" | "optional" | "off";
-  linkedinReq: "mandatory" | "optional" | "off";
-  dateOfBirthReq: "mandatory" | "optional" | "off";
-  minSalary: number;
-  maxSalary: number;
-  status?: "active" | "inactive" | "draft";
-  createdAt?: string | null;
-  updatedAt?: string | null;
-}
-
 export const createJob = async (jobData:any) => {
   try {
     const response = await fetch('/api/jobs', {
@@ -124,4 +103,19 @@ export const applyJob = async (jobId:any, data:any) => {
     throw err;
   }
 }
+
+export const getRequirementsForm = async (jobId:any) => {
+  try {
+    const response = await fetch(`/api/jobs/application-form?job-id=${jobId}`, {
+      method: 'GET',
+      cache: 'no-store'
+    });
+
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Error get job detail :', error)
+  }
+}
+
 

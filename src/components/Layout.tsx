@@ -58,7 +58,7 @@ export function Layout({children}: {children: React.ReactNode; }) {
     return (
       <AuthListener>
           <ScreenListenerWrapper>
-              <ProtectedAuth>
+              {/*<ProtectedAuth>*/}
                   <main
                     className="flex flex-col"
                     style={{
@@ -68,7 +68,7 @@ export function Layout({children}: {children: React.ReactNode; }) {
                       {showNavbar && <NavBar title={chooseTitle()}/>}
                       {children}
                   </main>
-              </ProtectedAuth>
+              {/*</ProtectedAuth>*/}
           </ScreenListenerWrapper>
       </AuthListener>
     )
