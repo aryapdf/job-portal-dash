@@ -26,5 +26,19 @@
     "photo": "/asset/photo/photo-1761634696473.jpg",
     "appliedAt": "2025-10-28T06:58:16.605Z",
     "status": "pending"
+  },
+  {
+    "id": "6ee12096-f6cf-4200-8fa1-6772920e4bdc",
+    "jobId": "fc96dbd7-627e-4346-8721-5ac642b29f01",
+    "fullName": "Hari Mau",
+    "dateOfBirth": "2001-02-05T17:00:00.000Z",
+    "gender": "female",
+    "domicile": "Lombok Barat, Nusa Tenggara Barat",
+    "phoneNumber": "8177318273",
+    "email": "jasdas@gmail.com",
+    "linkedin": "https://linkedin.com/in/hhsd",
+    "photo": null,
+    "appliedAt": "2025-10-28T09:45:32.282Z",
+    "status": "pending"
   }
 ]

@@ -26,6 +26,7 @@ import CameraDialog from "@/components/Dialog/CameraDialog"
 import { PhoneNumberInput } from "@/components/Input/PhoneNumberInput"
 import { toast } from "sonner"
 import {DomicileInput} from "@/components/Input/DomicileInput";
+import CalendarInput from "@/components/Input/CalendarInput";
 
 // Helper untuk bikin rule Zod berdasarkan field
 const buildSchema = (fields: any) => {
@@ -366,42 +367,14 @@ export default function Page() {
                     >
                       Date of birth {isRequired("dateOfBirthReq") && <span className="text-red-500">*</span>}
                     </FormLabel>
-                    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                            style={{
-                              padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
-                              fontSize: isMobile ? "3.5vw" : "1vw"
-                            }}
-                          >
-                            <CalendarIcon
-                              className="ml-auto opacity-50"
-                              style={{
-                                width: isMobile ? "4vw" : "1.143vw",
-                                height: isMobile ? "4vw" : "1.143vw"
-                              }}
-                            />
-                            {field.value ? format(field.value, "dd MMMM yyyy") : "Select date"}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent align="start" className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          onSelect={(date) => {
-                            field.onChange(date)
-                            setCalendarOpen(false)
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <CalendarInput
+                      value={field.value}
+                      onChange={(date) => {
+                        console.log('date is :', date)
+                        field.onChange(date)
+                        setCalendarOpen(false)
+                      }}
+                    />
                     <FormMessage style={{fontSize: isMobile ? "3vw" : "0.857vw"}} />
                   </FormItem>
                 )}

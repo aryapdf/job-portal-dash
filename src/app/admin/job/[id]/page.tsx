@@ -27,18 +27,22 @@ export default function Page() {
         const candidate = row.original
         return (
           <div
-            className={"flex items-center justify-center"}
-            style={{padding: isMobile ? "2.08vw" : "1.14vw",}}
+            className={"w-full h-full flex items-center justify-center relative"}
           >
             {candidate.photo ? (
               <img
                 src={candidate.photo}
                 alt={candidate.fullName}
-                className="rounded-full object-cover"
-                style={{ width: "40px", height: "40px" }}
+                className="object-cover rounded-full object-cover"
+                style={{width: "40px", height: "40px" }}
               />
             ) : (
-              <div className="rounded-full bg-gray-200" style={{ width: "40px", height: "40px" }} />
+              <img
+                src={'/asset/profile-placeholder.png'}
+                alt={candidate.fullName}
+                className="object-cover rounded-full object-cover"
+                style={{width: "40px", height: "40px" }}
+              />
             )}
           </div>
         )
@@ -48,7 +52,7 @@ export default function Page() {
     {
       accessorKey: "fullName",
       header: "FULL NAME",
-      cell: ({ getValue }: any) => (
+      cell: ({getValue}: any) => (
         <div
           style={{
             padding: isMobile ? "2.08vw" : "1.14vw",

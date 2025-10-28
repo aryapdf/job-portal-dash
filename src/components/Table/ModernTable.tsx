@@ -191,7 +191,7 @@ export default function ModernTable({ columns, data }: Props) {
                     padding: isMobile ? "3vw 2vw" : "1.14vw"
                   }}
                 >
-                  #
+
                 </TableHead>
               </TableRow>
             ))}
