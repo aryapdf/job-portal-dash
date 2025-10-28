@@ -4,12 +4,15 @@
 import { useRef, useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { useSelector } from "react-redux"
+import { RootState } from "@/store"
 
 export default function CameraDialog({ open, onClose, onCapture }: {
   open: boolean
   onClose: () => void
   onCapture: (photo: File, previewUrl: string) => void
 }) {
+  const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
@@ -46,7 +49,6 @@ export default function CameraDialog({ open, onClose, onCapture }: {
     }
   }, [open])
 
-
   const handleCapture = () => {
     const video = videoRef.current
     const canvas = canvasRef.current
@@ -72,19 +74,60 @@ export default function CameraDialog({ open, onClose, onCapture }: {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="max-w-sm"
         style={{
-          padding: "24px",
-          width: "637px",
+          padding: isMobile ? "6vw" : "1.714vw",
+          width: isMobile ? "90vw" : "45.5vw",
+          maxWidth: isMobile ? "90vw" : "45.5vw"
         }}
       >
-        <DialogTitle className={"w-fit h-fit"}>Take a Picture</DialogTitle>
-        <div className="flex flex-col gap-3 items-center">
-          <video ref={videoRef} autoPlay playsInline className="w-full rounded-md bg-black" />
-          <canvas ref={canvasRef} className="hidden w-full"  />
-          <div className="flex gap-2 mt-3">
-            {<Button onClick={handleCapture} style={{ padding: "4px 16px", fontSize: "14px" }}>Capture</Button>}
-            <Button variant="outline" onClick={onClose} style={{ padding: "4px 16px", fontSize: "14px" }} >
+        <DialogTitle
+          className="w-fit h-fit"
+          style={{
+            fontSize: isMobile ? "5vw" : "1.429vw"
+          }}
+        >
+          Take a Picture
+        </DialogTitle>
+        <div
+          className="flex flex-col items-center"
+          style={{gap: isMobile ? "3vw" : "0.857vw"}}
+        >
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className="w-full rounded-md bg-black"
+            style={{
+              borderRadius: isMobile ? "2vw" : "0.571vw"
+            }}
+          />
+          <canvas ref={canvasRef} className="hidden w-full" />
+          <div
+            className="flex"
+            style={{
+              gap: isMobile ? "2vw" : "0.571vw",
+              marginTop: isMobile ? "3vw" : "0.857vw"
+            }}
+          >
+            <Button
+              onClick={handleCapture}
+              className="font-semibold"
+              style={{
+                padding: isMobile ? "2.5vw 4vw" : "0.286vw 1.143vw",
+                fontSize: isMobile ? "3.5vw" : "1vw"
+              }}
+            >
+              Capture
+            </Button>
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className="font-semibold"
+              style={{
+                padding: isMobile ? "2.5vw 4vw" : "0.286vw 1.143vw",
+                fontSize: isMobile ? "3.5vw" : "1vw"
+              }}
+            >
               {captured ? "Close" : "Cancel"}
             </Button>
           </div>

@@ -63,7 +63,6 @@ const buildSchema = (req: any) => {
 }
 
 export default function Page() {
-  // TODO : kasih fontsize responsive disini
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
   const params = useParams()
   const router = useRouter()
@@ -180,78 +179,143 @@ export default function Page() {
   const isRequired = (key: string) => jobDetail[key] === "mandatory"
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
-      <Card style={{
-        width: isMobile ? "91.15vw" : "50vw",
-        padding: isMobile ? "5.21vw" : "2.86vw",
-        borderRadius: "unset"
-      }}>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center" style={{gap: isMobile ? "2.08vw" : "1.14vw"}}>
+    <div
+      className="w-full h-full flex overflow-y-auto"
+      style={{
+        padding: isMobile ? "4vw" : "2vw"
+      }}
+    >
+      <Card
+        style={{
+          width: isMobile ? "100%" : "50vw",
+          height: "fit-content",
+          margin: "auto",
+          padding: isMobile ? "5vw" : "2.86vw",
+          borderRadius: isMobile ? "3vw" : "0.857vw"
+        }}
+      >
+        {/* Header */}
+        <div
+          className="flex flex-col items-start"
+          style={{
+            marginBottom: isMobile ? "5vw" : "1.714vw",
+            gap: isMobile ? "3vw" : "0"
+          }}
+        >
+          <div
+            className="flex items-center w-full"
+            style={{
+              gap: isMobile ? "3vw" : "1.14vw",
+              marginBottom: isMobile ? "3vw" : "1.143vw"
+            }}
+          >
             <Button
               onClick={() => {router.push("/user")}}
               className="flex items-center justify-center border-1 cursor-pointer"
               style={{
                 background: "transparent",
-                padding: isMobile ? "0.52vw" : "0.29vw"
+                padding: isMobile ? "1.5vw" : "0.29vw",
+                minWidth: isMobile ? "8vw" : "auto",
+                minHeight: isMobile ? "8vw" : "auto"
               }}
             >
               <img
-                src="/asset/arrow-left.svg" alt=""
-                className={"w-full h-full object-contain"}
+                src="/asset/arrow-left.svg"
+                alt=""
+                className="w-full h-full object-contain"
                 style={{
-                  width: isMobile ? "2.60vw" : "1.43vw",
-                  height: isMobile ? "2.60vw" : "1.43vw"
+                  width: isMobile ? "5vw" : "1.43vw",
+                  height: isMobile ? "5vw" : "1.43vw"
                 }}
               />
             </Button>
-            <div className="font-bold" style={{color: "rgba(29, 31, 32, 1)", fontSize: isMobile ? "2vw" : "1.25vw"}}>
+            <div
+              className="font-bold flex-1"
+              style={{
+                color: "rgba(29, 31, 32, 1)",
+                fontSize: isMobile ? "4.5vw" : "1.25vw",
+                lineHeight: isMobile ? "1.3" : "1.5"
+              }}
+            >
               Apply {jobTitle} at {company}
             </div>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-gray-500">
-            <span className="text-blue-600">ℹ️</span> This field required to fill
           </div>
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 px-6">
-
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col"
+            style={{
+              gap: isMobile ? "5vw" : "1.143vw",
+              padding: isMobile ? "0" : "0 1.714vw"
+            }}
+          >
             {/* Photo */}
             {renderIf("photoProfileReq") && (
-              <div className="flex flex-col gap-3 w-fit h-fit">
-                <div>
-                  Photo Profile
+              <div
+                className="flex flex-col w-fit h-fit"
+                style={{gap: isMobile ? "3vw" : "0.857vw"}}
+              >
+                <div
+                  style={{
+                    fontSize: isMobile ? "3.5vw" : "1vw",
+                    fontWeight: "500"
+                  }}
+                >
+                  Photo Profile {isRequired("photoProfileReq") && <span className="text-red-500">*</span>}
                 </div>
                 {photoPreview ? (
                   <img
-                    src={photoPreview} alt="Preview" className="rounded-lg object-cover border"
+                    src={photoPreview}
+                    alt="Preview"
+                    className="rounded-lg object-cover border"
                     style={{
-                      width: isMobile ? "16.67vw" : "9.14vw",
-                      height: isMobile ? "16.67vw" : "9.14vw"
+                      width: isMobile ? "32vw" : "9.14vw",
+                      height: isMobile ? "32vw" : "9.14vw"
                     }}
                   />
                 ) : (
                   <div
                     className="flex items-center justify-center"
                     style={{
-                      width: isMobile ? "16.67vw" : "9.14vw",
-                      height: isMobile ? "16.67vw" : "9.14vw"
+                      width: isMobile ? "32vw" : "9.14vw",
+                      height: isMobile ? "32vw" : "9.14vw"
                     }}
                   >
-                    <img src="/asset/photo-placeholder.svg" alt="photo placeholder" className={"relative w-full h-full"}/>
+                    <img
+                      src="/asset/photo-placeholder.svg"
+                      alt="photo placeholder"
+                      className="relative w-full h-full"
+                    />
                   </div>
                 )}
                 <label className="cursor-pointer">
-                  <input type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoChange}
+                  />
                   <Button
                     variant="outline"
-                    type="button" size="sm"
-                    className="flex items-center gap-2"
-                    style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw",}}
+                    type="button"
+                    size="sm"
+                    className="flex items-center"
+                    style={{
+                      padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",
+                      fontSize: isMobile ? "3.5vw" : "1vw",
+                      gap: isMobile ? "2vw" : "0.571vw"
+                    }}
                     onClick={() => setShowCamera(true)}
                   >
-                    <Upload className="w-4 h-4" style={{fontSize: isMobile ? "1.82vw" : "1vw"}} /> Take a Picture
+                    <Upload
+                      style={{
+                        width: isMobile ? "4vw" : "1.143vw",
+                        height: isMobile ? "4vw" : "1.143vw"
+                      }}
+                    />
+                    Take a Picture
                   </Button>
                 </label>
               </div>
@@ -264,14 +328,24 @@ export default function Page() {
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel
+                      style={{
+                        fontSize: isMobile ? "3.5vw" : "1vw"
+                      }}
+                    >
                       Full name {isRequired("fullNameReq") && <span className="text-red-500">*</span>}
                     </FormLabel>
-                    <FormControl><Input
-                      placeholder="Budi Yanto" {...field}
-                      style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
-                    /></FormControl>
-                    <FormMessage />
+                    <FormControl>
+                      <Input
+                        placeholder="Budi Yanto"
+                        {...field}
+                        style={{
+                          padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+                          fontSize: isMobile ? "3.5vw" : "1vw"
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage style={{fontSize: isMobile ? "3vw" : "0.857vw"}} />
                   </FormItem>
                 )}
               />
@@ -284,7 +358,11 @@ export default function Page() {
                 name="dateOfBirth"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel
+                      style={{
+                        fontSize: isMobile ? "3.5vw" : "1vw"
+                      }}
+                    >
                       Date of birth {isRequired("dateOfBirthReq") && <span className="text-red-500">*</span>}
                     </FormLabel>
                     <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
@@ -292,10 +370,22 @@ export default function Page() {
                         <FormControl>
                           <Button
                             variant="outline"
-                            className={cn("w-full justify-start text-left font-normal", !field.value && "text-muted-foreground")}
-                            style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                            style={{
+                              padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+                              fontSize: isMobile ? "3.5vw" : "1vw"
+                            }}
                           >
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon
+                              className="ml-auto opacity-50"
+                              style={{
+                                width: isMobile ? "4vw" : "1.143vw",
+                                height: isMobile ? "4vw" : "1.143vw"
+                              }}
+                            />
                             {field.value ? format(field.value, "dd MMMM yyyy") : "Select date"}
                           </Button>
                         </FormControl>
@@ -305,13 +395,13 @@ export default function Page() {
                           mode="single"
                           onSelect={(date) => {
                             field.onChange(date)
-                            setCalendarOpen(false) // Tutup popover
+                            setCalendarOpen(false)
                           }}
                           initialFocus
                         />
                       </PopoverContent>
                     </Popover>
-                    <FormMessage />
+                    <FormMessage style={{fontSize: isMobile ? "3vw" : "0.857vw"}} />
                   </FormItem>
                 )}
               />
@@ -324,22 +414,50 @@ export default function Page() {
                 name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel
+                      style={{
+                        fontSize: isMobile ? "3.5vw" : "1vw"
+                      }}
+                    >
                       Pronoun (gender) {isRequired("genderReq") && <span className="text-red-500">*</span>}
                     </FormLabel>
                     <FormControl>
-                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-8">
-                        <FormItem className="flex items-center space-x-2">
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex"
+                        style={{
+                          gap: isMobile ? "5vw" : "2.286vw",
+                          flexDirection: isMobile ? "column" : "row"
+                        }}
+                      >
+                        <FormItem
+                          className="flex items-center"
+                          style={{gap: isMobile ? "2vw" : "0.571vw"}}
+                        >
                           <RadioGroupItem value="female" />
-                          <FormLabel className="font-normal text-gray-700" style={{fontSize: isMobile ? "1.82vw" : "1vw"}}>She/her (Female)</FormLabel>
+                          <FormLabel
+                            className="font-normal text-gray-700"
+                            style={{fontSize: isMobile ? "3.5vw" : "1vw"}}
+                          >
+                            She/her (Female)
+                          </FormLabel>
                         </FormItem>
-                        <FormItem className="flex items-center space-x-2">
+                        <FormItem
+                          className="flex items-center"
+                          style={{gap: isMobile ? "2vw" : "0.571vw"}}
+                        >
                           <RadioGroupItem value="male" />
-                          <FormLabel className="font-normal text-gray-700" style={{fontSize: isMobile ? "1.82vw" : "1vw"}}>He/him (Male)</FormLabel>
+                          <FormLabel
+                            className="font-normal text-gray-700"
+                            style={{fontSize: isMobile ? "3.5vw" : "1vw"}}
+                          >
+                            He/him (Male)
+                          </FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage style={{fontSize: isMobile ? "3vw" : "0.857vw"}} />
                   </FormItem>
                 )}
               />
@@ -352,16 +470,24 @@ export default function Page() {
                 name="domicile"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel
+                      style={{
+                        fontSize: isMobile ? "3.5vw" : "1vw"
+                      }}
+                    >
                       Domicile {isRequired("domicileReq") && <span className="text-red-500">*</span>}
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Kota Jakarta Barat - DKI Jakarta" {...field}
-                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
+                        placeholder="Kota Jakarta Barat - DKI Jakarta"
+                        {...field}
+                        style={{
+                          padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+                          fontSize: isMobile ? "3.5vw" : "1vw"
+                        }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage style={{fontSize: isMobile ? "3vw" : "0.857vw"}} />
                   </FormItem>
                 )}
               />
@@ -369,7 +495,11 @@ export default function Page() {
 
             {/* Phone */}
             {renderIf("phoneNumberReq") && (
-              <PhoneNumberInput control={form.control} isMobile={isMobile} isRequired={isRequired("phoneNumberReq")} />
+              <PhoneNumberInput
+                control={form.control}
+                isMobile={isMobile}
+                isRequired={isRequired("phoneNumberReq")}
+              />
             )}
 
             {/* Email */}
@@ -379,16 +509,25 @@ export default function Page() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel
+                      style={{
+                        fontSize: isMobile ? "3.5vw" : "1vw"
+                      }}
+                    >
                       Email {isRequired("emailReq") && <span className="text-red-500">*</span>}
                     </FormLabel>
                     <FormControl>
                       <Input
-                        type="email" placeholder="your@email.com" {...field}
-                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
+                        type="email"
+                        placeholder="your@email.com"
+                        {...field}
+                        style={{
+                          padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+                          fontSize: isMobile ? "3.5vw" : "1vw"
+                        }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage style={{fontSize: isMobile ? "3vw" : "0.857vw"}} />
                   </FormItem>
                 )}
               />
@@ -401,29 +540,49 @@ export default function Page() {
                 name="linkedin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
+                    <FormLabel
+                      style={{
+                        fontSize: isMobile ? "3.5vw" : "1vw"
+                      }}
+                    >
                       LinkedIn {isRequired("linkedinReq") && <span className="text-red-500">*</span>}
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="https://linkedin.com/in/username" {...field}
-                        style={{padding: isMobile ? "3.91vw 5.21vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
+                        placeholder="https://linkedin.com/in/username"
+                        {...field}
+                        style={{
+                          padding: isMobile ? "3.5vw 4vw" : "0.714vw 1.143vw",
+                          fontSize: isMobile ? "3.5vw" : "1vw"
+                        }}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage style={{fontSize: isMobile ? "3vw" : "0.857vw"}} />
                   </FormItem>
                 )}
               />
             )}
 
-            <Button type="submit" className="w-full h-11 text-base font-semibold bg-teal-600 hover:bg-teal-700">
+            <Button
+              type="submit"
+              className="w-full font-semibold bg-teal-600 hover:bg-teal-700"
+              style={{
+                height: isMobile ? "12vw" : "3.143vw",
+                fontSize: isMobile ? "4vw" : "1.143vw",
+                marginTop: isMobile ? "3vw" : "1.143vw"
+              }}
+            >
               Submit
             </Button>
           </form>
         </Form>
       </Card>
 
-      <CameraDialog open={showCamera} onClose={() => setShowCamera(false)} onCapture={handleCameraCapture} />
+      <CameraDialog
+        open={showCamera}
+        onClose={() => setShowCamera(false)}
+        onCapture={handleCameraCapture}
+      />
     </div>
   )
 }

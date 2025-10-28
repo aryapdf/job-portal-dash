@@ -43,26 +43,62 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
       name="phoneNumber"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>
+          <FormLabel
+            style={{
+              fontSize: isMobile ? "3.5vw" : "0.857vw"
+            }}
+          >
             Phone number {isRequired && <span className="text-red-500">*</span>}
           </FormLabel>
           <FormControl>
-            <div className="flex gap-2">
+            <div
+              className="flex"
+              style={{gap: isMobile ? "2vw" : "0.571vw"}}
+            >
               {/* Country Code Selector */}
               <Select value={selectedCountry} onValueChange={setSelectedCountry}>
                 <SelectTrigger
-                  style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
+                  style={{
+                    padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",
+                    fontSize: isMobile ? "3.5vw" : "1vw",
+                    width: isMobile ? "32vw" : "10vw"
+                  }}
                 >
                   <SelectValue>
-                    <div className="flex items-center gap-2" style={{fontSize: isMobile ? "1.82vw" : "1vw"}}>
+                    <div
+                      className="flex items-center"
+                      style={{
+                        gap: isMobile ? "2vw" : "0.571vw",
+                        fontSize: isMobile ? "3.5vw" : "1vw"
+                      }}
+                    >
                       <span>{currentCountry.flagEmoji}</span>
                       <span>{currentCountry.dialCode}</span>
                     </div>
                   </SelectValue>
                 </SelectTrigger>
-                <SelectContent style={{width: "346px", padding: "8px 16px"}}>
-                  <div className="flex items-center rounded-md" style={{gap: "8px", border: "2px solid rgba(224, 224, 224, 1)", padding: "8px 16px"}}>
-                    <img src="/asset/search-icon.svg" alt="search" style={{width: "14px", height: "14px"}} />
+                <SelectContent
+                  style={{
+                    width: isMobile ? "85vw" : "24.714vw",
+                    padding: isMobile ? "2vw 4vw" : "0.571vw 1.143vw"
+                  }}
+                >
+                  <div
+                    className="flex items-center rounded-md"
+                    style={{
+                      gap: isMobile ? "2vw" : "0.571vw",
+                      border: "2px solid rgba(224, 224, 224, 1)",
+                      padding: isMobile ? "2vw 4vw" : "0.571vw 1.143vw"
+                    }}
+                  >
+                    <img
+                      src="/asset/search-icon.svg"
+                      alt="search"
+                      style={{
+                        width: isMobile ? "4vw" : "1vw",
+                        height: isMobile ? "4vw" : "1vw"
+                      }}
+                    />
                     <Input
                       placeholder="Search country..."
                       value={searchTerm}
@@ -70,22 +106,40 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                       style={{
                         border: "none",
                         boxShadow: "none",
-                        fontSize: isMobile ? "1.82vw" : "1vw"
+                        fontSize: isMobile ? "3.5vw" : "1vw",
+                        padding: 0
                       }}
                     />
                   </div>
                   <Separator type={"dashed"} />
-                  <ScrollArea style={{height: "250px"}}>
+                  <ScrollArea
+                    style={{
+                      height: isMobile ? "50vh" : "17.857vw"
+                    }}
+                  >
                     <SelectGroup>
                       {filteredCountries.map((country) => (
                         <SelectItem
                           key={country.code}
                           value={country.code}
-                          className={"flex justify-between"}
-                          style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw", width: "100%", fontSize: isMobile ? "1.82vw" : "1vw"}}
+                          className="flex justify-between"
+                          style={{
+                            padding: isMobile ? "2.5vw 3vw" : "0.571vw 0.857vw",
+                            width: "100%",
+                            fontSize: isMobile ? "3.5vw" : "1vw"
+                          }}
                         >
-                          <div>{country.flagEmoji}{" "}{country.name}</div>
-                          <div className="text-muted-foreground ml-auto">{country.dialCode}</div>
+                          <div>
+                            {country.flagEmoji}{" "}{country.name}
+                          </div>
+                          <div
+                            className="text-muted-foreground ml-auto"
+                            style={{
+                              fontSize: isMobile ? "3vw" : "0.857vw"
+                            }}
+                          >
+                            {country.dialCode}
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectGroup>
@@ -99,7 +153,10 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
                 placeholder={currentCountry.placeholder}
                 {...field}
                 className="flex-1"
-                style={{padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw", fontSize: isMobile ? "1.82vw" : "1vw"}}
+                style={{
+                  padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",
+                  fontSize: isMobile ? "3.5vw" : "1vw"
+                }}
                 onChange={(e) => {
                   // Format input sesuai country format
                   const value = e.target.value.replace(/\D/g, '')
@@ -108,7 +165,11 @@ export function PhoneNumberInput({ control, isMobile = false, isRequired = false
               />
             </div>
           </FormControl>
-          <FormMessage />
+          <FormMessage
+            style={{
+              fontSize: isMobile ? "3vw" : "0.7vw"
+            }}
+          />
         </FormItem>
       )}
     />
