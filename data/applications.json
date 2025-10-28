@@ -40,5 +40,33 @@
     "photo": null,
     "appliedAt": "2025-10-28T09:45:32.282Z",
     "status": "pending"
+  },
+  {
+    "id": "f2c054b7-e424-4e2b-a44f-2d708651ee5b",
+    "jobId": "fc96dbd7-627e-4346-8721-5ac642b29f01",
+    "fullName": "Arya",
+    "dateOfBirth": "2001-05-01T17:00:00.000Z",
+    "gender": "male",
+    "domicile": "Soppeng, Sulawesi Selatan",
+    "phoneNumber": "81368899879",
+    "email": "arya@gmail.com",
+    "linkedin": "https://linkedin.com/in/arya",
+    "photo": "/asset/photo/photo-1761665071241.jpg",
+    "appliedAt": "2025-10-28T15:24:31.748Z",
+    "status": "pending"
+  },
+  {
+    "id": "c245c642-8214-4db9-bb29-8d69e7d28642",
+    "jobId": "fc96dbd7-627e-4346-8721-5ac642b29f01",
+    "fullName": "Uto",
+    "dateOfBirth": "2001-05-30T17:00:00.000Z",
+    "gender": "female",
+    "domicile": "Tabanan, Bali",
+    "phoneNumber": "81368899879",
+    "email": "utopia@gmail.com",
+    "linkedin": "https://linkedin.com/in/uto",
+    "photo": "/asset/photo/photo-1761665207855.jpg",
+    "appliedAt": "2025-10-28T15:26:47.884Z",
+    "status": "pending"
   }
 ]

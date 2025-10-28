@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import JobFormDialog from "@/components/Dialog/JobFormDialog";
 import DeleteJobDialog from "@/components/Dialog/DeleteJobDialog";
 import { useState, useEffect } from "react";
-import { EmptyJobCard } from "@/components/Card/EmptyJobCard";
+import { FallbackCard } from "@/components/Card/FallbackCard";
 import { getAllJobs } from "@/lib/services/jobService";
 import { LoadingOverlay } from "@/components/Loading/LoadingOverlay";
 import { useRouter } from "next/navigation";
@@ -144,7 +144,7 @@ export default function AdminContent() {
             </div>
           ) : filteredJobs.length === 0 ? (
             <div className="flex flex-col flex-1 items-center justify-center rounded-md relative">
-              <EmptyJobCard
+              <FallbackCard
                 type={"admin"}
                 onClick={() => setJobDialogOpen(true)}
               />

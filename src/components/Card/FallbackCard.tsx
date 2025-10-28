@@ -4,11 +4,11 @@ import {useSelector} from "react-redux";
 import {RootState} from "@/store";
 
 interface Props {
-  type: "admin" | "user" | "candidates"
+  type: "admin" | "user" | "candidates" | "doneApplyJob"
   onClick?: () => void;
 }
 
-export function EmptyJobCard(props: Props) {
+export function FallbackCard(props: Props) {
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === 'mobile'
 
   return (
@@ -155,6 +155,51 @@ export function EmptyJobCard(props: Props) {
             }}
           >
             Share your job vacancies so that more candidates will apply.
+          </CardDescription>
+          <CardFooter style={{padding: isMobile ? "0" : "inherit"}}>
+          </CardFooter>
+        </Card>
+      )}
+
+      {props.type === "doneApplyJob" && (
+        <Card
+          className="w-fit h-fit text-center items-center rounded-md"
+          style={{
+            gap: "unset",
+            border: "none",
+            boxShadow: "none",
+            padding: isMobile ? "5vw" : "0"
+          }}
+        >
+          <img
+            src="/asset/cheers-image.png"
+            alt="empty state"
+            style={{
+              objectFit: "contain",
+              width: isMobile ? "50vw" : "18.286vw",
+              height: isMobile ? "50vw" : "17.143vw",
+              marginBottom: isMobile ? "5vw" : "1.429vw"
+            }}
+          />
+          <CardTitle
+            className="font-semibold text-neutral-900 w-fit h-fit"
+            style={{
+              fontSize: isMobile ? "5vw" : "1.429vw",
+              marginBottom: isMobile ? "5vw" : "1.429vw",
+            }}
+          >
+            🎉 Your application was sent!
+          </CardTitle>
+          <CardDescription
+            className="w-fit h-fit"
+            style={{
+              color: "rgba(76, 76, 76, 1)",
+              marginBottom: isMobile ? "5vw" : "1.143vw",
+              fontSize: isMobile ? "3.5vw" : "0.857vw",
+            }}
+          >
+            Congratulations! You&#39;ve taken the first step towards a rewarding career at Rakamin. <br />
+            We look forward to learning more about you during the application process.
           </CardDescription>
           <CardFooter style={{padding: isMobile ? "0" : "inherit"}}>
           </CardFooter>

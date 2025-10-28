@@ -56,6 +56,9 @@ export default function ModernTable({ columns, data }: Props) {
     columns,
     columnResizeMode,
     getCoreRowModel: getCoreRowModel(),
+    // Enable column resizing
+    enableColumnResizing: true,
+    columnResizeDirection: "ltr",
   })
 
   const sensors = useSensors(
@@ -70,7 +73,7 @@ export default function ModernTable({ columns, data }: Props) {
     const { active, over } = event
     if (!over || active.id === over.id) return
 
-    setRows((items) => {
+    setRows((items:any) => {
       const oldIndex = items.findIndex((item: any) => item.id === active.id)
       const newIndex = items.findIndex((item: any) => item.id === over.id)
 
@@ -108,21 +111,25 @@ export default function ModernTable({ columns, data }: Props) {
           <TableCell
             key={cell.id}
             style={{
-              fontSize: isMobile ? "3.5vw" : "0.9rem",
-              padding: isMobile ? "2.5vw 2vw" : "0.857vw"
+              fontSize: isMobile ? "3.5vw" : "0.857vw",
+              padding: isMobile ? "3vw" : "1vw",
+              width: cell.column.getSize(),
+              minWidth: cell.column.getSize(),
+              maxWidth: cell.column.getSize(),
             }}
           >
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </TableCell>
         ))}
 
-        {/* Grab handle cell */}
         <TableCell
           className="cursor-grab active:cursor-grabbing text-center"
           style={{
-            width: isMobile ? "8vw" : "2.5vw",
+            width: isMobile ? "8vw" : "60px",
+            minWidth: isMobile ? "8vw" : "60px",
+            maxWidth: isMobile ? "8vw" : "60px",
             userSelect: "none",
-            padding: isMobile ? "2vw" : "0.5vw",
+            padding: isMobile ? "3vw" : "1vw",
           }}
           {...attributes}
           {...listeners}
@@ -130,8 +137,8 @@ export default function ModernTable({ columns, data }: Props) {
           <GripVertical
             className="mx-auto opacity-60 hover:opacity-100 transition"
             style={{
-              width: isMobile ? "5vw" : "1.143vw",
-              height: isMobile ? "5vw" : "1.143vw"
+              width: isMobile ? "5vw" : "20px",
+              height: isMobile ? "5vw" : "20px"
             }}
           />
         </TableCell>
@@ -144,6 +151,7 @@ export default function ModernTable({ columns, data }: Props) {
       className="overflow-auto rounded-md border"
       style={{
         maxHeight: "70vh",
+        width: "100%",
       }}
     >
       <DndContext
@@ -151,7 +159,12 @@ export default function ModernTable({ columns, data }: Props) {
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <Table className="min-w-full w-fit">
+        <Table
+          style={{
+            width: table.getTotalSize(),
+            minWidth: "100%"
+          }}
+        >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -163,9 +176,11 @@ export default function ModernTable({ columns, data }: Props) {
                     )}
                     style={{
                       width: header.getSize(),
+                      minWidth: header.getSize(),
+                      maxWidth: header.getSize(),
                       userSelect: "none",
-                      padding: isMobile ? "3vw 2vw" : "1.14vw",
-                      fontSize: isMobile ? "3vw" : "0.857vw"
+                      padding: isMobile ? "3vw" : "1vw",
+                      fontSize: isMobile ? "3vw" : "0.857vw",
                     }}
                   >
                     {flexRender(
@@ -176,7 +191,15 @@ export default function ModernTable({ columns, data }: Props) {
                       <div
                         onMouseDown={header.getResizeHandler()}
                         onTouchStart={header.getResizeHandler()}
-                        className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-gray-300 hover:bg-gray-500"
+                        className={cn(
+                          "absolute right-0 top-0 h-full w-1 cursor-col-resize bg-blue-400/50 hover:bg-blue-500 transition-colors",
+                          header.column.getIsResizing() && "bg-blue-600"
+                        )}
+                        style={{
+                          userSelect: "none",
+                          touchAction: "none",
+                          overflow: "hidden"
+                        }}
                       />
                     )}
                   </TableHead>
@@ -186,13 +209,13 @@ export default function ModernTable({ columns, data }: Props) {
                     "font-bold bg-muted/40 text-center select-none"
                   )}
                   style={{
-                    width: isMobile ? "8vw" : "2.5vw",
+                    width: isMobile ? "8vw" : "60px",
+                    minWidth: isMobile ? "8vw" : "60px",
+                    maxWidth: isMobile ? "8vw" : "60px",
                     fontSize: isMobile ? "3vw" : "0.857vw",
-                    padding: isMobile ? "3vw 2vw" : "1.14vw"
+                    padding: isMobile ? "3vw" : "1vw",
                   }}
-                >
-
-                </TableHead>
+                />
               </TableRow>
             ))}
           </TableHeader>
@@ -202,7 +225,7 @@ export default function ModernTable({ columns, data }: Props) {
               items={rows.map((r: any) => r.id)}
               strategy={verticalListSortingStrategy}
             >
-              {table.getRowModel().rows.map((row) => (
+              {table.getRowModel().rows.map((row:any) => (
                 <SortableRow key={row.original.id} row={row} />
               ))}
             </SortableContext>

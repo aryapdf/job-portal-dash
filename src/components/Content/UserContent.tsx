@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import JobFormDialog from "@/components/Dialog/JobFormDialog";
 import { useEffect, useState } from "react";
-import { EmptyJobCard } from "@/components/Card/EmptyJobCard";
+import { FallbackCard } from "@/components/Card/FallbackCard";
 import { Card } from "@/components/ui/card";
 import Separator from "@/components/Separator/Separator";
 import { useRouter } from "next/navigation";
@@ -56,7 +56,7 @@ export default function UserContent() {
           ) : (
             <>
               {!jobList || jobList.length === 0 ? (
-                <EmptyJobCard type={"user"} />
+                <FallbackCard type={"user"} />
               ) : (
                 <div
                   className="w-full h-full flex"

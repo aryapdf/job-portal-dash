@@ -3,7 +3,7 @@
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { getCandidates } from "@/lib/services/candidateService"
-import { EmptyJobCard } from "@/components/Card/EmptyJobCard"
+import { FallbackCard } from "@/components/Card/FallbackCard"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
 import { Button } from "@/components/ui/button"
@@ -55,7 +55,6 @@ export default function Page() {
       cell: ({getValue}: any) => (
         <div
           style={{
-            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -70,7 +69,6 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
-            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -85,7 +83,6 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
-            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -100,7 +97,6 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
-            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -117,7 +113,6 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
-            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -134,7 +129,6 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
-            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -152,7 +146,6 @@ export default function Page() {
       header: "LINKEDIN",
       cell: ({ getValue }: any) => (
         <div style={{
-          padding: isMobile ? "2.08vw" : "1.14vw",
           minWidth: isMobile ? "10vw" : "6vw",
           whiteSpace: "normal",
           wordBreak: "break-word",
@@ -188,7 +181,6 @@ export default function Page() {
         return (
           <div
             style={{
-              padding: isMobile ? "2.08vw" : "1.14vw",
               minWidth: isMobile ? "10vw" : "6vw",
               whiteSpace: "normal",
               wordBreak: "break-word",
@@ -290,7 +282,7 @@ export default function Page() {
         >
           {candidates.length === 0 ? (
             <div className="w-full h-full flex items-center justify-center">
-              <EmptyJobCard type={"candidates"} />
+              <FallbackCard type={"candidates"} />
             </div>
           ) : (
             <ModernTable columns={columns} data={candidates} />
