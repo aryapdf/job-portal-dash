@@ -1,123 +1,55 @@
-"use client"
+"use client";
 
-import {useEffect, useState} from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "@/store"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { LoadingOverlay } from "@/components/Loading/LoadingOverlay"
-import SocialButton from "@/components/Button/SocialButton"
-import Separator from "@/components/Separator/Separator"
-import {checkEmailExists, loginUserUsingPassword, sendMagicLink} from "@/lib/firebaseAuth"
-import { useRouter } from "next/navigation"
-import { setUser } from "@/store/userSlice"
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { verifyMagicLink } from "@/lib/firebaseAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "@/store/userSlice";
+import { RootState } from "@/store";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { LoadingOverlay } from "@/components/Loading/LoadingOverlay";
 
-// schemas
-const loginSchema = z.object({
-  email: z.string().min(1, "Email tidak boleh kosong").email("Format email tidak valid"),
-  password: z.string().min(1, "Password tidak boleh kosong"),
-})
+export default function VerifyContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const dispatch = useDispatch();
+  const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile";
 
-const emailOnlySchema = z.object({
-  email: z.string().min(1, "Email tidak boleh kosong").email("Format email tidak valid"),
-})
-
-const registerSchema = z.object({
-  email: z.string().min(1, "Email tidak boleh kosong").email("Format email tidak valid"),
-})
-
-type LoginFormValues = z.infer<typeof loginSchema>
-type EmailOnlyFormValues = z.infer<typeof emailOnlySchema>
-type RegisterFormValues = z.infer<typeof registerSchema>
-
-export default function OnboardingCard() {
-  const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
-  const dispatch = useDispatch()
-  const router = useRouter()
-
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [status, setStatus] = useState<"register" | "email_sent" | "login">("login")
-  const [passwordMode, setPasswordMode] = useState(false)
-  const [emailState, setEmailState] = useState("")
-
-  const form = useForm<{
-    email: string
-    password?: string
-  }>({
-    resolver: zodResolver(passwordMode ? loginSchema : emailOnlySchema),
-    defaultValues: { email: "", password: "" },
-  });
-
-  const registerForm = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: { email: "" },
-  })
+  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const resetAll = () => {
-      form.reset()
-      registerForm.reset();
+    const token = searchParams.get("token");
+    const email = searchParams.get("email");
+
+    if (!token || !email) {
+      setStatus("error");
+      setError("Link tidak valid atau sudah kadaluarsa");
+      return;
     }
-    resetAll()
-    console.log('form reset.')
-  }, [status, form, registerForm]);
 
-  // Handle login dengan password
-  const handleLogin = async (data: LoginFormValues) => {
-    setLoading(true)
-    setError("")
+    const verify = async () => {
+      try {
+        const user = await verifyMagicLink(token, email);
+        const role = email === "admin@gmail.com" ? "admin" : "user";
 
-    try {
-      const checkEmail = await checkEmailExists(data.email)
-      if (!checkEmail.exists) {
-        setError("Email ini belum terdaftar sebagai akun di Rakamin Academy.")
-        return
+        dispatch(setUser({ uid: user.uid, email: user.email, role }));
+        setStatus("success");
+
+        setTimeout(() => {
+          router.push(role === "admin" ? "/admin" : "/user");
+        }, 2000);
+      } catch (error: any) {
+        console.error("Verification error:", error);
+        setStatus("error");
+        setError(error.message || "Gagal verifikasi magic link");
       }
-      if (passwordMode) {
-        const user = await loginUserUsingPassword(data.email, data.password)
-        const role = data.email === "admin@gmail.com" ? "admin" : "user"
+    };
 
-        dispatch(setUser({ uid: user.uid, email: user.email, role }))
-        console.log("Login berhasil:", data.email)
-        router.push(role === "admin" ? "/admin" : "/user")
-      } else {
-        await sendMagicLink(data.email)
-        setStatus("email_sent")
-        console.log("Magic link dikirim ke:", data.email)
-      }
-    } catch (error: any) {
-      console.error("Login error:", error)
-      setError(error.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+    verify();
+  }, [searchParams, dispatch, router]);
 
-  // Handle register
-  const handleRegister = async (data: RegisterFormValues) => {
-    setLoading(true)
-    setError("")
-    setEmailState(data.email)
-
-    try {
-
-      await sendMagicLink(data.email)
-      setStatus("email_sent")
-    } catch (error: any) {
-      console.error("Register error:", error)
-      setError(error.message || "Gagal mendaftar")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  // Helper components
   const Logo = () => (
     <img
       src="/asset/rakamin-logo.png"
@@ -128,343 +60,7 @@ export default function OnboardingCard() {
         width: isMobile ? "20vw" : "10.357vw",
       }}
     />
-  )
-
-  const ErrorMessage = () => {
-    if (!error) return null;
-
-    const baseStyle = {
-      fontSize: isMobile ? "3vw" : "0.857vw",
-      marginBottom: isMobile ? "4vw" : "1vw",
-    };
-
-    if (error.includes("belum terdaftar")) {
-      return (
-        <div className="text-red-500 text-center p-2 rounded-md bg-red-50" style={baseStyle}>
-          {error}{" "}
-          <span
-            className="font-bold cursor-pointer underline"
-            onClick={() => {
-              setStatus("register");
-              setError("");
-            }}
-          >
-          Daftar
-        </span>
-        </div>
-      );
-    }
-
-    if (error.includes("sudah terdaftar")) {
-      return (
-        <div className="text-red-500 text-center p-2 rounded-md bg-red-50" style={baseStyle}>
-          {error}{" "}
-          <span
-            className="font-bold cursor-pointer underline"
-            onClick={() => {
-              setStatus("login");
-              setError("");
-            }}
-          >
-          Masuk
-        </span>
-        </div>
-      );
-    }
-
-    return (
-      <div className="text-red-500 text-center p-2 rounded-md bg-red-50" style={baseStyle}>
-        {error}
-      </div>
-    );
-  };
-
-
-  function renderLogin() {
-    const currentForm:any = form
-    const onSubmit = status === 'login' ? handleLogin : handleRegister
-
-    return (
-      <>
-        <Logo />
-        <CardHeader className="text-left p-0 gap-0">
-          <CardTitle
-            className="font-bold text-slate-900"
-            style={{
-              marginBottom: isMobile ? "3vw" : "1.143vw",
-              fontSize: isMobile ? "5vw" : "1.429vw",
-            }}
-          >
-            Masuk ke Rakamin
-          </CardTitle>
-          <div
-            className="text-left text-slate-600 mt-2"
-            style={{ fontSize: isMobile ? "3.5vw" : "0.972vw" }}
-          >
-            Belum punya akun?{" "}
-            <span
-              onClick={() => {
-                setStatus("register")
-                setError("")
-              }}
-              className="font-medium hover:underline transition-colors cursor-pointer"
-              style={{ color: "rgba(1, 149, 159, 1)" }}
-            >
-              Daftar menggunakan email
-            </span>
-          </div>
-        </CardHeader>
-
-        <CardContent className="grid p-0" style={{ gap: isMobile ? "6vw" : "1.143vw" }}>
-          <ErrorMessage />
-
-          <Form {...currentForm}>
-            <form
-              onSubmit={currentForm.handleSubmit(onSubmit as any)}
-              className="grid"
-              style={{ gap: isMobile ? "6vw" : "1.143vw" }}
-            >
-              <FormField
-                control={currentForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      className="text-slate-700 font-medium"
-                      style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
-                    >
-                      Alamat email
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        {...field}
-                        className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
-                        style={{
-                          padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
-                          height: isMobile ? "12vw" : "2.857vw",
-                          fontSize: isMobile ? "3.5vw" : "0.857vw",
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage
-                      className="text-red-500"
-                      style={{
-                        fontSize: isMobile ? "3vw" : "0.7vw",
-                        marginTop: isMobile ? "1vw" : "0.3vw",
-                      }}
-                    />
-                  </FormItem>
-                )}
-              />
-
-              {passwordMode && (
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel
-                        className="text-slate-700 font-medium"
-                        style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
-                      >
-                        Kata sandi
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          {...field}
-                          className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
-                          style={{
-                            padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
-                            height: isMobile ? "12vw" : "2.857vw",
-                            fontSize: isMobile ? "3.5vw" : "0.857vw",
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage
-                        className="text-red-500"
-                        style={{
-                          fontSize: isMobile ? "3vw" : "0.7vw",
-                          marginTop: isMobile ? "1vw" : "0.3vw",
-                        }}
-                      />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full font-bold transition-colors shadow-md hover:shadow-lg"
-                style={{
-                  background: "rgba(251, 192, 55, 1)",
-                  color: "rgba(64, 64, 64, 1)",
-                  fontSize: isMobile ? "4vw" : "1.143vw",
-                  height: isMobile ? "12vw" : "2.857vw",
-                }}
-              >
-                {passwordMode ? "Masuk" : "Kirim link login"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-
-        <CardFooter className="flex flex-col p-0" style={{ gap: isMobile ? "6vw" : "1.143vw" }}>
-          <Separator type="or" />
-
-          <SocialButton
-            icon={passwordMode ? "/asset/mail-icon.svg" : "/asset/key-icon.svg"}
-            text={passwordMode ? "Kirim link login melalui email" : "Masuk dengan kata sandi"}
-            onClick={() => {
-              setPasswordMode((prev) => !prev)
-              setError("")
-            }}
-          />
-        </CardFooter>
-      </>
-    )
-  }
-
-  function renderRegister() {
-    return (
-      <>
-        <Logo />
-        <CardHeader className="text-left p-0 gap-0">
-          <CardTitle
-            className="font-bold text-slate-900"
-            style={{
-              marginBottom: isMobile ? "3vw" : "1.143vw",
-              fontSize: isMobile ? "5vw" : "1.429vw",
-            }}
-          >
-            Bergabung dengan Rakamin
-          </CardTitle>
-          <div
-            className="text-left text-slate-600 mt-2"
-            style={{ fontSize: isMobile ? "3.5vw" : "0.972vw" }}
-          >
-            Sudah punya akun?{" "}
-            <span
-              onClick={() => {
-                setStatus("login")
-                setError("")
-              }}
-              className="font-medium hover:underline transition-colors cursor-pointer"
-              style={{ color: "rgba(1, 149, 159, 1)" }}
-            >
-              Masuk
-            </span>
-          </div>
-        </CardHeader>
-
-        <CardContent className="grid p-0" style={{ gap: isMobile ? "6vw" : "3vw" }}>
-          <ErrorMessage />
-
-          <Form {...registerForm}>
-            <form onSubmit={registerForm.handleSubmit(handleRegister)} className={"flex flex-col"}  style={{ gap: isMobile ? "6vw" : "1.143vw" }} >
-              <FormField
-                control={registerForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel
-                      className="text-slate-700 font-medium"
-                      style={{ fontSize: isMobile ? "3.5vw" : "0.857vw" }}
-                    >
-                      Alamat email
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        {...field}
-                        className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 transition-all"
-                        style={{
-                          padding: isMobile ? "2.5vw 4vw" : "0.556vw 1.111vw",
-                          fontSize: isMobile ? "3.5vw" : "0.857vw",
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage
-                      className="text-red-500"
-                      style={{
-                        fontSize: isMobile ? "3vw" : "0.7vw",
-                        marginTop: isMobile ? "1vw" : "0.3vw",
-                      }}
-                    />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full font-bold transition-colors shadow-md hover:shadow-lg mt-4"
-                style={{
-                  background: "rgba(251, 192, 55, 1)",
-                  color: "rgba(64, 64, 64, 1)",
-                  fontSize: isMobile ? "4vw" : "1.143vw",
-                  height: isMobile ? "12vw" : "2.857vw",
-                }}
-              >
-                Daftar dengan email
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-
-        <CardFooter className="flex flex-col p-0">
-          <div className="relative w-full" style={{ marginBlock: isMobile ? "4vw" : "1vw" }}>
-            <Separator type="or" />
-          </div>
-          <SocialButton icon="/asset/google-icon.svg" text="Daftar dengan Google" />
-        </CardFooter>
-      </>
-    )
-  }
-
-  function renderEmailSent() {
-    return (
-      <>
-        <CardHeader className="text-center p-0 gap-0">
-          <CardTitle
-            className="font-semibold text-neutral-900"
-            style={{
-              marginBottom: isMobile ? "3vw" : "1.143vw",
-              fontSize: isMobile ? "4vw" : "1.714vw",
-            }}
-          >
-            Periksa Email Anda
-          </CardTitle>
-          <CardDescription
-            style={{
-              color: "rgba(76, 76, 76, 1)",
-              marginBottom: isMobile ? "3vw" : "1.143vw",
-              fontSize: isMobile ? "3.5vw" : "0.857vw",
-            }}
-          >
-            Kami sudah mengirimkan link register ke{" "}
-            <span className="font-bold">{emailState}</span> yang berlaku dalam{" "}
-            <span className="font-bold">30 menit</span>.
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <img
-            src="/asset/email-sent.png"
-            alt="email_sent"
-            className="relative mx-auto"
-            style={{
-              width: isMobile ? "40vw" : "13.143vw",
-              height: isMobile ? "40vw" : "13.143vw",
-              margin: "auto"
-            }}
-          />
-        </CardContent>
-      </>
-    )
-  }
+  );
 
   return (
     <div
@@ -479,12 +75,157 @@ export default function OnboardingCard() {
           gap: isMobile ? "3vw" : "1.143vw",
         }}
       >
-        <LoadingOverlay isLoading={loading} />
+        {status === "verifying" && <LoadingOverlay isLoading={true} />}
 
-        {status === "login" && renderLogin()}
-        {status === "register" && renderRegister()}
-        {status === "email_sent" && renderEmailSent()}
+        <Logo />
+
+        {status === "verifying" && (
+          <>
+            <CardHeader className="text-center p-0 gap-0">
+              <CardTitle
+                className="font-bold text-slate-900"
+                style={{
+                  marginBottom: isMobile ? "3vw" : "1.143vw",
+                  fontSize: isMobile ? "5vw" : "1.714vw",
+                }}
+              >
+                Memverifikasi
+              </CardTitle>
+              <CardDescription
+                style={{
+                  color: "rgba(76, 76, 76, 1)",
+                  fontSize: isMobile ? "3.5vw" : "0.857vw",
+                }}
+              >
+                Mohon tunggu sebentar...
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="flex items-center justify-center" style={{ padding: isMobile ? "8vw 0" : "3vw 0" }}>
+              <div
+                className="animate-spin rounded-full border-b-2"
+                style={{
+                  width: isMobile ? "16vw" : "4vw",
+                  height: isMobile ? "16vw" : "4vw",
+                  borderColor: "rgba(1, 149, 159, 1)",
+                }}
+              />
+            </CardContent>
+          </>
+        )}
+
+        {status === "success" && (
+          <>
+            <CardHeader className="text-center p-0 gap-0">
+              <CardTitle
+                className="font-bold text-slate-900"
+                style={{
+                  marginBottom: isMobile ? "3vw" : "1.143vw",
+                  fontSize: isMobile ? "5vw" : "1.714vw",
+                }}
+              >
+                Berhasil!
+              </CardTitle>
+              <CardDescription
+                style={{
+                  color: "rgba(76, 76, 76, 1)",
+                  fontSize: isMobile ? "3.5vw" : "0.857vw",
+                }}
+              >
+                Anda akan dialihkan ke dashboard...
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="flex items-center justify-center" style={{ padding: isMobile ? "8vw 0" : "3vw 0" }}>
+              <div
+                className="flex items-center justify-center rounded-full"
+                style={{
+                  width: isMobile ? "20vw" : "5vw",
+                  height: isMobile ? "20vw" : "5vw",
+                  backgroundColor: "rgba(34, 197, 94, 0.1)",
+                }}
+              >
+                <svg
+                  className="text-green-500"
+                  style={{
+                    width: isMobile ? "12vw" : "3vw",
+                    height: isMobile ? "12vw" : "3vw",
+                  }}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+            </CardContent>
+          </>
+        )}
+
+        {status === "error" && (
+          <>
+            <CardHeader className="text-center p-0 gap-0">
+              <CardTitle
+                className="font-bold text-slate-900"
+                style={{
+                  marginBottom: isMobile ? "3vw" : "1.143vw",
+                  fontSize: isMobile ? "5vw" : "1.714vw",
+                }}
+              >
+                Gagal Verifikasi
+              </CardTitle>
+              <CardDescription
+                className="text-red-600"
+                style={{
+                  fontSize: isMobile ? "3.5vw" : "0.857vw",
+                  marginBottom: isMobile ? "4vw" : "1.143vw",
+                }}
+              >
+                {error}
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="flex flex-col items-center" style={{ gap: isMobile ? "6vw" : "1.143vw", padding: 0 }}>
+              <div
+                className="flex items-center justify-center rounded-full"
+                style={{
+                  width: isMobile ? "20vw" : "5vw",
+                  height: isMobile ? "20vw" : "5vw",
+                  backgroundColor: "rgba(239, 68, 68, 0.1)",
+                }}
+              >
+                <svg
+                  className="text-red-500"
+                  style={{
+                    width: isMobile ? "12vw" : "3vw",
+                    height: isMobile ? "12vw" : "3vw",
+                  }}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={3}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+
+              <Button
+                onClick={() => router.push("/sign_in")}
+                className="w-full font-bold transition-colors shadow-md hover:shadow-lg"
+                style={{
+                  background: "rgba(251, 192, 55, 1)",
+                  color: "rgba(64, 64, 64, 1)",
+                  fontSize: isMobile ? "4vw" : "1.143vw",
+                  height: isMobile ? "12vw" : "2.857vw",
+                }}
+              >
+                Kembali ke Login
+              </Button>
+            </CardContent>
+          </>
+        )}
       </Card>
     </div>
-  )
+  );
 }

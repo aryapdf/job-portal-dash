@@ -15,7 +15,6 @@ export default function AuthListener({children}: {children: React.ReactNode}) {
               let role:any;
               try {
                   const tokenResult = await user.getIdTokenResult();
-                  console.log('tokenResult', tokenResult);
                   const email = tokenResult.claims.email;
                   role = email === 'admin@gmail.com' ? 'admin' : 'user'
               } catch (error) {

@@ -1,7 +1,7 @@
 "use client"
 
 import AdminContent from "@/components/Content/AdminContent";
-import {useParams, useSearchParams} from "next/navigation";
+import {useParams, useRouter, useSearchParams} from "next/navigation";
 import {useEffect, useState} from "react";
 import {getCandidates} from "@/lib/services/candidateService";
 import {
@@ -15,10 +15,12 @@ import {
 import {EmptyJobCard} from "@/components/Card/EmptyJobCard";
 import {useSelector} from "react-redux";
 import {RootState} from "@/store";
+import {Button} from "@/components/ui/button";
 
 export default function Page() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter()
   const isMobile = useSelector((state: RootState) => state.screen.deviceType) === "mobile"
 
   const jobId = params.id as string;
@@ -60,10 +62,30 @@ export default function Page() {
         padding: isMobile ? "3.13vw" : "1.71vw",
         gap: isMobile ? "3.13vw" : "1.71vw"
       }}>
-        <div className={"font-bold"} style={{
+        <div className={"font-bold flex items-center"} style={{
           color: "rgba(29, 31, 32, 1)",
-          fontSize: isMobile ? "2.34vw" : "1.29vw"
+          fontSize: isMobile ? "2.34vw" : "1.29vw",
+          gap: isMobile ? "2.34vw" : "1.29vw"
         }}>
+          <Button
+            onClick={() => {router.push("/user")}}
+            className="flex items-center justify-center border-1 cursor-pointer"
+            style={{
+              background: "transparent",
+              padding: isMobile ? "0.52vw" : "0.29vw",
+              border: "none",
+              boxShadow: "none"
+            }}
+          >
+            <img
+              src="/asset/arrow-left.svg" alt=""
+              className={"w-full h-full object-contain"}
+              style={{
+                width: isMobile ? "2.60vw" : "1.43vw",
+                height: isMobile ? "2.60vw" : "1.43vw"
+              }}
+            />
+          </Button>
           {jobName}
         </div>
 
@@ -114,7 +136,7 @@ export default function Page() {
                         >{candidate.fullName}</TableCell>
                         <TableCell style={{...style.tableCell}}>{candidate.email}</TableCell>
                         <TableCell style={{...style.tableCell}}>{candidate.phoneNumber}</TableCell>
-                        <TableCell style={{...style.tableCell}}>{new Date(candidate.dateOfBirth).toLocaleDateString()}</TableCell>
+                        <TableCell style={{...style.tableCell}}>{candidate.dateOfBirth ? new Date(candidate.dateOfBirth).toLocaleDateString() : '-'}</TableCell>
                         <TableCell style={{...style.tableCell}}>{candidate.domicile || '-'}</TableCell>
                         <TableCell style={{...style.tableCell}}>{candidate.gender.toUpperCase()}</TableCell>
                         <TableCell style={{...style.tableCell}}>

@@ -47,7 +47,7 @@ export default function VerifyContent() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8 text-center">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8 text-center flex flex-col items-center justify-center">
         {status === "verifying" && (
           <>
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4" />
