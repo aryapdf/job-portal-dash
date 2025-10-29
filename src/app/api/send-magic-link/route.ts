@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
                     
                     <p style="color:#555555;font-size:18px;margin:0 0 40px 0;text-align:left;line-height:1.5;font-family:sans-serif;">
                       Hai! <br/><br/>
-                      Berikut adalah <strong>link masuk</strong> yang kamu request dari <span style="color:#007dfe;">jobPortalDash.com</span>
+                      Berikut adalah <strong>link masuk</strong> yang kamu request dari <span style="color:#007dfe;">jobportaldash.vercel.app</span>
                     </p>
                     
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:0 auto 16px;">
