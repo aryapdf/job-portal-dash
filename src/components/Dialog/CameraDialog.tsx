@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
 import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
@@ -19,14 +20,13 @@ export default function CameraDialog({
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
-  const [captured, setCaptured] = useState(false)
   const [handDetector, setHandDetector] = useState<HandLandmarker | null>(null)
-  const [detecting, setDetecting] = useState(false)
   const [gestureStep, setGestureStep] = useState(0)
+  const [capturedImage, setCapturedImage] = useState<string | null>(null)
+  const [capturedFile, setCapturedFile] = useState<File | null>(null)
   const lastStepTime = useRef(0)
   const consecutiveFrames = useRef(0)
 
-  // Countdown state
   const [countdown, setCountdown] = useState<number | null>(null)
   const [isCountingDown, setIsCountingDown] = useState(false)
   const countdownStarted = useRef(false)
@@ -36,7 +36,6 @@ export default function CameraDialog({
     const thumbTip = landmarks[4]
     const thumbMCP = landmarks[2]
     const wrist = landmarks[0]
-
     if (Math.abs(thumbTip.x - wrist.x) > Math.abs(thumbMCP.x - wrist.x) * 1.3) count++
 
     const fingers = [
@@ -78,6 +77,7 @@ export default function CameraDialog({
       setCountdown(null)
       setIsCountingDown(false)
       countdownStarted.current = false
+      setCapturedImage(null)
     } else {
       if (stream) {
         stream.getTracks().forEach(track => track.stop())
@@ -87,15 +87,14 @@ export default function CameraDialog({
     }
 
     return () => {
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop())
-      }
+      if (localStream) localStream.getTracks().forEach(track => track.stop())
     }
   }, [open])
 
   useEffect(() => {
     if (!open) return
     let active = true
+
     async function initHandDetector() {
       const vision = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
@@ -110,8 +109,8 @@ export default function CameraDialog({
       })
       if (active) setHandDetector(detector)
     }
-    initHandDetector()
 
+    initHandDetector()
     return () => {
       active = false
       setHandDetector(null)
@@ -124,6 +123,7 @@ export default function CameraDialog({
     if (!video || !canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
+
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
     ctx.drawImage(video, 0, 0)
@@ -132,43 +132,47 @@ export default function CameraDialog({
       if (blob) {
         const file = new File([blob], "photo.jpg", { type: "image/jpeg" })
         const url = URL.createObjectURL(blob)
-        onCapture(file, url)
-        setCaptured(true)
+        setCapturedImage(url)
+        setCapturedFile(file)
       }
     }, "image/jpeg")
   }
 
-  // FIXED: Countdown effect dengan ref untuk prevent re-trigger
+  const handleSubmit = () => {
+    if (capturedFile && capturedImage) {
+      onCapture(capturedFile, capturedImage)
+      onClose()
+    }
+  }
+
+  const handleRetake = () => {
+    setCapturedImage(null)
+    setCapturedFile(null)
+    setGestureStep(0)
+    lastStepTime.current = 0
+    consecutiveFrames.current = 0
+  }
+
   useEffect(() => {
-    if (gestureStep === 3 && !countdownStarted.current) {
+    if (gestureStep === 3 && !countdownStarted.current && !capturedImage) {
       countdownStarted.current = true
       setIsCountingDown(true)
       setCountdown(3)
 
-      // Countdown dari 3 ke 2 ke 1
       setTimeout(() => setCountdown(2), 1000)
       setTimeout(() => setCountdown(1), 2000)
 
-      // Capture setelah countdown selesai (di 3 detik)
       setTimeout(() => {
         setCountdown(null)
         handleCapture()
         setIsCountingDown(false)
-
-        // Reset gesture step setelah capture
-        setTimeout(() => {
-          setGestureStep(0)
-          lastStepTime.current = 0
-          consecutiveFrames.current = 0
-          countdownStarted.current = false
-        }, 500)
+        countdownStarted.current = false
       }, 3000)
     }
-  }, [gestureStep])
+  }, [gestureStep, capturedImage])
 
   useEffect(() => {
-    if (!handDetector || !videoRef.current) return
-
+    if (!handDetector || !videoRef.current || capturedImage) return
     let rafId: number
     let isActive = true
     let lastDetection = 0
@@ -190,7 +194,6 @@ export default function CameraDialog({
           const fingersUp = getFingerCount(hand)
           const expectedFingers = [1, 2, 3][gestureStep]
 
-          // Jangan deteksi gesture baru kalau sedang countdown
           if (!isCountingDown) {
             if (fingersUp === expectedFingers) {
               consecutiveFrames.current++
@@ -203,18 +206,13 @@ export default function CameraDialog({
                 }
               }
             } else consecutiveFrames.current = 0
-
             if (gestureStep > 0 && gestureStep < 3 && now - lastStepTime.current > 8000) {
               setGestureStep(0)
               lastStepTime.current = 0
               consecutiveFrames.current = 0
             }
           }
-        } else {
-          if (!isCountingDown) {
-            consecutiveFrames.current = 0
-          }
-        }
+        } else if (!isCountingDown) consecutiveFrames.current = 0
       }
       rafId = requestAnimationFrame(detect)
     }
@@ -224,7 +222,7 @@ export default function CameraDialog({
       isActive = false
       cancelAnimationFrame(rafId)
     }
-  }, [handDetector, gestureStep, isCountingDown])
+  }, [handDetector, gestureStep, isCountingDown, capturedImage])
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -243,123 +241,130 @@ export default function CameraDialog({
         >
           Raise Your Hand to Capture
         </DialogTitle>
-        <div className="text-left mt-2 text-sm font-medium text-slate-600">
-          We&#39;ll take the photo once your hand pose is detected.
-        </div>
-        <div
-          className="flex flex-col items-center relative"
-          style={{ gap: isMobile ? "3vw" : "0.857vw" }}
-        >
-          {/* Video with countdown overlay */}
-          <div className="relative w-full">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full rounded-md bg-black"
-              style={{
-                borderRadius: isMobile ? "2vw" : "0.571vw"
-              }}
-            />
 
-            {/* Countdown Overlay */}
-            {countdown !== null && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-md"
-                   style={{
-                     borderRadius: isMobile ? "2vw" : "0.571vw"
-                   }}
+        {capturedImage ? (
+          <div className="flex flex-col items-center">
+            <img
+              src={capturedImage}
+              alt="Captured"
+              className="rounded-md w-full object-contain"
+              style={{ borderRadius: isMobile ? "2vw" : "0.571vw" }}
+            />
+            <div className="flex justify-center gap-4" style={{ marginTop: isMobile ? "3.2vw" : "1.604vw"}} >
+              <Button variant="outline" className={"font-bold"} onClick={handleRetake} style={{padding: isMobile ? "2vw 4vw" : "0.86vw 1.143vw"}}>
+                Retake Photo
+              </Button>
+              <Button className={"font-bold"} onClick={handleSubmit} style={{padding: isMobile ? "2vw 4vw" : "0.86vw 1.143vw", background: "rgba(1, 149, 159, 1)"}}>Submit</Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center relative" style={{ gap: isMobile ? "3vw" : "0.857vw" }}>
+            <div className="relative w-full">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-full rounded-md bg-black"
+                style={{ borderRadius: isMobile ? "2vw" : "0.571vw" }}
+              />
+              {countdown !== null && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-md">
+                  <div
+                    className="text-white font-bold"
+                    style={{
+                      fontSize: isMobile ? "30vw" : "15vw",
+                      textShadow: "0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(255,255,255,0.5)"
+                    }}
+                  >
+                    {countdown}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <canvas ref={canvasRef} className="hidden w-full" />
+
+            {/* ===== Gesture Step Indicator ===== */}
+            <div className="w-full mt-3">
+              <div className="text-left mt-2 font-medium text-slate-600">
+                We&#39;ll take the photo once your hand pose is detected.
+              </div>
+              <div
+                className="mt-2 flex items-center justify-center w-full font-bold text-slate-600"
+                style={{
+                  gap: isMobile ? "2vw" : "0.571vw",
+                  marginTop: isMobile ? "3.2vw" : "1.604vw"
+                }}
               >
                 <div
-                  className="text-white font-bold"
                   style={{
-                    fontSize: isMobile ? "30vw" : "15vw",
-                    textShadow: "0 0 30px rgba(0,0,0,0.8), 0 0 60px rgba(255,255,255,0.5)",
-                    animation: "pulse 0.5s ease-in-out"
+                    padding: isMobile ? "0.833vw" : "0.857vw",
+                    background: "rgba(64, 64, 64, 1)"
                   }}
                 >
-                  {countdown}
+                  <img
+                    src={gestureStep === 0 ? "/asset/hand-gesture-one.png" : "/asset/hand-gesture-one-active.png"}
+                    style={{
+                      height: isMobile ? "6.39vw" : "5.604vw",
+                      objectFit: "contain"
+                    }}
+                    alt="1 finger"
+                  />
+                </div>
+
+                <img
+                  src="/asset/chevron-right.svg"
+                  alt=""
+                  style={{
+                    width: isMobile ? "6vw" : "1.714vw",
+                    height: isMobile ? "6vw" : "1.714vw"
+                  }}
+                />
+
+                <div
+                  style={{
+                    padding: isMobile ? "0.833vw" : "0.857vw",
+                    background: "rgba(64, 64, 64, 1)"
+                  }}
+                >
+                  <img
+                    src={gestureStep > 1 ? "/asset/hand-gesture-two-active.png" : "/asset/hand-gesture-two.png"}
+                    style={{
+                      height: isMobile ? "6.39vw" : "5.604vw",
+                      objectFit: "contain"
+                    }}
+                    alt="2 fingers"
+                  />
+                </div>
+
+                <img
+                  src="/asset/chevron-right.svg"
+                  alt=""
+                  style={{
+                    width: isMobile ? "6vw" : "1.714vw",
+                    height: isMobile ? "6vw" : "1.714vw"
+                  }}
+                />
+
+                <div
+                  style={{
+                    padding: isMobile ? "0.833vw" : "0.857vw",
+                    background: "rgba(64, 64, 64, 1)"
+                  }}
+                >
+                  <img
+                    src={gestureStep > 2 ? "/asset/hand-gesture-three-active.png" : "/asset/hand-gesture-three.png"}
+                    style={{
+                      height: isMobile ? "6.39vw" : "5.604vw",
+                      objectFit: "contain"
+                    }}
+                    alt="3 fingers"
+                  />
                 </div>
               </div>
-            )}
-          </div>
-
-          <canvas ref={canvasRef} className="hidden w-full" />
-          <div className="w-full mt-3">
-            <div className="text-left mt-2 font-medium text-slate-600">
-              We&#39;ll take the photo once your hand pose is detected.
-            </div>
-            <div
-              className="mt-2 flex items-center justify-center w-full font-bold text-slate-600"
-              style={{ gap: isMobile ? "2vw" : "0.571vw", marginTop: isMobile ? "3.2vw" : "1.604vw"  }}
-            >
-              <div
-                style={{
-                  padding: isMobile ? "0.833vw" : "0.857vw",
-                  background: "rgba(64, 64, 64, 1)"
-                }}
-              >
-                <img
-                  src={gestureStep === 0 ? "/asset/hand-gesture-one.png" : "/asset/hand-gesture-one-active.png"}
-                  style={{
-                    height: isMobile ? "6.39vw" : "5.604vw",
-                    objectFit: "contain",
-                  }}
-                  alt="1 finger"
-                />
-              </div>
-
-              <img
-                src="/asset/chevron-right.svg"
-                alt=""
-                style={{
-                  width: isMobile ? "6vw" : "1.714vw",
-                  height: isMobile ? "6vw" : "1.714vw"
-                }}
-              />
-
-              <div
-                style={{
-                  padding: isMobile ? "0.833vw" : "0.857vw",
-                  background: "rgba(64, 64, 64, 1)"
-                }}
-              >
-                <img
-                  src={gestureStep > 1 ? "/asset/hand-gesture-two-active.png" : "/asset/hand-gesture-two.png"}
-                  style={{
-                    height: isMobile ? "6.39vw" : "5.604vw",
-                    objectFit: "contain",
-                  }}
-                  alt="2 fingers"
-                />
-              </div>
-
-              <img
-                src="/asset/chevron-right.svg"
-                alt=""
-                style={{
-                  width: isMobile ? "6vw" : "1.714vw",
-                  height: isMobile ? "6vw" : "1.714vw"
-                }}
-              />
-
-              <div
-                style={{
-                  padding: isMobile ? "0.833vw" : "0.857vw",
-                  background: "rgba(64, 64, 64, 1)"
-                }}
-              >
-                <img
-                  src={gestureStep > 2 ? "/asset/hand-gesture-three-active.png" : "/asset/hand-gesture-three.png"}
-                  style={{
-                    height: isMobile ? "6.39vw" : "5.604vw",
-                    objectFit: "contain",
-                  }}
-                  alt="3 fingers"
-                />
-              </div>
             </div>
           </div>
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   )
