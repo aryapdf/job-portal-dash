@@ -9,7 +9,7 @@ Job Portal Dash is a modern job management dashboard built with Next.js 16, desi
 It provides a responsive, fast, and modular admin interface that supports CRUD operations for job listings, gesture-based input for interactive features, and Firebase integration for real-time data management.
 
 Key features:
-- Job posting management (create, edit, delete)
+- Job posting management (create, delete)
 - Candidate management (update, edit, delete)
 - Responsive layout for mobile and desktop
 - Gesture-based auto-capture photo
