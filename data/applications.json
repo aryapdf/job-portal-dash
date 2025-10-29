@@ -10,8 +10,9 @@
     "email": "asdasd@gmail.com",
     "linkedin": "https://linkedin.com/in/jjusafda",
     "photo": null,
+    "order": 2,
     "appliedAt": "2025-10-28T06:21:28.591Z",
-    "status": "pending"
+    "status": "declined"
   },
   {
     "id": "ee434840-305f-4780-a4be-cfe876b25f83",
@@ -24,8 +25,9 @@
     "email": "black.person@yahoo.mail",
     "linkedin": "https://linkedin.com/in/blcakks",
     "photo": "/asset/photo/photo-1761634696473.jpg",
+    "order": 1,
     "appliedAt": "2025-10-28T06:58:16.605Z",
-    "status": "pending"
+    "status": "approved"
   },
   {
     "id": "6ee12096-f6cf-4200-8fa1-6772920e4bdc",
@@ -38,6 +40,7 @@
     "email": "jasdas@gmail.com",
     "linkedin": "https://linkedin.com/in/hhsd",
     "photo": null,
+    "order": 3,
     "appliedAt": "2025-10-28T09:45:32.282Z",
     "status": "pending"
   },
@@ -51,7 +54,8 @@
     "phoneNumber": "81368899879",
     "email": "arya@gmail.com",
     "linkedin": "https://linkedin.com/in/arya",
-    "photo": "/asset/photo/photo-1761665071241.jpg",
+    "photo": null,
+    "order": 4,
     "appliedAt": "2025-10-28T15:24:31.748Z",
     "status": "pending"
   },
@@ -66,6 +70,7 @@
     "email": "utopia@gmail.com",
     "linkedin": "https://linkedin.com/in/uto",
     "photo": "/asset/photo/photo-1761665207855.jpg",
+    "order": 5,
     "appliedAt": "2025-10-28T15:26:47.884Z",
     "status": "pending"
   },
@@ -79,8 +84,24 @@
     "phoneNumber": "8812371231",
     "email": "99asdf9i@gmail.com",
     "linkedin": "https://linkedin.com/in/99813",
-    "photo": "/asset/photo/photo-1761666327212.jpg",
+    "photo": null,
+    "order": 6,
     "appliedAt": "2025-10-28T15:45:27.233Z",
+    "status": "pending"
+  },
+  {
+    "id": "7a48fa93-2721-4309-9095-f41753b63f41",
+    "jobId": "dcd5a8b0-bc70-4585-96ec-2a31cf2da499",
+    "fullName": "Aqsal",
+    "dateOfBirth": "2025-10-21T17:00:00.000Z",
+    "gender": "male",
+    "domicile": "Magelang, Jawa Tengah",
+    "phoneNumber": "81124612731",
+    "email": "asdada@afas.com",
+    "linkedin": "https://linkedin.com/in/blcakks",
+    "photo": null,
+    "order": 1,
+    "appliedAt": "2025-10-29T04:22:19.574Z",
     "status": "pending"
   }
 ]
