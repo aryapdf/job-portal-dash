@@ -47,6 +47,12 @@ Key features:
 - PostCSS  
 
 ## Run Locally
+**Prerequisites**
+- Minimum Node version: **v20+**  
+- Default package manager: **NPM**   
+- Configure Firestore security rules to allow authenticated read/write operations.
+- Configure Resend to allow magic links feature.
+
 
 1. **Clone the repository**
    ```bash
@@ -90,9 +96,3 @@ Key features:
    ```
    http://localhost:3000
    ```
-
-## Notes
-
-- Minimum Node version: **v20+**  
-- Default package manager: **NPM**   
-- Configure Firestore security rules to allow authenticated read/write operations.
