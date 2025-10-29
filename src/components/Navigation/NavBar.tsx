@@ -18,8 +18,7 @@ export default function NavBar(props: Props) {
       <nav
         className="w-full bg-white border-b border-slate-200 shadow-sm relative top-0 left-0 z-50"
         style={{
-          height: isMobile ? "14vw" : "4.571vw",
-          paddingInline: isMobile ? "5vw" : "1.429vw",
+          padding: isMobile ? "3vw" : "0.715vw 1.429vw",
         }}
       >
         <div className={"w-full h-full flex justify-between items-center"}>
@@ -36,6 +35,7 @@ export default function NavBar(props: Props) {
             {loggedIn && (
               <div
                 className={"font-bold text-slate-500 cursor-pointer"}
+                style={{fontSize: isMobile ? "3vw" : "0.857vw"}}
                 onClick={() => auth.signOut()}
               >
                 Logout

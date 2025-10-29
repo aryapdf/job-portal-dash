@@ -2,12 +2,18 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { getCandidates } from "@/lib/services/candidateService"
+import {
+  getCandidates,
+  updateCandidateOrder,
+  updateCandidateStatus,
+  deleteCandidates
+} from "@/lib/services/candidateService"
 import { FallbackCard } from "@/components/Card/FallbackCard"
 import { useSelector } from "react-redux"
 import { RootState } from "@/store"
 import { Button } from "@/components/ui/button"
-import ModernTable from "@/components/Table/ModernTable";
+import ModernTable from "@/components/Table/ModernTable"
+import { toast } from "sonner"
 
 export default function Page() {
   const params = useParams()
@@ -18,6 +24,7 @@ export default function Page() {
 
   const [jobName, setJobName] = useState<string>("")
   const [candidates, setCandidates] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   const columns = [
     {
@@ -27,22 +34,22 @@ export default function Page() {
         const candidate = row.original
         return (
           <div
-            className={"w-full h-full flex items-center justify-center relative"}
+            className="flex items-center justify-center"
           >
             {candidate.photo ? (
               <img
                 src={candidate.photo}
                 alt={candidate.fullName}
-                className="object-cover rounded-full object-cover"
-                style={{width: "40px", height: "40px" }}
+                className="rounded-full object-cover"
+                style={{ width: "40px", height: "40px" }}
               />
             ) : (
-              <img
-                src={'/asset/profile-placeholder.png'}
-                alt={candidate.fullName}
-                className="object-cover rounded-full object-cover"
-                style={{width: "40px", height: "40px" }}
-              />
+              <div
+                className="rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-semibold"
+                style={{ width: "40px", height: "40px" }}
+              >
+                {candidate.fullName?.charAt(0).toUpperCase()}
+              </div>
             )}
           </div>
         )
@@ -52,15 +59,18 @@ export default function Page() {
     {
       accessorKey: "fullName",
       header: "FULL NAME",
-      cell: ({getValue}: any) => (
+      cell: ({ getValue }: any) => (
         <div
           style={{
+            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
             lineHeight: isMobile ? "4vw" : "1.4em",
           }}
-        >{getValue() || "-"}</div>
+        >
+          {getValue() || "-"}
+        </div>
       ),
     },
     {
@@ -69,12 +79,15 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
+            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
             lineHeight: isMobile ? "4vw" : "1.4em",
           }}
-        >{getValue() || "-"}</div>
+        >
+          {getValue() || "-"}
+        </div>
       ),
     },
     {
@@ -83,12 +96,15 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
+            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
             lineHeight: isMobile ? "4vw" : "1.4em",
           }}
-        >{getValue() || "-"}</div>
+        >
+          {getValue() || "-"}
+        </div>
       ),
     },
     {
@@ -97,6 +113,7 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
+            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -113,6 +130,7 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
+            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -129,6 +147,7 @@ export default function Page() {
       cell: ({ getValue }: any) => (
         <div
           style={{
+            padding: isMobile ? "2.08vw" : "1.14vw",
             minWidth: isMobile ? "10vw" : "6vw",
             whiteSpace: "normal",
             wordBreak: "break-word",
@@ -145,11 +164,13 @@ export default function Page() {
       accessorKey: "linkedin",
       header: "LINKEDIN",
       cell: ({ getValue }: any) => (
-        <div style={{
-          minWidth: isMobile ? "10vw" : "6vw",
-          whiteSpace: "normal",
-          wordBreak: "break-word",
-          lineHeight: isMobile ? "4vw" : "1.4em",
+        <div
+          style={{
+            padding: isMobile ? "2.08vw" : "1.14vw",
+            minWidth: isMobile ? "10vw" : "6vw",
+            whiteSpace: "normal",
+            wordBreak: "break-word",
+            lineHeight: isMobile ? "4vw" : "1.4em",
           }}
         >
           {getValue() ? (
@@ -159,7 +180,7 @@ export default function Page() {
               rel="noopener noreferrer"
               className="text-blue-600 underline"
             >
-              {getValue()}
+              View Profile
             </a>
           ) : (
             "-"
@@ -181,11 +202,14 @@ export default function Page() {
         return (
           <div
             style={{
+              padding: isMobile ? "2.08vw" : "1.14vw",
               minWidth: isMobile ? "10vw" : "6vw",
               whiteSpace: "normal",
               wordBreak: "break-word",
-              lineHeight: isMobile ? "4vw" : "1.4em",}}
-            className={`font-semibold ${color}`}>
+              lineHeight: isMobile ? "4vw" : "1.4em",
+            }}
+            className={`font-semibold ${color}`}
+          >
             {val.toUpperCase()}
           </div>
         )
@@ -193,36 +217,66 @@ export default function Page() {
     },
   ]
 
-  const style = {
-    tableHead: {
-      fontSize: isMobile ? "1.56vw" : "0.86vw",
-      fontWeight: "bold",
-      padding: `${isMobile ? "3.39vw" : "1.86vw"} ${
-        isMobile ? "2.08vw" : "1.14vw"
-      }`,
-      backgroundColor: "rgba(250, 250, 250, 1)",
-    },
-    tableCell: {
-      fontSize: isMobile ? "1.82vw" : "1vw",
-      padding: isMobile ? "2.08vw" : "1.14vw",
-      borderBottom: `1px solid rgba(237, 237, 237, 1)`,
-    },
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      const result = await getCandidates(jobId)
+      if (result) {
+        setJobName(result.jobName || "")
+        setCandidates(result.candidates || [])
+      }
+    } catch (err) {
+      console.error("Failed to fetch candidates:", err)
+      toast.error("Failed to fetch candidates")
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await getCandidates(jobId)
-        if (result) {
-          setJobName(result.jobName || "")
-          setCandidates(result.candidates || [])
-        }
-      } catch (err) {
-        console.error("Failed to fetch candidates:", err)
-      }
-    }
     fetchData()
   }, [jobId])
+
+  const handleSaveOrder = async (newOrder: any[]) => {
+    try {
+      await updateCandidateOrder(jobId, newOrder)
+      toast.success("Order updated successfully!")
+      await fetchData() // Refresh data
+    } catch (error) {
+      toast.error("Failed to update order")
+      console.error(error)
+    }
+  }
+
+  const handleUpdateStatus = async (ids: string[], status: 'approved' | 'declined') => {
+    try {
+      await updateCandidateStatus(jobId, ids, status)
+      toast.success(`Status updated to ${status}!`)
+      await fetchData() // Refresh data
+    } catch (error) {
+      toast.error("Failed to update status")
+      console.error(error)
+    }
+  }
+
+  const handleDelete = async (ids: string[]) => {
+    try {
+      await deleteCandidates(jobId, ids)
+      toast.success("Candidates deleted successfully!")
+      await fetchData() // Refresh data
+    } catch (error) {
+      toast.error("Failed to delete candidates")
+      console.error(error)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -285,7 +339,13 @@ export default function Page() {
               <FallbackCard type={"candidates"} />
             </div>
           ) : (
-            <ModernTable columns={columns} data={candidates} />
+            <ModernTable
+              columns={columns}
+              data={candidates}
+              onSaveOrder={handleSaveOrder}
+              onUpdateStatus={handleUpdateStatus}
+              onDelete={handleDelete}
+            />
           )}
         </div>
       </div>

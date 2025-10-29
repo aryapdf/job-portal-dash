@@ -1,3 +1,4 @@
+// path : src/app/api/jobs/apply/route.ts
 import { NextResponse } from 'next/server';
 import fs from 'fs/promises';
 import path from 'path';
@@ -18,10 +19,19 @@ export async function POST(req: Request) {
     }
 
     const applications = JSON.parse(await fs.readFile(APPS_PATH, 'utf-8') || '[]');
+
+    // Calculate the next order number for this job
+    const jobApplications = applications.filter((app: any) => app.jobId === jobId);
+    const maxOrder = jobApplications.length > 0
+      ? Math.max(...jobApplications.map((app: any) => app.order || 0))
+      : 0;
+    const nextOrder = maxOrder + 1;
+
     const newApp = {
       id: randomUUID(),
       jobId,
       ...body,
+      order: nextOrder, // Add order field
       appliedAt: new Date().toISOString(),
       status: 'pending'
     };
