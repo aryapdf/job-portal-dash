@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import JobFormDialog from "@/components/Dialog/JobFormDialog";
 import { useEffect, useState } from "react";
 import { FallbackCard } from "@/components/Card/FallbackCard";
 import { Card } from "@/components/ui/card";
@@ -20,6 +20,7 @@ export default function UserContent() {
   const [loading, setLoading] = useState(true);
   const [jobList, setJobList] = useState<any[]>([]);
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchJobs = async () => {
     try {
@@ -40,26 +41,108 @@ export default function UserContent() {
     fetchJobs();
   }, []);
 
+  // Filter jobs based on search query
+  const filteredJobs = jobList.filter((job) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      job.title?.toLowerCase().includes(query) ||
+      job.type?.toLowerCase().includes(query) ||
+      job.description?.toLowerCase().includes(query) ||
+      formatJobType(job.type)?.toLowerCase().includes(query)
+    );
+  });
+
+  useEffect(() => {
+    if (filteredJobs.length > 0 && !filteredJobs.find(j => j.id === selectedJob?.id)) {
+      setSelectedJob(filteredJobs[0]);
+    } else if (filteredJobs.length === 0) {
+      setSelectedJob(null);
+    }
+  }, [searchQuery]);
+
   return (
     <div
       className="w-full h-full relative flex justify-between"
       style={{
         flexDirection: isMobile ? "column" : "row",
-        padding: isMobile ? "5vw 4vw" : "2.857vw 7.429vw",
+        padding: isMobile ? "5vw 4vw" : "1.857vw 7.429vw",
         gap: isMobile ? "5vw" : "0",
       }}
     >
-      <div className="w-full h-full overflow-hidden overflow-y-scroll rounded-sm flex flex-col">
-        <div className="flex flex-1 items-center justify-center rounded-md relative">
+      <div
+        className="w-full h-full rounded-xl flex flex-col"
+        style={{
+          gap: isMobile ? "4vw" : "1.143vw"
+        }}
+      >
+        <div
+          className="flex w-full items-center rounded-md border"
+          style={{
+            padding: isMobile ? "3vw 4vw" : "0.714vw 1.143vw",
+            backgroundColor: "white"
+          }}
+        >
+          <img
+            src={"/asset/magnifying-glass-icon.svg"}
+            style={{
+              width: isMobile ? "5vw" : "1.143vw",
+              height: isMobile ? "5vw" : "1.143vw",
+              marginRight: isMobile ? "3vw" : "0.571vw",
+            }}
+          />
+          <Input
+            type="search"
+            placeholder="Search jobs by title, type, or description..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="rounded-sm h-fit border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+            style={{
+              width: "100%",
+              padding: 0,
+              fontSize: isMobile ? "4vw" : "0.857vw",
+              border: "none",
+              boxShadow: "none"
+            }}
+          />
+        </div>
+
+        <div className="flex flex-1 items-center justify-center rounded-md relative overflow-hidden">
           {loading ? (
             <LoadingOverlay isLoading={loading} />
           ) : (
             <>
               {!jobList || jobList.length === 0 ? (
                 <FallbackCard type={"user"} />
+              ) : filteredJobs.length === 0 ? (
+                <div className="flex flex-col items-center justify-center">
+                  <div
+                    className="text-slate-400 mb-2"
+                    style={{
+                      fontSize: isMobile ? "12vw" : "4vw"
+                    }}
+                  >
+                    🔍
+                  </div>
+                  <div
+                    className="text-slate-600 font-medium"
+                    style={{
+                      fontSize: isMobile ? "4vw" : "1.143vw"
+                    }}
+                  >
+                    No jobs found
+                  </div>
+                  <div
+                    className="text-slate-500"
+                    style={{
+                      fontSize: isMobile ? "3.5vw" : "0.857vw"
+                    }}
+                  >
+                    Try adjusting your search
+                  </div>
+                </div>
               ) : (
                 <div
-                  className="w-full h-full flex"
+                  className="w-full h-full flex overflow-hidden"
                   style={{
                     gap: isMobile ? "4vw" : "1.143vw",
                   }}
@@ -69,12 +152,11 @@ export default function UserContent() {
                     className="flex flex-col overflow-y-auto"
                     style={{
                       width: isMobile ? "100%" : "24.286vw",
-                      maxHeight: isMobile ? "60vh" : "calc(100vh - 200px)",
                       gap: isMobile ? "3vw" : "0.857vw",
                       paddingRight: isMobile ? "0" : "0.571vw",
                     }}
                   >
-                    {jobList.map((job) => (
+                    {filteredJobs.map((job) => (
                       <Card
                         key={job.id}
                         onClick={() => setSelectedJob(job)}
@@ -184,7 +266,7 @@ export default function UserContent() {
                   {/* RIGHT SIDE - Job Details */}
                   {!isMobile && selectedJob && (
                     <Card
-                      className="flex-1"
+                      className="flex-1 overflow-hidden"
                       style={{
                         borderRadius: "0.857vw",
                         padding: "1.714vw",
@@ -265,7 +347,15 @@ export default function UserContent() {
 
                       <Separator type={"dashed"} />
 
-                      <div style={{ fontSize: "1vw", lineHeight: "1.5", whiteSpace: "pre-line" }}>
+                      <div
+                        className="overflow-y-auto"
+                        style={{
+                          fontSize: "1vw",
+                          lineHeight: "1.5",
+                          whiteSpace: "pre-line",
+                          maxHeight: "calc(100vh - 400px)"
+                        }}
+                      >
                         {selectedJob?.description}
                       </div>
                     </Card>
@@ -358,7 +448,6 @@ export default function UserContent() {
                       >
                         {selectedJob?.description}
                       </div>
-
                     </Card>
                   )}
                 </div>
